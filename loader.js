@@ -3,6 +3,9 @@ async function loadGame(configName) {
     // Load JSON config
     const config = await fetch(`config/${configName}.json`).then(res => res.json());
 
+    // Apply theme assets dynamically
+    applyTheme(config.theme);
+
     // Load corresponding game logic
     const module = await import(`./games/${config.gameType}.js`);
     const container = document.getElementById('game-container');
@@ -16,5 +19,13 @@ async function loadGame(configName) {
   }
 }
 
-// Example: load card-flip game
+function applyTheme(themeName) {
+  document.body.style.backgroundImage = `url('assets/themes/${themeName}/bg.png')`;
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+  document.documentElement.style.setProperty('--card-back', `url('assets/themes/${themeName}/card-back.png')`);
+}
+
+// Load example game
 loadGame('card-flip');
+

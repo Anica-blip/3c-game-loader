@@ -9,16 +9,16 @@
   <!-- Open Graph Meta Tags for Facebook, LinkedIn, etc. -->
   <meta property="og:title" content="Welcome to the 3C Thread To Success Universe">
   <meta property="og:description" content="Discover something real about yourself with Aurion, your digital guide. Take the quiz and start your journey today!">
-  <meta property="og:image" content="https://anica-blip.github.io/3c-quiz/static/8.png">
-  <meta property="og:url" content="https://anica-blip.github.io/3c-quiz/landing.html">
+  <meta property="og:image" content="https://anica-blip.github.io/3c-game-loader/static/8.png">
+  <meta property="og:url" content="https://anica-blip.github.io/3c-game-loader/landing.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="3C Thread To Success">
   
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Welcome to the 3C Thread To Success Universe">
-  <meta name="twitter:description" content="Discover something real about yourself with Aurion, your digital guide. Take the quiz and start your journey today!">
-  <meta name="twitter:image" content="https://anica-blip.github.io/3c-quiz/static/8.png">
+  <meta name="twitter:description" content="Discover something real about yourself with Aurion, your digital guide. Start your journey today!">
+  <meta name="twitter:image" content="https://anica-blip.github.io/3c-game-loader/static/8.png">
   
   <link rel="icon" href="data:,">
   <style>
@@ -68,7 +68,7 @@
       max-width: 100%;
       height: auto;
     }
-    .quiz-title {
+    .title {
       font-size: 18px;
       font-weight: bold;
       color: #997a64;
@@ -76,7 +76,7 @@
       letter-spacing: 1px;
       font-family: 'Segoe UI', Arial, sans-serif;
     }
-    .quiz-desc {
+    .desc {
       font-size: 15px;
       color: #fff;
       margin-bottom: 18px;
@@ -84,7 +84,7 @@
       font-family: 'Segoe UI', Arial, sans-serif;
       font-weight: 400;
     }
-    .quiz-desc em {
+    .desc em {
       font-style: italic;
       color: #e7d3bf;
     }
@@ -137,12 +137,12 @@
         aspect-ratio: 148/260;
         margin-bottom: 6vw;
       }
-      .quiz-title { 
+      .title { 
         font-size: 5vw;
         max-font-size: 20px;
         min-font-size: 16px;
       }
-      .quiz-desc { 
+      .desc { 
         font-size: 4vw;
         max-font-size: 16px;
         min-font-size: 13px;
@@ -180,27 +180,35 @@
     <img class="mobile-mockup" src="static/8.png" alt="Aurion Quiz Mobile" loading="eager"/>
     <div class="quiz-title">Welcome to the 3C Thread To Success Universe</div>
     <div class="quiz-desc">
-      Hey, Champ! I'm Aurion —your digital guide, your hype squad, and maybe your future quiz rival (just kidding... kinda). Wanted to just tell you :<br><br>
+      Hey, Champ! I'm Aurion —your digital guide, your hype squad, and always happy to cheer for you to win big time. Wanted to just tell you :<br><br>
       <em>
-        "What you're about to do isn't "just a quiz." It's your first step toward discovering something real about yourself."
+        "You're about to take your leap toward discovering something real about yourself."
       </em>
       <br><br>
       So take a deep breath, get right in.
     </div>
     <button class="cta-btn" id="startBtn">Let's Begin!</button>
     <span class="quote">
-      ⚡ You can return anytime. But today… feels like a pretty great day to rise, doesn't it?
+      ⚡ You can return anytime. But today… feels like a pretty great day, doesn't it?
     </span>
   </div>
   <script>
-    // Get quiz parameter from URL
+    // Get parameter from URL
     function qs(param) {
       const params = new URLSearchParams(window.location.search);
       return params.get(param);
     }
     document.getElementById('startBtn').onclick = function() {
-      const quizSlug = qs("quiz") || "quiz.01";
-      window.location.href = `https://anica-blip.github.io/3c-quiz/?quizUrl=${encodeURIComponent(quizSlug)}`;
+      const quizSlug = qs("game") || "game.01";
+      window.location.href = `https://anica-blip.github.io/3c-game/?gameUrl=${encodeURIComponent(gameSlug)}`;
+    }
+    document.getElementById('startBtn').onclick = function() {
+      const quizSlug = qs("puzzle") || "puzzle.01";
+      window.location.href = `https://anica-blip.github.io/3c-puzzle/?puzzleUrl=${encodeURIComponent(gameSlug)}`;
+    }
+    document.getElementById('startBtn').onclick = function() {
+      const quizSlug = qs("challenge") || "challenge.01";
+      window.location.href = `https://anica-blip.github.io/3c-challenge/?challengeUrl=${encodeURIComponent(gameSlug)}`;
     }
   </script>
 </body>

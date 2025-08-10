@@ -12,6 +12,9 @@
   ],
   "settings": {
     "cardFlipSpeed": 500,
+    "displayMs": 2200,
+    "stayOpen": false,
     "allowReplay": true
   }
 }
+

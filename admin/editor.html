@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>3C Admin Editor</title>
+  <link rel="stylesheet" href="editor.css" />
+</head>
+<body>
+  <div class="editor-container">
+    <aside class="form-section">
+      <h2>3C Game Editor</h2>
+
+      <label for="gameTitle">Game Title</label>
+      <input id="gameTitle" type="text" placeholder="Pick Your 3C Card" />
+
+      <label for="themeSelect">Theme</label>
+      <select id="themeSelect">
+        <option value="theme1">Theme 1</option>
+        <option value="theme2">Theme 2</option>
+        <option value="theme3">Theme 3</option>
+      </select>
+
+      <label for="cardMessages">Card messages (one per line)</label>
+      <textarea id="cardMessages" rows="8" placeholder="Line 1 message\nLine 2 message"></textarea>
+
+      <div class="controls">
+        <button id="generateConfig">Generate & Download JSON</button>
+        <button id="previewBtn">Live Preview</button>
+        <button id="saveLocalBtn">Save to /config (download with filename)</button>
+      </div>
+
+      <hr/>
+      <div class="meta">
+        <label for="slugInput">Slug (auto)</label>
+        <input id="slugInput" type="text" readonly />
+        <label for="gameNumber">Game Number (auto)</label>
+        <input id="gameNumber" type="text" readonly />
+      </div>
+    </aside>
+
+    <main class="preview-section">
+      <h3>Preview (mobile)</h3>
+      <div class="phone-frame">
+        <iframe id="previewFrame" src="../index.html" title="preview"></iframe>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="editor.js"></script>
+</body>
+</html>

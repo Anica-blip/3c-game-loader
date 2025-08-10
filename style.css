@@ -1,17 +1,23 @@
+:root {
+  --card-back: url('assets/themes/theme1/card-back.png');
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  font-family: Inter, Arial, sans-serif;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 
 header, footer {
   background: #111;
-  color: white;
+  color: #fff;
   text-align: center;
-  padding: 0.5em;
+  padding: 0.6rem 1rem;
 }
 
 main {
@@ -19,21 +25,72 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
+  background-size: cover;
+  background-position: center;
 }
 
-:root {
-  --card-back: url('assets/themes/theme1/card-back.png');
+/* Loader message */
+.loader-message { text-align: center; color: #333; }
+
+/* Cards container */
+.cards-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 720px;
 }
 
+/* Card */
 .card {
-  width: 100px;
+  width: 110px;
   height: 150px;
-  background: var(--card-back) no-repeat center/cover;
+  perspective: 800px;
   cursor: pointer;
-  margin: 5px;
-  transition: transform 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
 }
 
-.card.flipped {
+.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.45s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.card.flipped .card-inner {
   transform: rotateY(180deg);
 }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Back face uses theme variable */
+.card-back {
+  background: var(--card-back) no-repeat center/cover;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  background: #fff;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .card { width: 86px; height: 120px; }
+}
+

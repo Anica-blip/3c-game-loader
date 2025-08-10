@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to the 3C Thread To Success Universe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover something real about yourself with Aurion, your digital guide in the 3C Thread To Success Universe. Take the quiz and start your journey today!">
+  
+  <!-- Open Graph Meta Tags for Facebook, LinkedIn, etc. -->
+  <meta property="og:title" content="Welcome to the 3C Thread To Success Universe">
+  <meta property="og:description" content="Discover something real about yourself with Aurion, your digital guide. Take the quiz and start your journey today!">
+  <meta property="og:image" content="https://anica-blip.github.io/3c-quiz/static/8.png">
+  <meta property="og:url" content="https://anica-blip.github.io/3c-quiz/landing.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="3C Thread To Success">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Welcome to the 3C Thread To Success Universe">
+  <meta name="twitter:description" content="Discover something real about yourself with Aurion, your digital guide. Take the quiz and start your journey today!">
+  <meta name="twitter:image" content="https://anica-blip.github.io/3c-quiz/static/8.png">
+  
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #230d3a;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      position: relative;
+      color: #fff;
+    }
+    .bg-img {
+      position: fixed;
+      z-index: 0;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.96;
+    }
+    .landing-content {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      margin: 0 auto;
+      padding-top: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .mobile-mockup {
+      width: 148px;
+      height: 260px;
+      margin-bottom: 24px;
+      object-fit: contain;
+      border-radius: 24px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.28);
+      background: #160d1e;
+      border: 2px solid #997a64;
+      /* Ensure image loads properly */
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .quiz-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #997a64;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .quiz-desc {
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 18px;
+      line-height: 1.7;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-weight: 400;
+    }
+    .quiz-desc em {
+      font-style: italic;
+      color: #e7d3bf;
+    }
+    .cta-btn {
+      display: block;
+      width: 100%;
+      max-width: 220px;
+      margin: 0 auto 16px auto;
+      padding: 15px 0 13px 0;
+      background: #997a64;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      letter-spacing: 0.09em;
+      border: none;
+      border-radius: 37px;
+      box-shadow: 0 2px 24px rgba(153,122,100,0.18);
+      cursor: pointer;
+      transition: background 0.14s;
+      text-shadow: 0 1px 6px #280f2f, 0 0 3px #fff6;
+    }
+    .cta-btn:hover, .cta-btn:focus {
+      background: #b5926b;
+    }
+    .quote {
+      display: block;
+      margin: 0 auto;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      margin-top: 9px;
+      max-width: 360px;
+      text-align: center;
+      letter-spacing: 0.02em;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    @media (max-width: 500px) {
+      .landing-content {
+        max-width: 96vw;
+        padding-top: 22vw;
+        padding-left: 2vw;
+        padding-right: 2vw;
+      }
+      .mobile-mockup {
+        width: 38vw;
+        max-width: 180px;
+        min-width: 120px;
+        height: auto;
+        aspect-ratio: 148/260;
+        margin-bottom: 6vw;
+      }
+      .quiz-title { 
+        font-size: 5vw;
+        max-font-size: 20px;
+        min-font-size: 16px;
+      }
+      .quiz-desc { 
+        font-size: 4vw;
+        max-font-size: 16px;
+        min-font-size: 13px;
+        padding: 0 2vw;
+      }
+      .cta-btn { 
+        font-size: 5vw;
+        max-font-size: 18px;
+        min-font-size: 14px;
+        padding: 4vw 0;
+      }
+      .quote { 
+        font-size: 3.5vw;
+        max-font-size: 14px;
+        min-font-size: 11px;
+        padding: 0 2vw;
+      }
+    }
+    
+    /* Additional mobile fixes */
+    @media (max-width: 360px) {
+      .mobile-mockup {
+        width: 35vw;
+        margin-bottom: 8vw;
+      }
+      .landing-content {
+        padding-top: 15vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <img class="bg-img" src="static/7.png" alt="Background" loading="lazy"/>
+  <div class="landing-content">
+    <img class="mobile-mockup" src="static/8.png" alt="Aurion Quiz Mobile" loading="eager"/>
+    <div class="quiz-title">Welcome to the 3C Thread To Success Universe</div>
+    <div class="quiz-desc">
+      Hey, Champ! I'm Aurion —your digital guide, your hype squad, and maybe your future quiz rival (just kidding... kinda). Wanted to just tell you :<br><br>
+      <em>
+        "What you're about to do isn't "just a quiz." It's your first step toward discovering something real about yourself."
+      </em>
+      <br><br>
+      So take a deep breath, get right in.
+    </div>
+    <button class="cta-btn" id="startBtn">Let's Begin!</button>
+    <span class="quote">
+      ⚡ You can return anytime. But today… feels like a pretty great day to rise, doesn't it?
+    </span>
+  </div>
+  <script>
+    // Get quiz parameter from URL
+    function qs(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param);
+    }
+    document.getElementById('startBtn').onclick = function() {
+      const quizSlug = qs("quiz") || "quiz.01";
+      window.location.href = `https://anica-blip.github.io/3c-quiz/?quizUrl=${encodeURIComponent(quizSlug)}`;
+    }
+  </script>
+</body>
+</html>

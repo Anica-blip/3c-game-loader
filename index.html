@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>3C Game Loader</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -12,14 +12,16 @@
   </header>
 
   <main id="game-container">
-    <p>Loading game...</p>
+    <div class="loader-message">
+      <p>Loading game...</p>
+    </div>
   </main>
 
   <footer>
     <small>We Rise as One – Because Unity is Strength</small>
   </footer>
 
-  <script src="loader.js"></script>
+  <!-- loader.js needs module so dynamic import works -->
+  <script type="module" src="loader.js"></script>
 </body>
 </html>
-

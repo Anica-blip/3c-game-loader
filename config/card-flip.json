@@ -1,0 +1,17 @@
+{
+  "gameType": "card-flip",
+  "theme": "theme1",
+  "title": "Pick Your 3C Card",
+  "cards": [
+    { "id": 1, "frontImage": "card1.png", "message": "You are unstoppable today!" },
+    { "id": 2, "frontImage": "card2.png", "message": "Focus brings clarity." },
+    { "id": 3, "frontImage": "card3.png", "message": "Your effort will pay off soon." },
+    { "id": 4, "frontImage": "card4.png", "message": "Believe in your instincts." },
+    { "id": 5, "frontImage": "card5.png", "message": "Today is your turning point." },
+    { "id": 6, "frontImage": "card6.png", "message": "Courage is your superpower." }
+  ],
+  "settings": {
+    "cardFlipSpeed": 500,
+    "allowReplay": true
+  }
+}

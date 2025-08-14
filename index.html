@@ -1,27 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Basic Meta Tags -->
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>3C Game Loader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <!-- Page Information -->
+  <title>3C Game Loader - Interactive Learning Games</title>
+  <meta name="description" content="3C Thread to Success - Interactive learning games designed to educate and engage. Play card flip, memory match, and daily reveal games." />
+  <meta name="keywords" content="3C, Thread to Success, educational games, card games, memory games, interactive learning" />
+  <meta name="author" content="3C Thread to Success" />
+  
+  <!-- Open Graph Meta Tags (Social Media) -->
+  <meta property="og:title" content="3C Game Loader - Interactive Learning Games" />
+  <meta property="og:description" content="Educational games from 3C Thread to Success - We Rise as One, Because Unity is Strength" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="3C Thread to Success" />
+  <meta property="og:locale" content="en_US" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="3C Game Loader - Interactive Learning Games" />
+  <meta name="twitter:description" content="Educational games from 3C Thread to Success" />
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  
+  <!-- Theme Colors -->
+  <meta name="theme-color" content="#4A148C" />
+  <meta name="msapplication-TileColor" content="#4A148C" />
+  <meta name="msapplication-navbutton-color" content="#4A148C" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <!-- Web App Configuration -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="3C Games" />
+  <meta name="application-name" content="3C Games" />
+  
+  <!-- Performance and Caching -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="style.css" as="style" />
+  <link rel="preload" href="loader.js" as="script" />
+  
+  <!-- DNS Prefetch for External Resources -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+  
+  <!-- Font Loading (Optional - Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css" />
+  
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "3C Game Loader",
+    "description": "Interactive educational games from 3C Thread to Success",
+    "url": "https://your-domain.com",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "author": {
+      "@type": "Organization",
+      "name": "3C Thread to Success"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
 </head>
-<body>
-  <header>
-    <h1>3C Thread to Success</h1>
-  </header>
 
-  <main id="game-container">
-    <div class="loader-message">
-      <p>Loading game...</p>
+<body>
+  <!-- Skip Link for Accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <!-- Header -->
+  <header role="banner">
+    <div class="header-content">
+      <h1>
+        <span class="brand-highlight">3C</span> Thread to Success
+      </h1>
+      <div class="header-subtitle" aria-label="Brand motto">
+        Interactive Learning Games
+      </div>
+    </div>
+    
+    <!-- Game Info Panel (Hidden by default, shown when game loads) -->
+    <div id="game-info" class="game-info" style="display: none;" role="complementary" aria-live="polite">
+      <div class="game-title" id="current-game-title"></div>
+      <div class="game-stats">
+        <span id="game-timer" class="stat-item">
+          <span class="stat-label">Time:</span>
+          <span class="stat-value">00:00</span>
+        </span>
+        <span id="game-score" class="stat-item">
+          <span class="stat-label">Score:</span>
+          <span class="stat-value">0</span>
+        </span>
+        <span id="game-attempts" class="stat-item">
+          <span class="stat-label">Moves:</span>
+          <span class="stat-value">0</span>
+        </span>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main id="main-content" role="main" tabindex="-1">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen" aria-live="polite" aria-label="Game loading">
+      <div class="loading-content">
+        <div class="loading-logo">
+          <div class="logo-circle"></div>
+          <div class="brand-text">3C</div>
+        </div>
+        <div class="loading-message">
+          <p id="loading-text">Initializing game loader...</p>
+          <div class="loading-progress">
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text">
+              <span id="progress-percentage">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Game Container -->
+    <div id="game-container" class="game-container" role="application" aria-live="polite">
+      <noscript>
+        <div class="no-script-message">
+          <h2>JavaScript Required</h2>
+          <p>This application requires JavaScript to function properly. Please enable JavaScript in your browser settings and refresh the page.</p>
+        </div>
+      </noscript>
+    </div>
+    
+    <!-- Game Controls (Hidden by default, shown when game is active) -->
+    <div id="game-controls" class="game-controls" style="display: none;" role="toolbar" aria-label="Game controls">
+      <button id="pause-btn" class="control-btn" aria-label="Pause game">
+        <span class="btn-icon">⏸️</span>
+        <span class="btn-text">Pause</span>
+      </button>
+      <button id="restart-btn" class="control-btn" aria-label="Restart game">
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">Restart</span>
+      </button>
+      <button id="hint-btn" class="control-btn" aria-label="Get hint">
+        <span class="btn-icon">💡</span>
+        <span class="btn-text">Hint</span>
+      </button>
+      <button id="settings-btn" class="control-btn" aria-label="Game settings">
+        <span class="btn-icon">⚙️</span>
+        <span class="btn-text">Settings</span>
+      </button>
     </div>
   </main>
-
-  <footer>
-    <small>We Rise as One – Because Unity is Strength</small>
+  
+  <!-- Footer -->
+  <footer role="contentinfo">
+    <div class="footer-content">
+      <div class="footer-motto">
+        <strong>We Rise as One – Because Unity is Strength</strong>
+      </div>
+      <div class="footer-links">
+        <button id="about-btn" class="footer-link" aria-label="About 3C Thread to Success">About</button>
+        <span class="separator">•</span>
+        <button id="help-btn" class="footer-link" aria-label="Game help and instructions">Help</button>
+        <span class="separator">•</span>
+        <button id="accessibility-btn" class="footer-link" aria-label="Accessibility options">Accessibility</button>
+      </div>
+      <div class="footer-copyright">
+        <small>&copy; 2025 3C Thread to Success. All rights reserved.</small>
+      </div>
+    </div>
   </footer>
+  
+  <!-- Modal Container (for help, about, settings dialogs) -->
+  <div id="modal-container" class="modal-container" style="display: none;" role="dialog" aria-hidden="true" aria-modal="true">
+    <div class="modal-backdrop" aria-hidden="true"></div>
+    <div class="modal-content" role="document">
+      <header class="modal-header">
+        <h2 id="modal-title" class="modal-title"></h2>
+        <button id="modal-close" class="modal-close" aria-label="Close dialog">&times;</button>
+      </header>
+      <div id="modal-body" class="modal-body"></div>
+      <footer class="modal-footer">
+        <button id="modal-ok" class="modal-btn modal-btn-primary">OK</button>
+      </footer>
+    </div>
+  </div>
+  
+  <!-- Error Boundary Fallback -->
+  <div id="error-boundary" class="error-boundary" style="display: none;" role="alert">
+    <div class="error-content">
+      <h2>Something went wrong</h2>
+      <p>We encountered an unexpected error. Please refresh the page to try again.</p>
+      <button onclick="location.reload()" class="retry-button">Refresh Page</button>
+      <details class="error-details">
+        <summary>Technical Details</summary>
+        <pre id="error-details-content"></pre>
+      </details>
+    </div>
+  </div>
 
-  <!-- loader.js needs module so dynamic import works -->
+  <!-- Service Worker Registration (disabled for Claude environment) -->
+  <script>
+    // Service Worker disabled in Claude environment to prevent console errors
+    // Uncomment below when deploying to your own domain:
+    /*
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+    */
+  </script>
+  
+  <!-- Enhanced Loading Experience -->
+  <script>
+    // Enhanced loading screen with progress simulation
+    (function() {
+      const loadingScreen = document.getElementById('loading-screen');
+      const progressFill = document.getElementById('progress-fill');
+      const progressPercentage = document.getElementById('progress-percentage');
+      const loadingText = document.getElementById('loading-text');
+      
+      const loadingSteps = [
+        { text: 'Initializing game loader...', progress: 0 },
+        { text: 'Loading configuration...', progress: 25 },
+        { text: 'Preparing game assets...', progress: 50 },
+        { text: 'Setting up game engine...', progress: 75 },
+        { text: 'Starting game...', progress: 100 }
+      ];
+      
+      let currentStep = 0;
+      
+      function updateLoadingProgress() {
+        if (currentStep < loadingSteps.length) {
+          const step = loadingSteps[currentStep];
+          loadingText.textContent = step.text;
+          progressFill.style.width = step.progress + '%';
+          progressPercentage.textContent = step.progress + '%';
+          currentStep++;
+          
+          if (currentStep < loadingSteps.length) {
+            setTimeout(updateLoadingProgress, 200 + Math.random() * 300);
+          } else {
+            // Hide loading screen after final step
+            setTimeout(() => {
+              loadingScreen.style.opacity = '0';
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+              }, 300);
+            }, 500);
+          }
+        }
+      }
+      
+      // Start loading simulation
+      setTimeout(updateLoadingProgress, 100);
+    })();
+    
+    // Global error handler
+    window.addEventListener('error', (event) => {
+      console.error('Global error:', event.error);
+      const errorBoundary = document.getElementById('error-boundary');
+      const errorDetails = document.getElementById('error-details-content');
+      
+      if (errorDetails) {
+        errorDetails.textContent = event.error ? event.error.stack : 'Unknown error';
+      }
+      
+      if (errorBoundary) {
+        errorBoundary.style.display = 'flex';
+      }
+    });
+    
+    // Unhandled promise rejection handler
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      // You can add additional error reporting here
+    });
+  </script>
+  
+  <!-- Main Game Loader Module -->
   <script type="module" src="loader.js"></script>
+  
+  <!-- Analytics (Optional - replace with your analytics code) -->
+  <!-- 
+  <script>
+    // Add your analytics code here
+    // Example: Google Analytics, Adobe Analytics, etc.
+  </script>
+  -->
 </body>
 </html>

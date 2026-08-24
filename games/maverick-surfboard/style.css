@@ -64,12 +64,37 @@ body {
   padding: 0 16px;
 }
 
-/* Used by game.html's #game-container — background set dynamically in JS */
+/* Used by game.html's #game-container — split into a persistent background
+   layer and a content layer, so switching scenes never interrupts a
+   looping background video */
 #game-container.maverick-game {
+  position: relative;
   min-height: 100vh;
+  overflow: hidden;
+}
+
+.maverick-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.maverick-bg-image {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.maverick-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.maverick-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,7 +209,6 @@ body {
 .maverick-duck-moving {
   position: absolute;
   left: 0;
-  top: 20px;
 }
 
 /* Glass "click" prompt — appears when the character reaches the end of the pass */

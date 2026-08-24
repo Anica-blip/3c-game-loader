@@ -123,6 +123,19 @@ body {
   }
 }
 
+.admin-scene-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .admin-scene-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-section {
   border-top: 1px solid var(--glass-border);
   padding-top: var(--spacing-md);

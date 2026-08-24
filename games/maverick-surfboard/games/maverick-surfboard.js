@@ -17,6 +17,15 @@ export function startGame(config, container) {
   container.classList.add('maverick-game');
   container.innerHTML = '';
 
+  const exitBtn = document.createElement('button');
+  exitBtn.className = 'maverick-exit-btn';
+  exitBtn.textContent = '\u2715';
+  exitBtn.setAttribute('aria-label', 'Exit challenge');
+  exitBtn.addEventListener('click', () => {
+    window.location.href = 'landing.html';
+  });
+  container.appendChild(exitBtn);
+
   const bgLayer = document.createElement('div');
   bgLayer.className = 'maverick-bg-layer';
   container.appendChild(bgLayer);

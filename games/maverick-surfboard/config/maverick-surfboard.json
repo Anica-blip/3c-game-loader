@@ -3,7 +3,7 @@
   "theme": "ocean",
   "title": "Maverick's Surf Challenge",
   "introImage": "assets/maverick-intro.png",
-  "finaleImage": "assets/maverick-intro.png",
+  "finaleImage": "assets/maverick-finale.png",
   "background": {
     "type": "image",
     "url": "assets/ocean-waves.png"

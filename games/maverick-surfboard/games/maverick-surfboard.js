@@ -60,10 +60,16 @@ export function startGame(config, container) {
     }
   }
 
-  function getCharacterImage(id) {
+  function getCharacterImageUrl(decision) {
+    if (decision.image && decision.image.url) {
+      return decision.image.url;
+    }
     const list = config.characterImages || [];
-    const found = list.find(img => img.id === id);
-    return found ? found.url : (list[0] ? list[0].url : '');
+    if (decision.characterImageId) {
+      const found = list.find(img => img.id === decision.characterImageId);
+      if (found) return found.url;
+    }
+    return list[0] ? list[0].url : '';
   }
 
   function startAmbient() {
@@ -131,7 +137,7 @@ export function startGame(config, container) {
     progressLabel.textContent = `${decisionIndex + 1} of ${config.decisions.length}`;
 
     const duck = document.createElement('img');
-    duck.src = getCharacterImage(decision.characterImageId);
+    duck.src = getCharacterImageUrl(decision);
     duck.alt = 'Character in motion';
     duck.className = 'maverick-duck-img maverick-duck-surf maverick-duck-moving';
     duck.style.top = `${verticalPercent}%`;

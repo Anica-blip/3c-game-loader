@@ -15,11 +15,37 @@ export function startGame(config, container) {
   let rafId = null;
 
   container.classList.add('maverick-game');
-  if (config.background) {
-    container.style.backgroundImage = `url('${config.background}')`;
-  }
+  container.innerHTML = '';
+
+  const bgLayer = document.createElement('div');
+  bgLayer.className = 'maverick-bg-layer';
+  container.appendChild(bgLayer);
+  setupBackground(bgLayer, config.background);
+
+  const content = document.createElement('div');
+  content.className = 'maverick-content';
+  container.appendChild(content);
 
   renderIntro();
+
+  function setupBackground(layer, background) {
+    if (!background || !background.url) return;
+
+    if (background.type === 'video') {
+      const video = document.createElement('video');
+      video.src = background.url;
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.className = 'maverick-bg-video';
+      layer.appendChild(video);
+      video.play().catch(() => {});
+    } else {
+      layer.classList.add('maverick-bg-image');
+      layer.style.backgroundImage = `url('${background.url}')`;
+    }
+  }
 
   function getCharacterImage(id) {
     const list = config.characterImages || [];
@@ -31,14 +57,15 @@ export function startGame(config, container) {
     if (config.ambientSound && !ambientAudio) {
       ambientAudio = new Audio(config.ambientSound);
       ambientAudio.loop = true;
-      ambientAudio.volume = 0.4;
+      const vol = typeof config.ambientVolume === 'number' ? config.ambientVolume : 3;
+      ambientAudio.volume = Math.max(0, Math.min(5, vol)) / 5;
       ambientAudio.play().catch(() => {});
     }
   }
 
   function renderIntro() {
     if (rafId) cancelAnimationFrame(rafId);
-    container.innerHTML = '';
+    content.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-intro';
 
@@ -65,7 +92,7 @@ export function startGame(config, container) {
     });
 
     wrap.append(img, title, intro, startBtn);
-    container.appendChild(wrap);
+    content.appendChild(wrap);
   }
 
   function renderDecisionStage() {
@@ -76,8 +103,9 @@ export function startGame(config, container) {
 
     const decision = config.decisions[decisionIndex];
     const motionFn = MOTION_PRESETS[decision.motion] || MOTION_PRESETS['glide-bob'];
+    const verticalPercent = typeof decision.verticalPosition === 'number' ? decision.verticalPosition : 40;
 
-    container.innerHTML = '';
+    content.innerHTML = '';
     const stage = document.createElement('div');
     stage.className = 'maverick-stage';
 
@@ -89,9 +117,10 @@ export function startGame(config, container) {
     duck.src = getCharacterImage(decision.characterImageId);
     duck.alt = 'Character in motion';
     duck.className = 'maverick-duck-img maverick-duck-surf maverick-duck-moving';
+    duck.style.top = `${verticalPercent}%`;
 
     stage.append(progressLabel, duck);
-    container.appendChild(stage);
+    content.appendChild(stage);
 
     let start = null;
     function animate(ts) {
@@ -132,7 +161,7 @@ export function startGame(config, container) {
   }
 
   function renderOptions(decision) {
-    container.innerHTML = '';
+    content.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-decision';
 
@@ -156,7 +185,7 @@ export function startGame(config, container) {
     });
 
     wrap.append(situation, optionsWrap);
-    container.appendChild(wrap);
+    content.appendChild(wrap);
   }
 
   function renderFinale() {
@@ -165,7 +194,7 @@ export function startGame(config, container) {
     const result = config.results.find(r => score >= r.minScore && score <= r.maxScore)
       || config.results[config.results.length - 1];
 
-    container.innerHTML = '';
+    content.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-finale';
 
@@ -200,11 +229,11 @@ export function startGame(config, container) {
     creditsBtn.addEventListener('click', renderCredits);
 
     wrap.append(img, title, message, scoreLine, replayBtn, creditsBtn);
-    container.appendChild(wrap);
+    content.appendChild(wrap);
   }
 
   function renderCredits() {
-    container.innerHTML = '';
+    content.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-credits';
 
@@ -221,6 +250,6 @@ export function startGame(config, container) {
     backBtn.addEventListener('click', renderFinale);
 
     wrap.append(title, text, backBtn);
-    container.appendChild(wrap);
+    content.appendChild(wrap);
   }
 }

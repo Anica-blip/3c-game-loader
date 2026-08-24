@@ -38,6 +38,10 @@ export function startGame(config, container) {
   renderIntro();
 
   function setupBackground(layer, background) {
+    layer.innerHTML = '';
+    layer.classList.remove('maverick-bg-image');
+    layer.style.backgroundImage = '';
+
     if (!background || !background.url) return;
 
     if (background.type === 'video') {
@@ -74,6 +78,7 @@ export function startGame(config, container) {
 
   function renderIntro() {
     if (rafId) cancelAnimationFrame(rafId);
+    setupBackground(bgLayer, config.background);
     content.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-intro';
@@ -114,6 +119,9 @@ export function startGame(config, container) {
     const motionFn = MOTION_PRESETS[decision.motion] || MOTION_PRESETS['glide-bob'];
     const verticalPercent = typeof decision.verticalPosition === 'number' ? decision.verticalPosition : 40;
 
+    const sceneBackground = (decision.background && decision.background.url) ? decision.background : config.background;
+    setupBackground(bgLayer, sceneBackground);
+
     content.innerHTML = '';
     const stage = document.createElement('div');
     stage.className = 'maverick-stage';
@@ -153,16 +161,17 @@ export function startGame(config, container) {
   }
 
   function showPromptButton(stage, decision) {
+    if (decision.soundEffect) {
+      const voice = new Audio(decision.soundEffect);
+      voice.play().catch(() => {});
+    }
+
     const btn = document.createElement('button');
     btn.className = 'maverick-glass-btn';
     btn.textContent = 'click';
     btn.setAttribute('aria-label', 'See what happens next');
 
     btn.addEventListener('click', () => {
-      if (decision.soundEffect) {
-        const sfx = new Audio(decision.soundEffect);
-        sfx.play().catch(() => {});
-      }
       renderOptions(decision);
     });
 
@@ -199,6 +208,7 @@ export function startGame(config, container) {
 
   function renderFinale() {
     if (ambientAudio) ambientAudio.pause();
+    setupBackground(bgLayer, config.background);
 
     const result = config.results.find(r => score >= r.minScore && score <= r.maxScore)
       || config.results[config.results.length - 1];

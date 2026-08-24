@@ -173,6 +173,12 @@ body {
   margin-bottom: 6px;
 }
 
+.admin-header-btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
 .admin-small-label {
   font-size: 0.75rem;
   opacity: 0.7;

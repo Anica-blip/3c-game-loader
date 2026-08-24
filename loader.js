@@ -113,7 +113,7 @@ class ThemeManager {
  */
 class GameManager {
   static async loadGameModule(gameType) {
-    const modulePath = `./games/${gameType}.js`;
+    const modulePath = new URL(`games/${gameType}.js`, document.baseURI).href;
     
     try {
       const module = await import(modulePath);
@@ -239,4 +239,3 @@ class GameLoader {
 
 // Initialize the game loader when the script loads
 GameLoader.initialize();
-

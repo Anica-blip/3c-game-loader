@@ -62,6 +62,10 @@ body {
   resize: vertical;
 }
 
+.admin-textarea-large {
+  min-height: 220px;
+}
+
 .admin-btn {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--glass-border);
@@ -134,6 +138,53 @@ body {
   .admin-scene-columns {
     grid-template-columns: 1fr;
   }
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: var(--spacing-md) 0;
+}
+
+.admin-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.admin-tab-active {
+  background: var(--brand-neon-gold);
+  color: #14141a;
+  border-color: var(--brand-neon-gold);
+  font-weight: 700;
+}
+
+.admin-tab-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0 2px;
+  opacity: 0.7;
+}
+
+.admin-tab-close:hover {
+  opacity: 1;
+}
+
+.admin-tab-add {
+  background: transparent;
+  border: 1px dashed var(--glass-border);
 }
 
 .admin-section {

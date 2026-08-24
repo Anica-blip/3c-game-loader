@@ -194,7 +194,33 @@ export function startGame(config, container) {
       renderIntro();
     });
 
-    wrap.append(img, title, message, scoreLine, replayBtn);
+    const creditsBtn = document.createElement('button');
+    creditsBtn.className = 'maverick-btn-link';
+    creditsBtn.textContent = 'Credits';
+    creditsBtn.addEventListener('click', renderCredits);
+
+    wrap.append(img, title, message, scoreLine, replayBtn, creditsBtn);
+    container.appendChild(wrap);
+  }
+
+  function renderCredits() {
+    container.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'maverick-screen maverick-credits';
+
+    const title = document.createElement('h1');
+    title.textContent = 'Credits';
+
+    const text = document.createElement('p');
+    text.className = 'maverick-credits-text';
+    text.textContent = config.credits || 'Credits coming soon.';
+
+    const backBtn = document.createElement('button');
+    backBtn.className = 'maverick-btn maverick-btn-primary';
+    backBtn.textContent = 'Back';
+    backBtn.addEventListener('click', renderFinale);
+
+    wrap.append(title, text, backBtn);
     container.appendChild(wrap);
   }
 }

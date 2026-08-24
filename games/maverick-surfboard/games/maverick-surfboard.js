@@ -1,11 +1,18 @@
 // Repo path: games/maverick-surfboard/games/maverick-surfboard.js
-// (Yes, "games" inside "maverick-surfboard" — this matches where the shared
-// engine automatically looks for a game module named "maverick-surfboard".
-// No changes to the shared loader.js were needed.)
+
+const MOTION_DURATION = 3200;
+
+const MOTION_PRESETS = {
+  'glide-bob': (progress) => Math.sin(progress * Math.PI * 8) * 12,
+  'straight-glide': () => 0,
+  'wave-jump': (progress) => -Math.abs(Math.sin(progress * Math.PI * 5)) * 25
+};
 
 export function startGame(config, container) {
   let score = 0;
   let decisionIndex = 0;
+  let ambientAudio = null;
+  let rafId = null;
 
   container.classList.add('maverick-game');
   if (config.background) {
@@ -14,56 +21,120 @@ export function startGame(config, container) {
 
   renderIntro();
 
+  function getCharacterImage(id) {
+    const list = config.characterImages || [];
+    const found = list.find(img => img.id === id);
+    return found ? found.url : (list[0] ? list[0].url : '');
+  }
+
+  function startAmbient() {
+    if (config.ambientSound && !ambientAudio) {
+      ambientAudio = new Audio(config.ambientSound);
+      ambientAudio.loop = true;
+      ambientAudio.volume = 0.4;
+      ambientAudio.play().catch(() => {});
+    }
+  }
+
   function renderIntro() {
+    if (rafId) cancelAnimationFrame(rafId);
     container.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-intro';
 
     const img = document.createElement('img');
-    img.src = config.duckImages.intro;
-    img.alt = 'Maverick the surfer duck';
+    img.src = config.introImage;
+    img.alt = config.title || 'Challenge intro';
     img.className = 'maverick-duck-img';
 
     const title = document.createElement('h1');
-    title.textContent = config.title || "Maverick's Surf Challenge";
+    title.textContent = config.title || 'Challenge';
 
     const intro = document.createElement('p');
     intro.className = 'maverick-body-text';
-    intro.textContent = "Maverick's heading out to catch some waves. Help him make the calls out there.";
+    intro.textContent = 'Get ready for a new challenge. Every call you make shapes how the story unfolds.';
 
     const startBtn = document.createElement('button');
     startBtn.className = 'maverick-btn maverick-btn-primary';
-    startBtn.textContent = "Let's Go!";
+    startBtn.textContent = "Let's go";
     startBtn.addEventListener('click', () => {
+      startAmbient();
       decisionIndex = 0;
       score = 0;
-      renderDecision();
+      renderDecisionStage();
     });
 
     wrap.append(img, title, intro, startBtn);
     container.appendChild(wrap);
   }
 
-  function renderDecision() {
+  function renderDecisionStage() {
     if (decisionIndex >= config.decisions.length) {
       renderFinale();
       return;
     }
 
     const decision = config.decisions[decisionIndex];
+    const motionFn = MOTION_PRESETS[decision.motion] || MOTION_PRESETS['glide-bob'];
 
+    container.innerHTML = '';
+    const stage = document.createElement('div');
+    stage.className = 'maverick-stage';
+
+    const progressLabel = document.createElement('div');
+    progressLabel.className = 'maverick-progress';
+    progressLabel.textContent = `${decisionIndex + 1} of ${config.decisions.length}`;
+
+    const duck = document.createElement('img');
+    duck.src = getCharacterImage(decision.characterImageId);
+    duck.alt = 'Character in motion';
+    duck.className = 'maverick-duck-img maverick-duck-surf maverick-duck-moving';
+
+    stage.append(progressLabel, duck);
+    container.appendChild(stage);
+
+    let start = null;
+    function animate(ts) {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const progress = Math.min(elapsed / MOTION_DURATION, 1);
+
+      const trackWidth = stage.clientWidth - duck.clientWidth;
+      const x = progress * trackWidth;
+      const y = motionFn(progress);
+
+      duck.style.transform = `translate(${x}px, ${y}px)`;
+
+      if (progress < 1) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        showPromptButton(stage, decision);
+      }
+    }
+    rafId = requestAnimationFrame(animate);
+  }
+
+  function showPromptButton(stage, decision) {
+    const btn = document.createElement('button');
+    btn.className = 'maverick-glass-btn';
+    btn.textContent = 'click';
+    btn.setAttribute('aria-label', 'See what happens next');
+
+    btn.addEventListener('click', () => {
+      if (decision.soundEffect) {
+        const sfx = new Audio(decision.soundEffect);
+        sfx.play().catch(() => {});
+      }
+      renderOptions(decision);
+    });
+
+    stage.appendChild(btn);
+  }
+
+  function renderOptions(decision) {
     container.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-decision';
-
-    const progress = document.createElement('div');
-    progress.className = 'maverick-progress';
-    progress.textContent = `Situation ${decisionIndex + 1} of ${config.decisions.length}`;
-
-    const img = document.createElement('img');
-    img.src = config.duckImages.surf;
-    img.alt = 'Maverick surfing';
-    img.className = 'maverick-duck-img maverick-duck-surf';
 
     const situation = document.createElement('p');
     situation.className = 'maverick-body-text';
@@ -73,22 +144,24 @@ export function startGame(config, container) {
     optionsWrap.className = 'maverick-options';
 
     decision.options.forEach(option => {
-      const btn = document.createElement('button');
-      btn.className = 'maverick-btn maverick-btn-option';
-      btn.textContent = option.text;
-      btn.addEventListener('click', () => {
+      const optBtn = document.createElement('button');
+      optBtn.className = 'maverick-btn maverick-btn-option';
+      optBtn.textContent = option.text;
+      optBtn.addEventListener('click', () => {
         score += option.scoreDelta;
         decisionIndex += 1;
-        renderDecision();
+        renderDecisionStage();
       });
-      optionsWrap.appendChild(btn);
+      optionsWrap.appendChild(optBtn);
     });
 
-    wrap.append(progress, img, situation, optionsWrap);
+    wrap.append(situation, optionsWrap);
     container.appendChild(wrap);
   }
 
   function renderFinale() {
+    if (ambientAudio) ambientAudio.pause();
+
     const result = config.results.find(r => score >= r.minScore && score <= r.maxScore)
       || config.results[config.results.length - 1];
 
@@ -97,8 +170,8 @@ export function startGame(config, container) {
     wrap.className = 'maverick-screen maverick-finale';
 
     const img = document.createElement('img');
-    img.src = config.duckImages.finale;
-    img.alt = 'Maverick the surfer duck';
+    img.src = config.finaleImage;
+    img.alt = config.title || 'Challenge complete';
     img.className = 'maverick-duck-img';
 
     const title = document.createElement('h1');
@@ -114,7 +187,7 @@ export function startGame(config, container) {
 
     const replayBtn = document.createElement('button');
     replayBtn.className = 'maverick-btn maverick-btn-primary';
-    replayBtn.textContent = 'Play Again';
+    replayBtn.textContent = 'Play again';
     replayBtn.addEventListener('click', () => {
       decisionIndex = 0;
       score = 0;

@@ -1,0 +1,54 @@
+<!-- Repo path: games/maverick-surfboard/admin/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maverick Surfboard — Admin</title>
+  <link rel="icon" href="../../../shared/favicon.png">
+  <link rel="stylesheet" href="../../../style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-wrap">
+    <h1 class="admin-title">Maverick Surfboard — Admin</h1>
+
+    <!-- Shown until a token is saved -->
+    <div id="connect-panel" class="admin-card">
+      <p class="admin-help">
+        Paste your GitHub token below. It's saved only in this browser and used to read and update
+        this game's config file directly.
+      </p>
+      <label class="admin-label" for="pat-input">GitHub token</label>
+      <input id="pat-input" class="admin-input" type="password" placeholder="github_pat_...">
+      <button id="connect-btn" class="admin-btn admin-btn-primary">Connect</button>
+      <p id="connect-status" class="admin-status"></p>
+    </div>
+
+    <!-- Shown once connected -->
+    <div id="editor-panel" class="admin-card" style="display:none;">
+      <div class="admin-toolbar">
+        <span id="editor-status" class="admin-status"></span>
+        <div>
+          <button id="reload-btn" class="admin-btn">Reload</button>
+          <button id="disconnect-btn" class="admin-btn">Change token</button>
+        </div>
+      </div>
+
+      <label class="admin-label" for="theme-select">Theme</label>
+      <select id="theme-select" class="admin-select"></select>
+      <button id="new-theme-btn" class="admin-btn">New theme</button>
+
+      <div id="form-root"></div>
+
+      <div class="admin-toolbar">
+        <button id="save-btn" class="admin-btn admin-btn-primary admin-save">Save this theme</button>
+        <button id="save-as-btn" class="admin-btn admin-save">Save as new theme</button>
+      </div>
+      <p id="save-status" class="admin-status"></p>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -171,3 +171,45 @@ body {
     width: 150px;
   }
 }
+
+/* Motion stage — used during each decision's travel animation */
+.maverick-stage {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  height: 220px;
+  margin: 40px auto 0;
+}
+
+.maverick-duck-moving {
+  position: absolute;
+  left: 0;
+  top: 20px;
+}
+
+/* Glass "click" prompt — appears when the character reaches the end of the pass */
+.maverick-glass-btn {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  background: rgba(46, 196, 214, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid var(--maverick-teal);
+  border-radius: 999px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--maverick-text);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  animation: maverick-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes maverick-pulse {
+  0%, 100% { transform: translateY(-50%) scale(1); box-shadow: 0 0 0 0 rgba(46, 196, 214, 0.5); }
+  50% { transform: translateY(-50%) scale(1.08); box-shadow: 0 0 0 10px rgba(46, 196, 214, 0); }
+}

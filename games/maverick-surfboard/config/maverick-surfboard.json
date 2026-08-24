@@ -6,6 +6,7 @@
   "finaleImage": "assets/maverick-intro.png",
   "background": "assets/ocean-waves.png",
   "ambientSound": "",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT\n\nVoice\nElevenLabs, Aurion voice\n\nMusic\nSuno\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer\nAnica",
 
   "characterImages": [
     { "id": "surf", "label": "Surfing pose", "url": "assets/maverick-surfboard.png" }

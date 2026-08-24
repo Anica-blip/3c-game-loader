@@ -1,0 +1,69 @@
+{
+  "gameType": "maverick-surfboard",
+  "theme": "ocean",
+  "title": "Maverick's Surf Challenge",
+
+  "duckImages": {
+    "intro": "assets/maverick-intro.png",
+    "finale": "assets/maverick-intro.png",
+    "surf": "assets/maverick-surfboard.png"
+  },
+
+  "background": "assets/ocean-waves.png",
+
+  "decisions": [
+    {
+      "id": 1,
+      "situation": "Maverick paddles out and spots a big wave building faster than expected.",
+      "options": [
+        { "text": "Paddle hard and catch it early", "scoreDelta": 2 },
+        { "text": "Hang back for a smaller, safer wave", "scoreDelta": 1 }
+      ]
+    },
+    {
+      "id": 2,
+      "situation": "A sudden gust of wind throws Maverick off balance mid-ride.",
+      "options": [
+        { "text": "Lean into it and adjust his stance", "scoreDelta": 2 },
+        { "text": "Slow right down and ride it out carefully", "scoreDelta": 1 }
+      ]
+    },
+    {
+      "id": 3,
+      "situation": "Another surfer cuts across Maverick's path without warning.",
+      "options": [
+        { "text": "Swerve around them with confidence", "scoreDelta": 2 },
+        { "text": "Ease off and let them pass first", "scoreDelta": 1 }
+      ]
+    },
+    {
+      "id": 4,
+      "situation": "The wave starts closing out fast as Maverick nears the shore.",
+      "options": [
+        { "text": "Go for a stylish finish before it breaks", "scoreDelta": 2 },
+        { "text": "Kick out early to stay safe", "scoreDelta": 1 }
+      ]
+    }
+  ],
+
+  "results": [
+    {
+      "minScore": 4,
+      "maxScore": 5,
+      "title": "Steady Sailor",
+      "message": "Maverick trusted caution over speed today. Careful choices keep you steady when it counts."
+    },
+    {
+      "minScore": 6,
+      "maxScore": 7,
+      "title": "Balanced Maverick",
+      "message": "A mix of bold and careful calls. Maverick reads the moment and adapts as he goes."
+    },
+    {
+      "minScore": 8,
+      "maxScore": 8,
+      "title": "Fearless Maverick",
+      "message": "Every call was bold. Maverick rides the unexpected like it's exactly where he wants to be."
+    }
+  ]
+}

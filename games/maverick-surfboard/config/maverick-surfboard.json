@@ -4,8 +4,12 @@
   "title": "Maverick's Surf Challenge",
   "introImage": "assets/maverick-intro.png",
   "finaleImage": "assets/maverick-intro.png",
-  "background": "assets/ocean-waves.png",
+  "background": {
+    "type": "image",
+    "url": "assets/ocean-waves.png"
+  },
   "ambientSound": "",
+  "ambientVolume": 3,
   "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT\n\nVoice\nElevenLabs, Aurion voice\n\nMusic\nSuno\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer\nAnica",
 
   "characterImages": [
@@ -18,6 +22,7 @@
       "situation": "Maverick paddles out and spots a big wave building faster than expected.",
       "characterImageId": "surf",
       "motion": "glide-bob",
+      "verticalPosition": 40,
       "soundEffect": "",
       "options": [
         { "text": "Paddle hard and catch it early", "scoreDelta": 2 },
@@ -29,6 +34,7 @@
       "situation": "A sudden gust of wind throws Maverick off balance mid-ride.",
       "characterImageId": "surf",
       "motion": "glide-bob",
+      "verticalPosition": 40,
       "soundEffect": "",
       "options": [
         { "text": "Lean into it and adjust his stance", "scoreDelta": 2 },
@@ -40,6 +46,7 @@
       "situation": "Another surfer cuts across Maverick's path without warning.",
       "characterImageId": "surf",
       "motion": "glide-bob",
+      "verticalPosition": 40,
       "soundEffect": "",
       "options": [
         { "text": "Swerve around them with confidence", "scoreDelta": 2 },
@@ -51,6 +58,7 @@
       "situation": "The wave starts closing out fast as Maverick nears the shore.",
       "characterImageId": "surf",
       "motion": "glide-bob",
+      "verticalPosition": 40,
       "soundEffect": "",
       "options": [
         { "text": "Go for a stylish finish before it breaks", "scoreDelta": 2 },

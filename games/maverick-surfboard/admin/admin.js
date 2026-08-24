@@ -27,7 +27,8 @@ const disconnectBtn = document.getElementById('disconnect-btn');
 const saveBtn = document.getElementById('save-btn');
 const saveAsBtn = document.getElementById('save-as-btn');
 const saveStatus = document.getElementById('save-status');
-const formRoot = document.getElementById('form-root');
+const stageRoot = document.getElementById('stage-root');
+const sceneRoot = document.getElementById('scene-root');
 const themeSelect = document.getElementById('theme-select');
 const newThemeBtn = document.getElementById('new-theme-btn');
 
@@ -195,11 +196,14 @@ function sliderField(labelText, value, min, max, onChange) {
 // ---- main render ----
 
 function renderForm() {
-  formRoot.innerHTML = '';
+  stageRoot.innerHTML = '';
+  sceneRoot.innerHTML = '';
 
-  formRoot.appendChild(textField('Title', state.title, v => { state.title = v; }));
+  stageRoot.appendChild(sectionTitle('Setting the stage'));
 
-  formRoot.appendChild(textField(
+  stageRoot.appendChild(textField('Title', state.title, v => { state.title = v; }));
+
+  stageRoot.appendChild(textField(
     'Intro / finale image (repo path, do not use a Cloudflare URL here)',
     state.introImage,
     v => { state.introImage = v; state.finaleImage = v; }
@@ -220,7 +224,7 @@ function renderForm() {
     state.background.url,
     v => { state.background.url = v; }
   ));
-  formRoot.appendChild(bgSection);
+  stageRoot.appendChild(bgSection);
 
   const soundSection = document.createElement('div');
   soundSection.className = 'admin-section';
@@ -235,11 +239,9 @@ function renderForm() {
     state.ambientVolume ?? 3, 0, 5,
     v => { state.ambientVolume = v; }
   ));
-  formRoot.appendChild(soundSection);
+  stageRoot.appendChild(soundSection);
 
-  formRoot.appendChild(renderCharacterImages());
-  formRoot.appendChild(renderDecisions());
-  formRoot.appendChild(renderResults());
+  stageRoot.appendChild(renderCharacterImages());
 
   const creditsSection = document.createElement('div');
   creditsSection.className = 'admin-section';
@@ -249,7 +251,11 @@ function renderForm() {
     state.credits,
     v => { state.credits = v; }
   ));
-  formRoot.appendChild(creditsSection);
+  stageRoot.appendChild(creditsSection);
+
+  sceneRoot.appendChild(sectionTitle('Setting the scenes'));
+  sceneRoot.appendChild(renderDecisions());
+  sceneRoot.appendChild(renderResults());
 }
 
 function sectionTitle(text) {
@@ -338,7 +344,24 @@ function renderDecisions() {
     card.appendChild(selectField('Image for this scene', decision.characterImageId, imageOptions, v => { decision.characterImageId = v; }));
     card.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
     card.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
-    card.appendChild(textField('Sound effect Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
+    card.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
+
+    if (!decision.background) decision.background = { type: 'image', url: '' };
+    const bgLabel = document.createElement('span');
+    bgLabel.className = 'admin-small-label';
+    bgLabel.textContent = 'Background for this scene (leave URL blank to use the default background)';
+    card.appendChild(bgLabel);
+    card.appendChild(selectField(
+      'Type',
+      decision.background.type,
+      [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
+      v => { decision.background.type = v; }
+    ));
+    card.appendChild(textField(
+      'Cloudflare URL',
+      decision.background.url,
+      v => { decision.background.url = v; }
+    ));
 
     card.appendChild(renderOptions(decision));
 
@@ -356,6 +379,7 @@ function renderDecisions() {
       motion: 'glide-bob',
       verticalPosition: 40,
       soundEffect: '',
+      background: { type: 'image', url: '' },
       options: [
         { text: '', scoreDelta: 1 },
         { text: '', scoreDelta: 1 }

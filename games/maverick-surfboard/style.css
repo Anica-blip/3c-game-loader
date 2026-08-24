@@ -102,6 +102,28 @@ body {
   box-sizing: border-box;
 }
 
+.maverick-exit-btn {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maverick-exit-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
 .maverick-screen {
   background: rgba(20, 20, 26, 0.72);
   border: 2px solid var(--maverick-gold);

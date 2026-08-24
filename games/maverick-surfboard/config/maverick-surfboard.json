@@ -2,19 +2,22 @@
   "gameType": "maverick-surfboard",
   "theme": "ocean",
   "title": "Maverick's Surf Challenge",
-
-  "duckImages": {
-    "intro": "assets/maverick-intro.png",
-    "finale": "assets/maverick-intro.png",
-    "surf": "assets/maverick-surfboard.png"
-  },
-
+  "introImage": "assets/maverick-intro.png",
+  "finaleImage": "assets/maverick-intro.png",
   "background": "assets/ocean-waves.png",
+  "ambientSound": "",
+
+  "characterImages": [
+    { "id": "surf", "label": "Surfing pose", "url": "assets/maverick-surfboard.png" }
+  ],
 
   "decisions": [
     {
       "id": 1,
       "situation": "Maverick paddles out and spots a big wave building faster than expected.",
+      "characterImageId": "surf",
+      "motion": "glide-bob",
+      "soundEffect": "",
       "options": [
         { "text": "Paddle hard and catch it early", "scoreDelta": 2 },
         { "text": "Hang back for a smaller, safer wave", "scoreDelta": 1 }
@@ -23,6 +26,9 @@
     {
       "id": 2,
       "situation": "A sudden gust of wind throws Maverick off balance mid-ride.",
+      "characterImageId": "surf",
+      "motion": "glide-bob",
+      "soundEffect": "",
       "options": [
         { "text": "Lean into it and adjust his stance", "scoreDelta": 2 },
         { "text": "Slow right down and ride it out carefully", "scoreDelta": 1 }
@@ -31,6 +37,9 @@
     {
       "id": 3,
       "situation": "Another surfer cuts across Maverick's path without warning.",
+      "characterImageId": "surf",
+      "motion": "glide-bob",
+      "soundEffect": "",
       "options": [
         { "text": "Swerve around them with confidence", "scoreDelta": 2 },
         { "text": "Ease off and let them pass first", "scoreDelta": 1 }
@@ -39,6 +48,9 @@
     {
       "id": 4,
       "situation": "The wave starts closing out fast as Maverick nears the shore.",
+      "characterImageId": "surf",
+      "motion": "glide-bob",
+      "soundEffect": "",
       "options": [
         { "text": "Go for a stylish finish before it breaks", "scoreDelta": 2 },
         { "text": "Kick out early to stay safe", "scoreDelta": 1 }

@@ -1,5 +1,9 @@
 /* Repo path: games/maverick-surfboard/admin/admin.css */
 
+body {
+  background-color: var(--brand-dark-purple);
+}
+
 .admin-wrap {
   max-width: 760px;
   margin: 0 auto;
@@ -100,6 +104,23 @@
   margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.admin-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  align-items: start;
+}
+
+.admin-col {
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .admin-columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 .admin-section {

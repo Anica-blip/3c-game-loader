@@ -204,9 +204,15 @@ function renderForm() {
   stageRoot.appendChild(textField('Title', state.title, v => { state.title = v; }));
 
   stageRoot.appendChild(textField(
-    'Intro / finale image (repo path, do not use a Cloudflare URL here)',
+    'Intro image (repo path, do not use a Cloudflare URL here)',
     state.introImage,
-    v => { state.introImage = v; state.finaleImage = v; }
+    v => { state.introImage = v; }
+  ));
+
+  stageRoot.appendChild(textField(
+    'Finale image (repo path, do not use a Cloudflare URL here)',
+    state.finaleImage,
+    v => { state.finaleImage = v; }
   ));
 
   const bgSection = document.createElement('div');
@@ -317,10 +323,6 @@ function renderDecisions() {
 
   if (!state.decisions) state.decisions = [];
 
-  const imageOptions = (state.characterImages || []).map(img => ({
-    value: img.id, label: img.label || img.id
-  }));
-
   state.decisions.forEach((decision, index) => {
     const card = document.createElement('div');
     card.className = 'admin-item-card';
@@ -341,7 +343,15 @@ function renderDecisions() {
     card.appendChild(header);
 
     card.appendChild(textareaField('Situation', decision.situation, v => { decision.situation = v; }));
-    card.appendChild(selectField('Image for this scene', decision.characterImageId, imageOptions, v => { decision.characterImageId = v; }));
+
+    if (!decision.image) decision.image = { label: '', url: '' };
+    const imgLabel = document.createElement('span');
+    imgLabel.className = 'admin-small-label';
+    imgLabel.textContent = 'Image for this scene (leave URL blank to use the default scene image)';
+    card.appendChild(imgLabel);
+    card.appendChild(textField('Name', decision.image.label, v => { decision.image.label = v; }));
+    card.appendChild(textField('Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
+
     card.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
     card.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
     card.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
@@ -375,7 +385,7 @@ function renderDecisions() {
     state.decisions.push({
       id: state.decisions.length + 1,
       situation: '',
-      characterImageId: imageOptions[0] ? imageOptions[0].value : '',
+      image: { label: '', url: '' },
       motion: 'glide-bob',
       verticalPosition: 40,
       soundEffect: '',

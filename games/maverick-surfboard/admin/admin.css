@@ -1,0 +1,173 @@
+/* Repo path: games/maverick-surfboard/admin/admin.css */
+
+.admin-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md) 80px;
+}
+
+.admin-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  color: var(--brand-neon-gold);
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-help {
+  color: var(--text-primary);
+  opacity: 0.85;
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brand-neon-gold);
+  margin-bottom: 4px;
+}
+
+.admin-input,
+.admin-textarea,
+.admin-select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 10px 12px;
+  margin-bottom: var(--spacing-sm);
+  box-sizing: border-box;
+}
+
+.admin-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.admin-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.admin-btn:hover {
+  border-color: var(--brand-neon-gold);
+}
+
+.admin-btn-primary {
+  background: var(--brand-neon-gold);
+  color: #14141a;
+  border-color: var(--brand-neon-gold);
+}
+
+.admin-save {
+  margin-top: var(--spacing-md);
+  width: 100%;
+}
+
+.admin-status {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 8px;
+  min-height: 1.2em;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-section {
+  border-top: 1px solid var(--glass-border);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.admin-section-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  color: var(--brand-neon-gold);
+  margin-bottom: var(--spacing-sm);
+}
+
+.admin-item-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.admin-item-row {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-item-row .admin-input {
+  flex: 1;
+}
+
+.admin-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.admin-small-label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.admin-btn-remove {
+  background: rgba(220, 60, 60, 0.15);
+  border-color: rgba(220, 60, 60, 0.4);
+  color: #ff8a8a;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+}
+
+.admin-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.admin-slider-row input[type="range"] {
+  flex: 1;
+}
+
+.admin-slider-value {
+  font-size: 0.8rem;
+  min-width: 32px;
+  text-align: right;
+  color: var(--brand-neon-gold);
+}

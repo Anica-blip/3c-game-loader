@@ -804,8 +804,50 @@ footer {
     color: black !important;
   }
   
-  .glass, .glass-dark {
-    background: white !important;
-    border: 1px solid black !important;
-  }
+/* Challenge Games Hub */
+.challenge-hub {
+  max-width: 800px;
+  margin: 0 auto var(--spacing-lg);
+  padding: 0 var(--spacing-md);
+  text-align: center;
+}
+ 
+.challenge-hub-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  color: var(--brand-neon-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--spacing-md);
+}
+ 
+.challenge-hub-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+ 
+.challenge-hub-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition-normal);
+  min-width: 220px;
+}
+ 
+.challenge-hub-card:hover {
+  border-color: var(--brand-neon-gold);
+  box-shadow: var(--neon-gold-subtle);
+  transform: translateY(-2px);
+}
+ 
+.glass, .glass-dark {
+  background: white !important;
+  border: 1px solid black !important;  }
 }

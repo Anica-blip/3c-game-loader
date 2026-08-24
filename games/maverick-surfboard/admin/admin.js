@@ -15,6 +15,7 @@ const MOTION_OPTIONS = [
 let state = null;
 let currentSha = null;
 let currentTheme = DEFAULT_THEME;
+let expandedSceneIndex = 0;
 
 const connectPanel = document.getElementById('connect-panel');
 const editorPanel = document.getElementById('editor-panel');
@@ -327,62 +328,87 @@ function renderDecisions() {
     const card = document.createElement('div');
     card.className = 'admin-item-card';
 
+    const isExpanded = index === expandedSceneIndex;
+
     const header = document.createElement('div');
     header.className = 'admin-row-header';
+
     const heading = document.createElement('span');
     heading.className = 'admin-small-label';
-    heading.textContent = `Scene ${index + 1}`;
+    const preview = decision.situation
+      ? decision.situation.slice(0, 40) + (decision.situation.length > 40 ? '...' : '')
+      : '(empty)';
+    heading.textContent = isExpanded ? `Scene ${index + 1}` : `Scene ${index + 1}: ${preview}`;
+
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'admin-header-btns';
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'admin-btn';
+    toggleBtn.textContent = isExpanded ? 'Collapse' : 'Edit';
+    toggleBtn.addEventListener('click', () => {
+      expandedSceneIndex = isExpanded ? -1 : index;
+      renderForm();
+    });
+
     const removeBtn = document.createElement('button');
     removeBtn.className = 'admin-btn admin-btn-remove';
     removeBtn.textContent = 'Remove scene';
     removeBtn.addEventListener('click', () => {
       state.decisions.splice(index, 1);
+      if (expandedSceneIndex >= state.decisions.length) {
+        expandedSceneIndex = state.decisions.length - 1;
+      }
       renderForm();
     });
-    header.append(heading, removeBtn);
+
+    btnGroup.append(toggleBtn, removeBtn);
+    header.append(heading, btnGroup);
     card.appendChild(header);
 
-    const cols = document.createElement('div');
-    cols.className = 'admin-scene-columns';
-    const left = document.createElement('div');
-    const right = document.createElement('div');
+    if (isExpanded) {
+      const cols = document.createElement('div');
+      cols.className = 'admin-scene-columns';
+      const left = document.createElement('div');
+      const right = document.createElement('div');
 
-    // Left: how this scene looks and moves
-    if (!decision.image) decision.image = { label: '', url: '' };
-    const imgLabel = document.createElement('span');
-    imgLabel.className = 'admin-small-label';
-    imgLabel.textContent = 'Image for this scene (leave URL blank to use the default scene image)';
-    left.appendChild(imgLabel);
-    left.appendChild(textField('Name', decision.image.label, v => { decision.image.label = v; }));
-    left.appendChild(textField('Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
+      // Left: how this scene looks and moves
+      if (!decision.image) decision.image = { label: '', url: '' };
+      const imgLabel = document.createElement('span');
+      imgLabel.className = 'admin-small-label';
+      imgLabel.textContent = 'Image for this scene (leave URL blank to use the default scene image)';
+      left.appendChild(imgLabel);
+      left.appendChild(textField('Name', decision.image.label, v => { decision.image.label = v; }));
+      left.appendChild(textField('Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
 
-    if (!decision.background) decision.background = { type: 'image', url: '' };
-    const bgLabel = document.createElement('span');
-    bgLabel.className = 'admin-small-label';
-    bgLabel.textContent = 'Background for this scene (leave URL blank to use the default background)';
-    left.appendChild(bgLabel);
-    left.appendChild(selectField(
-      'Type',
-      decision.background.type,
-      [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
-      v => { decision.background.type = v; }
-    ));
-    left.appendChild(textField(
-      'Cloudflare URL',
-      decision.background.url,
-      v => { decision.background.url = v; }
-    ));
+      if (!decision.background) decision.background = { type: 'image', url: '' };
+      const bgLabel = document.createElement('span');
+      bgLabel.className = 'admin-small-label';
+      bgLabel.textContent = 'Background for this scene (leave URL blank to use the default background)';
+      left.appendChild(bgLabel);
+      left.appendChild(selectField(
+        'Type',
+        decision.background.type,
+        [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
+        v => { decision.background.type = v; }
+      ));
+      left.appendChild(textField(
+        'Cloudflare URL',
+        decision.background.url,
+        v => { decision.background.url = v; }
+      ));
 
-    left.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
-    left.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
+      left.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
+      left.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
 
-    // Right: what happens in this scene
-    right.appendChild(textareaField('Situation', decision.situation, v => { decision.situation = v; }));
-    right.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
-    right.appendChild(renderOptions(decision));
+      // Right: what happens in this scene
+      right.appendChild(textareaField('Situation', decision.situation, v => { decision.situation = v; }));
+      right.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
+      right.appendChild(renderOptions(decision));
 
-    cols.append(left, right);
-    card.appendChild(cols);
+      cols.append(left, right);
+      card.appendChild(cols);
+    }
 
     section.appendChild(card);
   });
@@ -404,6 +430,7 @@ function renderDecisions() {
         { text: '', scoreDelta: 1 }
       ]
     });
+    expandedSceneIndex = state.decisions.length - 1;
     renderForm();
   });
   section.appendChild(addBtn);
@@ -531,6 +558,7 @@ async function loadTheme(themeName) {
   try {
     state = await fetchThemeConfig(themeName);
     currentTheme = themeName;
+    expandedSceneIndex = 0;
     themeSelect.value = themeName;
     editorStatus.textContent = `Editing "${themeName}"`;
     renderForm();
@@ -555,6 +583,7 @@ newThemeBtn.addEventListener('click', () => {
   state = JSON.parse(JSON.stringify(state));
   currentSha = null;
   currentTheme = slug;
+  expandedSceneIndex = 0;
   themeSelect.value = '';
   editorStatus.textContent = `New theme "${slug}" (not saved yet)`;
   renderForm();

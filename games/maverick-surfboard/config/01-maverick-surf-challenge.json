@@ -8,9 +8,9 @@
     "type": "image",
     "url": "assets/ocean-waves.png"
   },
-  "ambientSound": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/01%20maverick-music-long.wav",
+  "ambientSound": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/01%20maverick-music-short.wav",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, Maverick Duck voice\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\nVoice\nElevenLabs, Maverick Duck voice\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
   "characterImages": [
     {
       "id": "surf",
@@ -24,7 +24,7 @@
       "situation": "Maverick's halfway out and the horizon just stood up. Bigger set, no warning.",
       "characterImageId": "surf",
       "motion": "straight-glide",
-      "verticalPosition": 40,
+      "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20Whoa%20buddy%2C%20incoming!.mp3",
       "options": [
         {
@@ -92,7 +92,7 @@
       "situation": "He looks up. He's drifted way past his spot without even noticing.",
       "characterImageId": "surf",
       "motion": "straight-glide",
-      "verticalPosition": 34,
+      "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20-Wait%2C%20where%20am%20I%3F.mp3",
       "options": [
         {
@@ -125,7 +125,7 @@
       "id": 4,
       "situation": "Wave says no. He's under, board's gone, world's all bubbles.",
       "characterImageId": "surf",
-      "motion": "wipeout-spin",
+      "motion": "glide-bob",
       "verticalPosition": 40,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-Can%20a%20duck%20win%3F.mp3",
       "options": [
@@ -162,7 +162,7 @@
         "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20-%20maverick-surfboard-inwave.png"
       },
       "motion": "glide-bob",
-      "verticalPosition": 40,
+      "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20-Wish%20me%20luck%2C%20buddy!.mp3",
       "background": {
         "type": "image",

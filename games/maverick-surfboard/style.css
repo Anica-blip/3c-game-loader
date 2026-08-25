@@ -18,7 +18,7 @@ body {
 /* Full-page background wrapper — used by landing.html and consent.html */
 .maverick-bg-page {
   min-height: 100vh;
-  background-color: #363d46;
+  background-color: #252a31;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -300,8 +300,9 @@ body {
 }
 
 .maverick-msg-video {
-  width: 100%;
-  max-width: 800px;
+  width: auto;
+  max-width: 500px;
+  max-height: 55vh;
   border-radius: 16px;
   overflow: hidden;
   display: block;

@@ -1,0 +1,217 @@
+{
+  "gameType": "maverick-surfboard",
+  "theme": "ocean",
+  "title": "01 Maverick's Surf Challenge",
+  "introImage": "assets/maverick-intro.png",
+  "finaleImage": "assets/maverick-finale.png",
+  "background": {
+    "type": "image",
+    "url": "assets/ocean-waves.png"
+  },
+  "ambientSound": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/01%20maverick-music-short.wav",
+  "ambientVolume": 3,
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\nVoice\nElevenLabs, Maverick Duck voice\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "characterImages": [
+    {
+      "id": "surf",
+      "label": "Surfing pose",
+      "url": "assets/maverick-surfboard.png"
+    }
+  ],
+  "decisions": [
+    {
+      "id": 1,
+      "situation": "Maverick's halfway out and the horizon just stood up. Bigger set, no warning.",
+      "characterImageId": "surf",
+      "motion": "straight-glide",
+      "verticalPosition": 40,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20Whoa%20buddy%2C%20incoming!.mp3",
+      "options": [
+        {
+          "text": "Angle off toward the shoulder",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Sit wide, let it pass",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Duck the board, dive under",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Paddle hard, punch straight through",
+          "scoreDelta": 4
+        }
+      ],
+      "background": {
+        "type": "image",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20ocean-wave.png"
+      },
+      "image": {
+        "label": "maverick-onboard",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20maverick-onboard.png"
+      }
+    },
+    {
+      "id": 2,
+      "situation": "Some rookie snakes clean across his line like it's nobody's wave but his.",
+      "characterImageId": "surf",
+      "motion": "glide-bob",
+      "verticalPosition": 45,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20-Plot%20twist!.mp3",
+      "options": [
+        {
+          "text": "Pull off, let it go",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Hold the line, share it",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Hoot loud, stake the claim",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Cut inside, steal the pocket back",
+          "scoreDelta": 4
+        }
+      ],
+      "background": {
+        "type": "image",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20ocean-wave.png"
+      },
+      "image": {
+        "label": "maverick-surfboarding",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20-%20maverick-surfboard.png"
+      }
+    },
+    {
+      "id": 3,
+      "situation": "He looks up. He's drifted way past his spot without even noticing.",
+      "characterImageId": "surf",
+      "motion": "straight-glide",
+      "verticalPosition": 34,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20-Wait%2C%20where%20am%20I%3F.mp3",
+      "options": [
+        {
+          "text": "Wait it out, let it sort itself",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Cut across at an angle",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Ride it out, find a new peak",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Paddle straight back against it",
+          "scoreDelta": 4
+        }
+      ],
+      "background": {
+        "type": "image",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20ocean-wave.png"
+      },
+      "image": {
+        "label": "maverick-onboard",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20maverick-onboard.png"
+      }
+    },
+    {
+      "id": 4,
+      "situation": "Wave says no. He's under, board's gone, world's all bubbles.",
+      "characterImageId": "surf",
+      "motion": "glide-bob",
+      "verticalPosition": 40,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-Can%20a%20duck%20win%3F.mp3",
+      "options": [
+        {
+          "text": "Laugh it off, paddle straight back out",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Swim for shore, call it",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Breathe, ride the tumble out calm",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Pop up, chase the board down",
+          "scoreDelta": 4
+        }
+      ],
+      "background": {
+        "type": "image",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20ocean-wave.png"
+      },
+      "image": {
+        "label": "maverick-falling",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-%20maverick-falling.png"
+      }
+    },
+    {
+      "situation": "One wave left. Stands apart from everything else today. This is the one.",
+      "image": {
+        "label": "maverick-inwave",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20-%20maverick-surfboard-inwave.png"
+      },
+      "motion": "glide-bob",
+      "verticalPosition": 40,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20-Wish%20me%20luck%2C%20buddy!.mp3",
+      "background": {
+        "type": "image",
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20ocean-wave.png"
+      },
+      "options": [
+        {
+          "text": "Wave someone else onto it",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Let it go, watch from the shoulder",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Take it smooth, ride it with style",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Go all in, biggest drop of the day",
+          "scoreDelta": 4
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "minScore": 1,
+      "maxScore": 2,
+      "title": "🧘 Steady Hands",
+      "message": "Honestly buddy, I could use whatever calm you're carrying."
+    },
+    {
+      "minScore": 2,
+      "maxScore": 4,
+      "title": "👀 The Patient One",
+      "message": "Buddy, you could really be a good influence on me."
+    },
+    {
+      "minScore": 3,
+      "maxScore": 6,
+      "title": "🏄 Reads The Water",
+      "message": "You read that water like you were born on it, buddy."
+    },
+    {
+      "minScore": 4,
+      "maxScore": 8,
+      "title": "🌊 My Kind Of Trouble",
+      "message": "Buddy, we're grabbing a beer, you're exactly my kind."
+    }
+  ]
+}

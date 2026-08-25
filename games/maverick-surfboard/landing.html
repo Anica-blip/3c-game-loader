@@ -21,8 +21,16 @@
       <p class="maverick-body-text">
         Get ready for a new challenge. Every call you make shapes how the story unfolds.
       </p>
-      <a href="consent.html" class="maverick-btn maverick-btn-primary">Continue</a>
+      <a href="consent.html" id="continue-link" class="maverick-btn maverick-btn-primary">Continue</a>
     </div>
   </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var configName = params.get('configName') || 'maverick-surfboard';
+      document.getElementById('continue-link').href = 'consent.html?configName=' + encodeURIComponent(configName);
+    })();
+  </script>
 </body>
 </html>

@@ -17,7 +17,17 @@ function preloadAssets(config) {
     if (d.image && d.image.url) urls.push(d.image.url);
   });
   (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
-  urls.forEach(url => { const img = new Image(); img.src = url; });
+
+  const loadPromises = urls.map(url => new Promise(resolve => {
+    const img = new Image();
+    img.onload = resolve;
+    img.onerror = resolve;
+    img.src = url;
+  }));
+
+  const timeout = new Promise(resolve => setTimeout(resolve, 8000));
+
+  return Promise.race([Promise.all(loadPromises), timeout]);
 }
 
 export function startGame(config, container) {
@@ -34,13 +44,14 @@ export function startGame(config, container) {
   container.appendChild(bgLayer);
   setupBackground(bgLayer, config.background);
 
-  preloadAssets(config);
-
   const content = document.createElement('div');
   content.className = 'maverick-content';
   container.appendChild(content);
 
-  renderIntro();
+  renderLoading();
+  preloadAssets(config).then(() => {
+    renderIntro();
+  });
 
   function setupBackground(layer, background) {
     layer.innerHTML = '';
@@ -93,6 +104,19 @@ export function startGame(config, container) {
       ambientAudio.volume = Math.max(0, Math.min(5, vol)) / 5;
       ambientAudio.play().catch(() => {});
     }
+  }
+
+  function renderLoading() {
+    content.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'maverick-screen maverick-loading';
+
+    const msg = document.createElement('p');
+    msg.className = 'maverick-body-text';
+    msg.textContent = "Hang on, Maverick's getting his things together...";
+
+    wrap.appendChild(msg);
+    content.appendChild(wrap);
   }
 
   function renderIntro() {

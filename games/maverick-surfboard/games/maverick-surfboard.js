@@ -143,6 +143,9 @@ export function startGame(config, container) {
     const verticalPercent = typeof decision.verticalPosition === 'number' ? decision.verticalPosition : 40;
     const durationMs = (typeof decision.duration === 'number' ? decision.duration : 4) * 1000;
 
+    const sceneBackground = (decision.background && decision.background.url) ? decision.background : config.background;
+    setupBackground(bgLayer, sceneBackground);
+
     content.innerHTML = '';
     const stage = document.createElement('div');
     stage.className = 'maverick-stage';

@@ -67,8 +67,9 @@ function slugify(name) {
     .replace(/^-+|-+$/g, '');
 }
 
-function blankScene() {
+function blankScene(id) {
   return {
+    id: id,
     situation: '',
     image: { label: '', url: '' },
     motion: 'glide-bob',
@@ -325,7 +326,7 @@ function renderSceneTabs() {
   addTab.className = 'admin-tab admin-tab-add';
   addTab.textContent = '+ Add scene';
   addTab.addEventListener('click', () => {
-    state.decisions.push(blankScene());
+    state.decisions.push(blankScene(state.decisions.length + 1));
     activeSceneIndex = state.decisions.length - 1;
     renderForm();
   });

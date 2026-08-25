@@ -29,15 +29,6 @@ export function startGame(config, container) {
   container.classList.add('maverick-game');
   container.innerHTML = '';
 
-  const exitBtn = document.createElement('button');
-  exitBtn.className = 'maverick-exit-btn';
-  exitBtn.textContent = '\u2715';
-  exitBtn.setAttribute('aria-label', 'Exit challenge');
-  exitBtn.addEventListener('click', () => {
-    window.location.href = 'landing.html';
-  });
-  container.appendChild(exitBtn);
-
   const bgLayer = document.createElement('div');
   bgLayer.className = 'maverick-bg-layer';
   container.appendChild(bgLayer);
@@ -55,6 +46,7 @@ export function startGame(config, container) {
     layer.innerHTML = '';
     layer.classList.remove('maverick-bg-image');
     layer.style.backgroundImage = '';
+    layer.style.backgroundColor = '';
 
     if (!background || !background.url) return;
 
@@ -72,6 +64,13 @@ export function startGame(config, container) {
       layer.classList.add('maverick-bg-image');
       layer.style.backgroundImage = `url('${background.url}')`;
     }
+  }
+
+  function setSolidBackground(layer, hex) {
+    layer.innerHTML = '';
+    layer.classList.remove('maverick-bg-image');
+    layer.style.backgroundImage = '';
+    layer.style.backgroundColor = hex;
   }
 
   function getCharacterImageUrl(decision) {
@@ -131,7 +130,11 @@ export function startGame(config, container) {
 
   function renderDecisionStage() {
     if (decisionIndex >= config.decisions.length) {
-      renderFinale();
+      if (config.maverickVideo) {
+        renderMaverickMessage();
+      } else {
+        renderFinale();
+      }
       return;
     }
 
@@ -139,9 +142,6 @@ export function startGame(config, container) {
     const motionFn = MOTION_PRESETS[decision.motion] || MOTION_PRESETS['glide-bob'];
     const verticalPercent = typeof decision.verticalPosition === 'number' ? decision.verticalPosition : 40;
     const durationMs = (typeof decision.duration === 'number' ? decision.duration : 4) * 1000;
-
-    const sceneBackground = (decision.background && decision.background.url) ? decision.background : config.background;
-    setupBackground(bgLayer, sceneBackground);
 
     content.innerHTML = '';
     const stage = document.createElement('div');
@@ -229,6 +229,45 @@ export function startGame(config, container) {
     content.appendChild(wrap);
   }
 
+  function renderMaverickMessage() {
+    if (rafId) cancelAnimationFrame(rafId);
+    setSolidBackground(bgLayer, '#363d46');
+    content.innerHTML = '';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'maverick-msg-wrap';
+
+    const video = document.createElement('video');
+    video.className = 'maverick-msg-video';
+    video.src = config.maverickVideo;
+    video.autoplay = true;
+    video.setAttribute('playsinline', '');
+    video.playsInline = true;
+    video.disablePictureInPicture = true;
+    video.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+    video.oncontextmenu = (e) => e.preventDefault();
+
+    video.addEventListener('ended', () => {
+      renderFinale();
+    });
+
+    video.play().catch(() => {
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+
+    const flipBtn = document.createElement('button');
+    flipBtn.className = 'maverick-flip-btn';
+    flipBtn.textContent = 'Flip Over';
+    flipBtn.addEventListener('click', () => {
+      video.pause();
+      renderFinale();
+    });
+
+    wrap.append(video, flipBtn);
+    content.appendChild(wrap);
+  }
+
   function renderFinale() {
     if (ambientAudio) {
       ambientAudio.pause();
@@ -268,12 +307,42 @@ export function startGame(config, container) {
       renderIntro();
     });
 
+    const bottomRow = document.createElement('div');
+    bottomRow.className = 'maverick-bottom-row';
+
     const creditsBtn = document.createElement('button');
     creditsBtn.className = 'maverick-btn-link';
     creditsBtn.textContent = 'Credits';
     creditsBtn.addEventListener('click', renderCredits);
 
-    wrap.append(img, title, message, scoreLine, replayBtn, creditsBtn);
+    const offBtn = document.createElement('button');
+    offBtn.className = 'maverick-off-btn';
+    offBtn.textContent = 'OFF';
+    offBtn.setAttribute('aria-label', 'Exit challenge');
+    offBtn.addEventListener('click', () => {
+      renderGoodbye();
+      window.close();
+    });
+
+    bottomRow.append(creditsBtn, offBtn);
+    wrap.append(img, title, message, scoreLine, replayBtn, bottomRow);
+    content.appendChild(wrap);
+  }
+
+  function renderGoodbye() {
+    if (ambientAudio) {
+      ambientAudio.pause();
+      ambientAudio = null;
+    }
+    content.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'maverick-screen maverick-goodbye';
+
+    const message = document.createElement('p');
+    message.className = 'maverick-body-text';
+    message.textContent = 'Thanks for playing!';
+
+    wrap.appendChild(message);
     content.appendChild(wrap);
   }
 

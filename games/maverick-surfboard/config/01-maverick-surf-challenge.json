@@ -28,14 +28,26 @@
       "verticalPosition": 56,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20Whoa%20buddy%2C%20incoming!.mp3",
       "options": [
-        { "text": "Angle off toward the shoulder", "scoreDelta": 1 },
-        { "text": "Sit wide, let it pass", "scoreDelta": 2 },
-        { "text": "Duck the board, dive under", "scoreDelta": 3 },
-        { "text": "Paddle hard, punch straight through", "scoreDelta": 4 }
+        {
+          "text": "Angle off toward the shoulder",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Sit wide, let it pass",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Duck the board, dive under",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Paddle hard, punch straight through",
+          "scoreDelta": 4
+        }
       ],
       "background": {
         "type": "image",
-        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20ocean-wave.png"
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20ocean-waves-background.png"
       },
       "image": {
         "label": "maverick-onboard",
@@ -51,14 +63,26 @@
       "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20-Plot%20twist!.mp3",
       "options": [
-        { "text": "Pull off, let it go", "scoreDelta": 1 },
-        { "text": "Hold the line, share it", "scoreDelta": 2 },
-        { "text": "Hoot loud, stake the claim", "scoreDelta": 3 },
-        { "text": "Cut inside, steal the pocket back", "scoreDelta": 4 }
+        {
+          "text": "Pull off, let it go",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Hold the line, share it",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Hoot loud, stake the claim",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Cut inside, steal the pocket back",
+          "scoreDelta": 4
+        }
       ],
       "background": {
         "type": "image",
-        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20ocean-wave.png"
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20-%20ocean-waves-background.png"
       },
       "image": {
         "label": "maverick-surfboarding",
@@ -73,14 +97,26 @@
       "verticalPosition": 75,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20-Wait%2C%20where%20am%20I%3F.mp3",
       "options": [
-        { "text": "Wait it out, let it sort itself", "scoreDelta": 1 },
-        { "text": "Cut across at an angle", "scoreDelta": 2 },
-        { "text": "Ride it out, find a new peak", "scoreDelta": 3 },
-        { "text": "Paddle straight back against it", "scoreDelta": 4 }
+        {
+          "text": "Wait it out, let it sort itself",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Cut across at an angle",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Ride it out, find a new peak",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Paddle straight back against it",
+          "scoreDelta": 4
+        }
       ],
       "background": {
         "type": "image",
-        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20ocean-wave.png"
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20-%20ocean-waves-background.png"
       },
       "image": {
         "label": "maverick-onboard",
@@ -95,14 +131,26 @@
       "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-Can%20a%20duck%20win%3F.mp3",
       "options": [
-        { "text": "Laugh it off, paddle straight back out", "scoreDelta": 1 },
-        { "text": "Swim for shore, call it", "scoreDelta": 2 },
-        { "text": "Breathe, ride the tumble out calm", "scoreDelta": 3 },
-        { "text": "Pop up, chase the board down", "scoreDelta": 4 }
+        {
+          "text": "Laugh it off, paddle straight back out",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Swim for shore, call it",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Breathe, ride the tumble out calm",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Pop up, chase the board down",
+          "scoreDelta": 4
+        }
       ],
       "background": {
         "type": "image",
-        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20ocean-wave.png"
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-%20ocean-waves-background.png"
       },
       "image": {
         "label": "maverick-falling",
@@ -121,13 +169,25 @@
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20-Wish%20me%20luck%2C%20buddy!.mp3",
       "background": {
         "type": "image",
-        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20ocean-wave.png"
+        "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20-%20ocean-waves-background.png"
       },
       "options": [
-        { "text": "Wave someone else onto it", "scoreDelta": 1 },
-        { "text": "Let it go, watch from the shoulder", "scoreDelta": 2 },
-        { "text": "Take it smooth, ride it with style", "scoreDelta": 3 },
-        { "text": "Go all in, biggest drop of the day", "scoreDelta": 4 }
+        {
+          "text": "Wave someone else onto it",
+          "scoreDelta": 1
+        },
+        {
+          "text": "Let it go, watch from the shoulder",
+          "scoreDelta": 2
+        },
+        {
+          "text": "Take it smooth, ride it with style",
+          "scoreDelta": 3
+        },
+        {
+          "text": "Go all in, biggest drop of the day",
+          "scoreDelta": 4
+        }
       ]
     }
   ],

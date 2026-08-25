@@ -3,9 +3,10 @@
 const MOTION_DURATION = 3200;
 
 const MOTION_PRESETS = {
-  'glide-bob': (progress) => Math.sin(progress * Math.PI * 8) * 12,
-  'straight-glide': () => 0,
-  'wave-jump': (progress) => -Math.abs(Math.sin(progress * Math.PI * 5)) * 25
+  'glide-bob': (progress) => ({ y: Math.sin(progress * Math.PI * 8) * 12, rotation: 0 }),
+  'straight-glide': () => ({ y: 0, rotation: 0 }),
+  'wave-jump': (progress) => ({ y: -Math.abs(Math.sin(progress * Math.PI * 5)) * 25, rotation: 0 }),
+  'wipeout-spin': (progress) => ({ y: Math.sin(progress * Math.PI * 10) * 35, rotation: progress * 1080 })
 };
 
 export function startGame(config, container) {
@@ -153,9 +154,11 @@ export function startGame(config, container) {
 
       const trackWidth = stage.clientWidth - duck.clientWidth;
       const x = progress * trackWidth;
-      const y = motionFn(progress);
+      const motionResult = motionFn(progress);
+      const y = motionResult.y;
+      const rotation = motionResult.rotation || 0;
 
-      duck.style.transform = `translate(${x}px, ${y}px)`;
+      duck.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
 
       if (progress < 1) {
         rafId = requestAnimationFrame(animate);

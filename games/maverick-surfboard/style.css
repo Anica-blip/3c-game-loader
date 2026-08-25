@@ -218,7 +218,7 @@ body {
 /* Glass "click" prompt — appears when the character reaches the end of the pass */
 .maverick-glass-btn {
   position: absolute;
-  right: 8%;
+  right: 35%;
   top: 50%;
   background: rgba(46, 196, 214, 0.18);
   backdrop-filter: blur(12px);

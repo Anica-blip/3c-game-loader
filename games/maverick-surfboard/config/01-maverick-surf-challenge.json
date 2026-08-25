@@ -8,9 +8,9 @@
     "type": "image",
     "url": "assets/ocean-waves.png"
   },
-  "ambientSound": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/01%20maverick-music-short.wav",
+  "ambientSound": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/01%20maverick-music-long.wav",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\nVoice\nElevenLabs, Maverick Duck voice\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, Maverick Duck voice\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
   "characterImages": [
     {
       "id": "surf",
@@ -51,7 +51,8 @@
       "image": {
         "label": "maverick-onboard",
         "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20maverick-onboard.png"
-      }
+      },
+      "duration": 3
     },
     {
       "id": 2,

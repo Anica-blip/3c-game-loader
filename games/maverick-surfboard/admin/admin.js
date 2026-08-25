@@ -265,6 +265,12 @@ function renderGlobal() {
     v => { state.finaleImage = v; }
   ));
 
+  globalRoot.appendChild(textField(
+    'Maverick message video, Cloudflare URL (.mp4, plays before the result, leave blank to skip)',
+    state.maverickVideo,
+    v => { state.maverickVideo = v; }
+  ));
+
   const creditsSection = document.createElement('div');
   creditsSection.className = 'admin-section';
   creditsSection.appendChild(sectionTitle('Credits'));

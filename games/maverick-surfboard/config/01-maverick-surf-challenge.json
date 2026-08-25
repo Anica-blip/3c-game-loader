@@ -4,6 +4,7 @@
   "title": "01 Maverick's Surf Challenge",
   "introImage": "assets/maverick-intro.png",
   "finaleImage": "assets/maverick-finale.png",
+  "maverickVideo": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/Maverick%20Challenge%20Ending.mp4",
   "background": {
     "type": "image",
     "url": "assets/ocean-waves.png"
@@ -24,25 +25,13 @@
       "situation": "Maverick's halfway out and the horizon just stood up. Bigger set, no warning.",
       "characterImageId": "surf",
       "motion": "straight-glide",
-      "verticalPosition": 50,
+      "verticalPosition": 56,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20Whoa%20buddy%2C%20incoming!.mp3",
       "options": [
-        {
-          "text": "Angle off toward the shoulder",
-          "scoreDelta": 1
-        },
-        {
-          "text": "Sit wide, let it pass",
-          "scoreDelta": 2
-        },
-        {
-          "text": "Duck the board, dive under",
-          "scoreDelta": 3
-        },
-        {
-          "text": "Paddle hard, punch straight through",
-          "scoreDelta": 4
-        }
+        { "text": "Angle off toward the shoulder", "scoreDelta": 1 },
+        { "text": "Sit wide, let it pass", "scoreDelta": 2 },
+        { "text": "Duck the board, dive under", "scoreDelta": 3 },
+        { "text": "Paddle hard, punch straight through", "scoreDelta": 4 }
       ],
       "background": {
         "type": "image",
@@ -59,25 +48,13 @@
       "situation": "Some rookie snakes clean across his line like it's nobody's wave but his.",
       "characterImageId": "surf",
       "motion": "glide-bob",
-      "verticalPosition": 45,
+      "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%202/scene%202%20-Plot%20twist!.mp3",
       "options": [
-        {
-          "text": "Pull off, let it go",
-          "scoreDelta": 1
-        },
-        {
-          "text": "Hold the line, share it",
-          "scoreDelta": 2
-        },
-        {
-          "text": "Hoot loud, stake the claim",
-          "scoreDelta": 3
-        },
-        {
-          "text": "Cut inside, steal the pocket back",
-          "scoreDelta": 4
-        }
+        { "text": "Pull off, let it go", "scoreDelta": 1 },
+        { "text": "Hold the line, share it", "scoreDelta": 2 },
+        { "text": "Hoot loud, stake the claim", "scoreDelta": 3 },
+        { "text": "Cut inside, steal the pocket back", "scoreDelta": 4 }
       ],
       "background": {
         "type": "image",
@@ -96,22 +73,10 @@
       "verticalPosition": 72,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20-Wait%2C%20where%20am%20I%3F.mp3",
       "options": [
-        {
-          "text": "Wait it out, let it sort itself",
-          "scoreDelta": 1
-        },
-        {
-          "text": "Cut across at an angle",
-          "scoreDelta": 2
-        },
-        {
-          "text": "Ride it out, find a new peak",
-          "scoreDelta": 3
-        },
-        {
-          "text": "Paddle straight back against it",
-          "scoreDelta": 4
-        }
+        { "text": "Wait it out, let it sort itself", "scoreDelta": 1 },
+        { "text": "Cut across at an angle", "scoreDelta": 2 },
+        { "text": "Ride it out, find a new peak", "scoreDelta": 3 },
+        { "text": "Paddle straight back against it", "scoreDelta": 4 }
       ],
       "background": {
         "type": "image",
@@ -127,25 +92,13 @@
       "situation": "Wave says no. He's under, board's gone, world's all bubbles.",
       "characterImageId": "surf",
       "motion": "glide-bob",
-      "verticalPosition": 40,
+      "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-Can%20a%20duck%20win%3F.mp3",
       "options": [
-        {
-          "text": "Laugh it off, paddle straight back out",
-          "scoreDelta": 1
-        },
-        {
-          "text": "Swim for shore, call it",
-          "scoreDelta": 2
-        },
-        {
-          "text": "Breathe, ride the tumble out calm",
-          "scoreDelta": 3
-        },
-        {
-          "text": "Pop up, chase the board down",
-          "scoreDelta": 4
-        }
+        { "text": "Laugh it off, paddle straight back out", "scoreDelta": 1 },
+        { "text": "Swim for shore, call it", "scoreDelta": 2 },
+        { "text": "Breathe, ride the tumble out calm", "scoreDelta": 3 },
+        { "text": "Pop up, chase the board down", "scoreDelta": 4 }
       ],
       "background": {
         "type": "image",
@@ -157,6 +110,7 @@
       }
     },
     {
+      "id": 5,
       "situation": "One wave left. Stands apart from everything else today. This is the one.",
       "image": {
         "label": "maverick-inwave",
@@ -170,22 +124,10 @@
         "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%205/scene%205%20ocean-wave.png"
       },
       "options": [
-        {
-          "text": "Wave someone else onto it",
-          "scoreDelta": 1
-        },
-        {
-          "text": "Let it go, watch from the shoulder",
-          "scoreDelta": 2
-        },
-        {
-          "text": "Take it smooth, ride it with style",
-          "scoreDelta": 3
-        },
-        {
-          "text": "Go all in, biggest drop of the day",
-          "scoreDelta": 4
-        }
+        { "text": "Wave someone else onto it", "scoreDelta": 1 },
+        { "text": "Let it go, watch from the shoulder", "scoreDelta": 2 },
+        { "text": "Take it smooth, ride it with style", "scoreDelta": 3 },
+        { "text": "Go all in, biggest drop of the day", "scoreDelta": 4 }
       ]
     }
   ],

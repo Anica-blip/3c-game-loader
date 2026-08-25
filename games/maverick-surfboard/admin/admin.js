@@ -72,6 +72,7 @@ function blankScene() {
     situation: '',
     image: { label: '', url: '' },
     motion: 'glide-bob',
+    duration: 4,
     verticalPosition: 40,
     soundEffect: '',
     background: { type: 'image', url: '' },
@@ -86,7 +87,7 @@ function blankScene() {
 
 async function listThemes() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_DIR}`;
-  const res = await fetch(url, { headers: apiHeaders() });
+  const res = await fetch(url, { headers: apiHeaders(), cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`GitHub error ${res.status}: could not list themes`);
   }
@@ -98,7 +99,7 @@ async function listThemes() {
 
 async function fetchThemeConfig(themeName) {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_DIR}/${themeName}.json`;
-  const res = await fetch(url, { headers: apiHeaders() });
+  const res = await fetch(url, { headers: apiHeaders(), cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`GitHub error ${res.status}: could not read "${themeName}"`);
   }
@@ -365,6 +366,7 @@ function renderActiveScene() {
   activeLeft.appendChild(textField('Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
 
   activeLeft.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
+  activeLeft.appendChild(sliderField('Speed, seconds to cross the screen (lower is faster)', decision.duration ?? 4, 2, 8, v => { decision.duration = v; }));
   activeLeft.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
   activeLeft.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
 

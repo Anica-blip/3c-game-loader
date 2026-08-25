@@ -272,10 +272,6 @@ export function startGame(config, container) {
   }
 
   function renderFinale() {
-    if (ambientAudio) {
-      ambientAudio.pause();
-      ambientAudio = null;
-    }
     setupBackground(bgLayer, config.background);
 
     const result = config.results.find(r => score >= r.minScore && score <= r.maxScore)

@@ -69,8 +69,8 @@
       "id": 3,
       "situation": "He looks up. He's drifted way past his spot without even noticing.",
       "characterImageId": "surf",
-      "motion": "straight-glide",
-      "verticalPosition": 72,
+      "motion": "glide-bob",
+      "verticalPosition": 75,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%203/scene%203%20-Wait%2C%20where%20am%20I%3F.mp3",
       "options": [
         { "text": "Wait it out, let it sort itself", "scoreDelta": 1 },
@@ -91,7 +91,7 @@
       "id": 4,
       "situation": "Wave says no. He's under, board's gone, world's all bubbles.",
       "characterImageId": "surf",
-      "motion": "glide-bob",
+      "motion": "straight-glide",
       "verticalPosition": 50,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%204/scene%204%20-Can%20a%20duck%20win%3F.mp3",
       "options": [

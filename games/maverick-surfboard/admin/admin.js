@@ -27,6 +27,7 @@ const reloadBtn = document.getElementById('reload-btn');
 const disconnectBtn = document.getElementById('disconnect-btn');
 const saveBtn = document.getElementById('save-btn');
 const saveAsBtn = document.getElementById('save-as-btn');
+const exportBtn = document.getElementById('export-btn');
 const saveStatus = document.getElementById('save-status');
 const globalRoot = document.getElementById('global-root');
 const sceneTabs = document.getElementById('scene-tabs');
@@ -589,6 +590,20 @@ saveAsBtn.addEventListener('click', async () => {
   } catch (err) {
     saveStatus.textContent = `Save failed: ${err.message}`;
   }
+});
+
+exportBtn.addEventListener('click', () => {
+  const filename = `${currentTheme || 'theme'}.json`;
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  saveStatus.textContent = `Downloaded ${filename}. Rename it however you like, then add it to games/maverick-surfboard/config/ in the repo.`;
 });
 
 // On load, if a token is already saved, skip straight to the theme list

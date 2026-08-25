@@ -103,25 +103,7 @@ body {
 }
 
 .maverick-exit-btn {
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 5;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.maverick-exit-btn:hover {
-  background: rgba(0, 0, 0, 0.6);
+  display: none;
 }
 
 .maverick-screen {
@@ -275,9 +257,75 @@ body {
 .maverick-credits-text {
   font-size: 0.85rem;
   line-height: 1.6;
-  text-align: left;
+  text-align: center;
   white-space: pre-wrap;
   margin: 12px 0 20px;
   color: var(--maverick-text);
   opacity: 0.9;
+}
+
+.maverick-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.maverick-off-btn {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--maverick-gold);
+  border-radius: 999px;
+  color: var(--maverick-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.maverick-off-btn:hover {
+  background: rgba(240, 180, 41, 0.15);
+}
+
+/* Maverick message page, video with no container, hidden toolbar */
+.maverick-msg-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.maverick-msg-video {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: block;
+  background: transparent;
+}
+
+.maverick-msg-video::-webkit-media-controls,
+.maverick-msg-video::-webkit-media-controls-enclosure,
+.maverick-msg-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.maverick-flip-btn {
+  background: transparent;
+  border: 2px solid var(--maverick-gold);
+  color: var(--maverick-gold);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  padding: 10px 32px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.maverick-flip-btn:hover {
+  background: rgba(240, 180, 41, 0.12);
 }

@@ -18,6 +18,7 @@ body {
 /* Full-page background wrapper — used by landing.html and consent.html */
 .maverick-bg-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: #252a31;
   display: flex;
   align-items: center;
@@ -70,6 +71,7 @@ body {
 #game-container.maverick-game {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
 }
 
@@ -95,6 +97,7 @@ body {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

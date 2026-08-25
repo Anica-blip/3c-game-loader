@@ -9,7 +9,8 @@ const DEFAULT_THEME = 'maverick-surfboard';
 const MOTION_OPTIONS = [
   { value: 'glide-bob', label: 'Glide and bob' },
   { value: 'straight-glide', label: 'Straight glide' },
-  { value: 'wave-jump', label: 'Wave jump' }
+  { value: 'wave-jump', label: 'Wave jump' },
+  { value: 'wipeout-spin', label: 'Wipeout spin' }
 ];
 
 let state = null;
@@ -593,7 +594,8 @@ saveAsBtn.addEventListener('click', async () => {
 });
 
 exportBtn.addEventListener('click', () => {
-  const filename = `${currentTheme || 'theme'}.json`;
+  const baseName = state.title ? slugify(state.title) : (currentTheme || 'theme');
+  const filename = `${baseName}.json`;
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

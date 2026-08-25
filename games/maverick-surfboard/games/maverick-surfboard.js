@@ -234,7 +234,7 @@ export function startGame(config, container) {
 
   function renderMaverickMessage() {
     if (rafId) cancelAnimationFrame(rafId);
-    setSolidBackground(bgLayer, '#363d46');
+    setSolidBackground(bgLayer, '#252a31');
     content.innerHTML = '';
 
     const wrap = document.createElement('div');
@@ -251,7 +251,7 @@ export function startGame(config, container) {
     video.oncontextmenu = (e) => e.preventDefault();
 
     video.addEventListener('ended', () => {
-      renderFinale();
+      video.pause();
     });
 
     video.play().catch(() => {

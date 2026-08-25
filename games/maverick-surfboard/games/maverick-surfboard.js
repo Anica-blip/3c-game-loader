@@ -1,13 +1,24 @@
 // Repo path: games/maverick-surfboard/games/maverick-surfboard.js
 
-const MOTION_DURATION = 3200;
-
 const MOTION_PRESETS = {
   'glide-bob': (progress) => ({ y: Math.sin(progress * Math.PI * 8) * 12, rotation: 0 }),
   'straight-glide': () => ({ y: 0, rotation: 0 }),
   'wave-jump': (progress) => ({ y: -Math.abs(Math.sin(progress * Math.PI * 5)) * 25, rotation: 0 }),
   'wipeout-spin': (progress) => ({ y: Math.sin(progress * Math.PI * 10) * 35, rotation: progress * 1080 })
 };
+
+function preloadAssets(config) {
+  const urls = [];
+  if (config.background && config.background.url && config.background.type !== 'video') {
+    urls.push(config.background.url);
+  }
+  (config.decisions || []).forEach(d => {
+    if (d.background && d.background.url && d.background.type !== 'video') urls.push(d.background.url);
+    if (d.image && d.image.url) urls.push(d.image.url);
+  });
+  (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
+  urls.forEach(url => { const img = new Image(); img.src = url; });
+}
 
 export function startGame(config, container) {
   let score = 0;
@@ -31,6 +42,8 @@ export function startGame(config, container) {
   bgLayer.className = 'maverick-bg-layer';
   container.appendChild(bgLayer);
   setupBackground(bgLayer, config.background);
+
+  preloadAssets(config);
 
   const content = document.createElement('div');
   content.className = 'maverick-content';
@@ -125,6 +138,7 @@ export function startGame(config, container) {
     const decision = config.decisions[decisionIndex];
     const motionFn = MOTION_PRESETS[decision.motion] || MOTION_PRESETS['glide-bob'];
     const verticalPercent = typeof decision.verticalPosition === 'number' ? decision.verticalPosition : 40;
+    const durationMs = (typeof decision.duration === 'number' ? decision.duration : 4) * 1000;
 
     const sceneBackground = (decision.background && decision.background.url) ? decision.background : config.background;
     setupBackground(bgLayer, sceneBackground);
@@ -150,7 +164,7 @@ export function startGame(config, container) {
     function animate(ts) {
       if (!start) start = ts;
       const elapsed = ts - start;
-      const progress = Math.min(elapsed / MOTION_DURATION, 1);
+      const progress = Math.min(elapsed / durationMs, 1);
 
       const trackWidth = stage.clientWidth - duck.clientWidth;
       const x = progress * trackWidth;
@@ -216,7 +230,10 @@ export function startGame(config, container) {
   }
 
   function renderFinale() {
-    if (ambientAudio) ambientAudio.pause();
+    if (ambientAudio) {
+      ambientAudio.pause();
+      ambientAudio = null;
+    }
     setupBackground(bgLayer, config.background);
 
     const result = config.results.find(r => score >= r.minScore && score <= r.maxScore)

@@ -1,0 +1,76 @@
+<!-- Repo path: mechanics/bingo-grid/bingo-grid.html
+     TEMPLATE — copy into whichever week's folder needs it. 10x10 grid,
+     numbers 1–100, click a block to mark it, click again to unmark.
+     No config JSON, no loader, fully standalone. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #1a0f2e; /* CHANGE THIS: match your background image's tone */
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 3px;
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1 / 1;
+    }
+
+    .bingo-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .bingo-block.marked {
+      background: rgba(240, 180, 41, 0.35); /* CHANGE THIS: accent color */
+      border-color: #f0b429;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bingo-grid" id="bingoGrid"></div>
+
+  <script>
+    var grid = document.getElementById('bingoGrid');
+
+    for (var n = 1; n <= 100; n++) {
+      (function (num) {
+        var block = document.createElement('div');
+        block.className = 'bingo-block';
+        block.textContent = num;
+        block.addEventListener('click', function () {
+          block.classList.toggle('marked');
+        });
+        grid.appendChild(block);
+      })(n);
+    }
+  </script>
+
+</body>
+</html>

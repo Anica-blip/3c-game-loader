@@ -1,0 +1,149 @@
+<!-- Repo path: mechanics/category-cards/category-cards.html
+     TEMPLATE — copy into whichever week's folder needs it, edit CATEGORY_DATA
+     near the top of the script. Same flip mechanic as games/card-flip.js
+     (rotateY + backface-visibility), restyled, no config JSON, no loader,
+     fully standalone. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #1a0f2e; /* CHANGE THIS: match your background image's tone */
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #ffffff;
+      padding: 24px 16px;
+      box-sizing: border-box;
+    }
+
+    .cards-wrapper {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .card {
+      aspect-ratio: 3 / 4;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .card-name {
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid #f0b429; /* CHANGE THIS: accent color */
+      box-shadow: 0 0 15px rgba(240, 180, 41, 0.25);
+    }
+
+    .card-name span {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .card-goals {
+      transform: rotateY(180deg);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .card-goals ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.72rem;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .card-goals li {
+      margin-bottom: 4px;
+    }
+
+    .card-goals li::before {
+      content: "• ";
+      color: #f0b429;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cards-wrapper" id="wrapper"></div>
+
+  <script>
+    // CHANGE THIS: swap in whatever categories and goals this week needs.
+    var CATEGORY_DATA = [
+      { name: "Health", goals: ["Move today, even a little", "Sleep like it matters", "Eat something that actually fuels you", "Drink more water than you think you need"] },
+      { name: "Career", goals: ["Ask for what you're worth", "Learn the thing that moves you forward", "Start that side income you keep circling back to", "Put a little more aside this month", "Chip away at what you owe"] },
+      { name: "Family", goals: ["Have one real conversation this week", "Plan the day out you keep postponing", "Put the phone down and actually be there", "Show up for the small stuff too"] },
+      { name: "Friends", goals: ["Reach out to someone you've drifted from", "Make the time, don't just find it", "Listen a little longer than usual", "Be there when it counts"] },
+      { name: "Social", goals: ["Join something", "Say yes more often than you say no", "Meet someone new", "Widen the circle"] },
+      { name: "Personal development", goals: ["Learn something that lights you up", "Rest on purpose, not by accident", "Strengthen the relationship that needs it", "Build the habit that actually sticks"] }
+    ];
+
+    var wrapper = document.getElementById('wrapper');
+
+    CATEGORY_DATA.forEach(function (cat) {
+      var card = document.createElement('div');
+      card.className = 'card';
+
+      var inner = document.createElement('div');
+      inner.className = 'card-inner';
+
+      var nameFace = document.createElement('div');
+      nameFace.className = 'card-face card-name';
+      nameFace.innerHTML = '<span>' + cat.name + '</span>';
+
+      var goalsFace = document.createElement('div');
+      goalsFace.className = 'card-face card-goals';
+      var list = document.createElement('ul');
+      cat.goals.forEach(function (g) {
+        var li = document.createElement('li');
+        li.textContent = g;
+        list.appendChild(li);
+      });
+      goalsFace.appendChild(list);
+
+      inner.append(nameFace, goalsFace);
+      card.appendChild(inner);
+      wrapper.appendChild(card);
+
+      card.addEventListener('click', function () {
+        card.classList.toggle('flipped');
+      });
+    });
+  </script>
+
+</body>
+</html>

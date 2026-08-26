@@ -1,0 +1,158 @@
+<!-- Repo path: mechanics/puzzle-pieces/puzzle-pieces.html
+     TEMPLATE — copy into whichever week's folder needs it. Once real art
+     exists, set REVEAL_IMAGE near the top of the script to its URL and the
+     four placeholder quadrant colors are replaced automatically (see
+     buildGrid() — CHANGE THIS note inside). No config JSON, no loader,
+     fully standalone. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #1a0f2e; /* CHANGE THIS: match your background image's tone */
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .puzzle-stage {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      max-width: 80vw;
+      max-height: 80vw;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 30px rgba(120, 80, 200, 0.3);
+    }
+
+    .puzzle-under {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .puzzle-piece {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .piece-frost {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease;
+    }
+
+    .piece-frost.cleared {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .piece-frost span {
+      font-size: 1.4rem;
+      color: #f0b429; /* CHANGE THIS: accent color */
+      opacity: 0.8;
+    }
+
+    .complete-msg {
+      margin-top: 18px;
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .complete-msg.show {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="puzzle-stage">
+    <div class="puzzle-under" id="puzzleUnder"></div>
+  </div>
+  <p class="complete-msg" id="completeMsg">The full picture</p>
+
+  <script>
+    // CHANGE THIS: once real art exists, set this to its URL, e.g.
+    //   var REVEAL_IMAGE = 'https://games.3c-public-library.org/.../week1.png';
+    // Leave blank to keep the placeholder quadrant colors below.
+    var REVEAL_IMAGE = '';
+
+    var PLACEHOLDER_COLORS = [
+      'rgba(59, 42, 94, 0.9)',    /* dark purple */
+      'rgba(79, 209, 232, 0.5)',  /* light blue */
+      'rgba(240, 180, 41, 0.5)',  /* gold */
+      'rgba(59, 42, 94, 0.9)'     /* dark purple */
+    ];
+
+    var puzzleUnder = document.getElementById('puzzleUnder');
+    var completeMsg = document.getElementById('completeMsg');
+    var clearedCount = 0;
+    var totalPieces = 4;
+
+    var positions = [
+      { bg: '0% 0%' },
+      { bg: '100% 0%' },
+      { bg: '0% 100%' },
+      { bg: '100% 100%' }
+    ];
+
+    for (var i = 0; i < totalPieces; i++) {
+      (function (index) {
+        var piece = document.createElement('div');
+        piece.className = 'puzzle-piece';
+
+        var under = document.createElement('div');
+        under.style.cssText = 'position:absolute;inset:0;';
+        if (REVEAL_IMAGE) {
+          under.style.backgroundImage = 'url(' + REVEAL_IMAGE + ')';
+          under.style.backgroundSize = '200% 200%';
+          under.style.backgroundPosition = positions[index].bg;
+        } else {
+          under.style.background = PLACEHOLDER_COLORS[index];
+        }
+
+        var frost = document.createElement('div');
+        frost.className = 'piece-frost';
+        frost.innerHTML = '<span>+</span>';
+
+        piece.append(under, frost);
+        puzzleUnder.appendChild(piece);
+
+        piece.addEventListener('click', function () {
+          if (frost.classList.contains('cleared')) return;
+          frost.classList.add('cleared');
+          clearedCount += 1;
+          if (clearedCount === totalPieces) {
+            completeMsg.classList.add('show');
+          }
+        });
+      })(i);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!-- Repo path: mechanics/tower-of-cups/tower-of-cups.html
+     TEMPLATE — copy into whichever week's folder needs it, edit STEP_DATA
+     near the top of the script. The cup shape below is a CSS placeholder,
+     replace it with a real cup image once art is ready (see CHANGE THIS
+     note inside renderCup()). No config JSON, no loader, fully standalone. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tower</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #1a0f2e; /* CHANGE THIS: match your background image's tone */
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .tower-stage {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      min-height: 260px;
+      justify-content: flex-start;
+      margin-bottom: 24px;
+    }
+
+    /* Placeholder cup shape — swap for a real transparent PNG when ready.
+       See renderCup() below for exactly where the image would go instead. */
+    .cup-placeholder {
+      width: 70px;
+      height: 46px;
+      clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      border: 2px solid #f0b429; /* CHANGE THIS: accent color */
+      border-top: none;
+      margin-top: -2px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: cupIn 0.5s ease forwards;
+    }
+
+    @keyframes cupIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 18px 20px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .step-progress {
+      font-size: 0.75rem;
+      color: #f0b429; /* CHANGE THIS: accent color */
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0 0 16px;
+    }
+
+    .step-btn {
+      background: transparent;
+      border: 2px solid #f0b429; /* CHANGE THIS: accent color */
+      color: #f0b429;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 9px 26px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .step-btn:hover {
+      background: rgba(240, 180, 41, 0.12);
+    }
+
+    .complete-msg {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tower-stage" id="towerStage"></div>
+  <div class="step-card" id="stepCard"></div>
+
+  <script>
+    // CHANGE THIS: swap in whatever steps this week's tower needs.
+    var STEP_DATA = [
+      "Name the goal you're building toward",
+      "Say why it actually matters to you",
+      "Pick the first small move",
+      "Decide when you'll take it",
+      "Tell someone, or write it somewhere you'll see it"
+    ];
+
+    var towerStage = document.getElementById('towerStage');
+    var stepCard = document.getElementById('stepCard');
+    var currentStep = 0;
+
+    function renderCup() {
+      var cup = document.createElement('div');
+      cup.className = 'cup-placeholder';
+      // CHANGE THIS when real art is ready — replace the two lines above
+      // and this comment with something like:
+      //   var cup = document.createElement('img');
+      //   cup.src = 'cup.png';
+      //   cup.className = 'cup-real';
+      towerStage.appendChild(cup);
+    }
+
+    function renderStep() {
+      stepCard.innerHTML = '';
+
+      if (currentStep >= STEP_DATA.length) {
+        var msg = document.createElement('p');
+        msg.className = 'complete-msg';
+        msg.textContent = 'The tower is built.';
+        stepCard.appendChild(msg);
+        return;
+      }
+
+      var progress = document.createElement('div');
+      progress.className = 'step-progress';
+      progress.textContent = 'Step ' + (currentStep + 1) + ' of ' + STEP_DATA.length;
+
+      var text = document.createElement('p');
+      text.className = 'step-text';
+      text.textContent = STEP_DATA[currentStep];
+
+      var btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.textContent = 'Done, add the cup';
+      btn.addEventListener('click', function () {
+        renderCup();
+        currentStep += 1;
+        renderStep();
+      });
+
+      stepCard.append(progress, text, btn);
+    }
+
+    renderStep();
+  </script>
+
+</body>
+</html>

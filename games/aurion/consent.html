@@ -1,0 +1,36 @@
+<!-- Repo path: games/aurion/consent.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ready? — 3C Thread To Success</title>
+  <!-- TODO: confirm exact favicon filename saved in /shared -->
+  <link rel="icon" href="../../shared/favicon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="maverick-bg-page">
+    <div class="maverick-screen">
+      <img src="assets/aurion-intro.png" alt="Aurion" class="maverick-duck-img">
+      <h1>Ready to help?</h1>
+      <p class="maverick-body-text">
+        A handful of situations are coming up. Your choices decide what happens next.
+        Tap Play when you're ready.
+      </p>
+      <a href="game.html?configName=week-1" id="play-link" class="maverick-btn maverick-btn-primary">▶ Play</a>
+    </div>
+    <div class="maverick-bottom-watermark">
+      Designed and Built with ❤️ by Claude (Anthropic) × Chef Anica · 3C Thread To Success™ Cooking Lab 🧪👨‍🍳
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var configName = params.get('configName') || 'week-1';
+      document.getElementById('play-link').href = 'game.html?configName=' + encodeURIComponent(configName);
+    })();
+  </script>
+</body>
+</html>

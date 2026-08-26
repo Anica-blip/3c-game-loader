@@ -146,6 +146,13 @@
       "Category 4", "Category 5", "Category 6"
     ];
 
+    // CHANGE THIS: once you have a full wheel illustration (segments and
+    // labels already drawn into the artwork), set this to its URL and the
+    // code-drawn placeholder segments/text below are skipped entirely —
+    // the image just spins as one whole piece, same approach as vault-door.
+    // Leave blank to keep using the placeholder colored segments.
+    var WHEEL_IMAGE = '';
+
     var wheel = document.getElementById('wheel');
     var spinBtn = document.getElementById('spinBtn');
     var result = document.getElementById('result');
@@ -153,6 +160,14 @@
     var spinning = false;
 
     function buildWheel() {
+      if (WHEEL_IMAGE) {
+        wheel.style.background = 'none';
+        wheel.style.backgroundImage = 'url(' + WHEEL_IMAGE + ')';
+        wheel.style.backgroundSize = 'cover';
+        wheel.style.backgroundPosition = 'center';
+        return;
+      }
+
       var count = WHEEL_DATA.length;
       var slice = 360 / count;
 

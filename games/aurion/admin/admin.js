@@ -4,7 +4,7 @@ const REPO_OWNER = 'Anica-blip';
 const REPO_NAME = '3c-game-loader';
 const CONFIG_DIR = 'games/aurion/config';
 const PAT_STORAGE_KEY = 'gameAdminPAT'; // shared key name across all game admins, same token works for any of them
-const DEFAULT_THEME = 'week-1';
+const DEFAULT_THEME = 'aurion';
 
 const MOTION_OPTIONS = [
   { value: 'glide-bob', label: 'Glide and bob' },

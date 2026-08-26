@@ -1,0 +1,212 @@
+<!-- Repo path: mechanics/spin-wheel/spin-wheel.html
+     TEMPLATE — copy into whichever week's folder needs it, edit WHEEL_DATA
+     near the top of the script once labels are ready. No config JSON, no
+     loader, fully standalone. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #1a0f2e; /* CHANGE THIS: match your background image's tone */
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .wheel-stage {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      max-width: 80vw;
+      max-height: 80vw;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 22px solid #f0b429; /* CHANGE THIS: accent color */
+      z-index: 5;
+      filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
+    }
+
+    .wheel-glass {
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 30px rgba(120, 80, 200, 0.35);
+    }
+
+    .wheel {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .segment-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50%;
+      text-align: right;
+      padding-right: 14px;
+      box-sizing: border-box;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      transform-origin: left center;
+      white-space: nowrap;
+    }
+
+    .hub {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 46px;
+      height: 46px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      z-index: 4;
+    }
+
+    .spin-btn {
+      margin-top: 32px;
+      background: transparent;
+      border: 2px solid #f0b429; /* CHANGE THIS: accent color */
+      color: #f0b429;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 10px 32px;
+      border-radius: 999px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+    }
+
+    .spin-btn:hover {
+      background: rgba(240, 180, 41, 0.12);
+    }
+
+    .spin-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+      background: none;
+    }
+
+    .result {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wheel-stage">
+    <div class="wheel-glass"></div>
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel"></div>
+    <div class="hub"></div>
+  </div>
+
+  <button class="spin-btn" id="spinBtn">Spin</button>
+  <p class="result" id="result"></p>
+
+  <script>
+    // CHANGE THIS: swap in real labels once ready. Any number of segments works.
+    var WHEEL_DATA = [
+      "Category 1", "Category 2", "Category 3",
+      "Category 4", "Category 5", "Category 6"
+    ];
+
+    var wheel = document.getElementById('wheel');
+    var spinBtn = document.getElementById('spinBtn');
+    var result = document.getElementById('result');
+    var currentRotation = 0;
+    var spinning = false;
+
+    function buildWheel() {
+      var count = WHEEL_DATA.length;
+      var slice = 360 / count;
+
+      var brandColors = [
+        'rgba(59, 42, 94, 0.9)',    /* dark purple */
+        'rgba(79, 209, 232, 0.55)', /* light blue */
+        'rgba(240, 180, 41, 0.55)'  /* gold */
+      ];
+
+      var stops = [];
+      for (var i = 0; i < count; i++) {
+        var color = brandColors[i % brandColors.length];
+        stops.push(color + ' ' + (i * slice) + 'deg ' + ((i + 1) * slice) + 'deg');
+      }
+      wheel.style.background = 'conic-gradient(' + stops.join(', ') + ')';
+
+      WHEEL_DATA.forEach(function (label, i) {
+        var el = document.createElement('div');
+        el.className = 'segment-label';
+        var angle = slice * i + slice / 2;
+        el.style.transform = 'translateY(-50%) rotate(' + angle + 'deg)';
+        el.textContent = label;
+        wheel.appendChild(el);
+      });
+    }
+
+    function spin() {
+      if (spinning) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      result.textContent = '';
+
+      var count = WHEEL_DATA.length;
+      var slice = 360 / count;
+      var winnerIndex = Math.floor(Math.random() * count);
+
+      // land the winning segment's center under the fixed top pointer
+      var landingAngle = 360 - (winnerIndex * slice + slice / 2);
+      var extraSpins = 5 + Math.floor(Math.random() * 3); // 5–7 full spins for effect
+      var totalRotation = currentRotation + extraSpins * 360 + ((landingAngle - (currentRotation % 360) + 360) % 360);
+
+      currentRotation = totalRotation;
+      wheel.style.transform = 'rotate(' + totalRotation + 'deg)';
+
+      setTimeout(function () {
+        spinning = false;
+        spinBtn.disabled = false;
+        result.textContent = WHEEL_DATA[winnerIndex];
+      }, 4600);
+    }
+
+    spinBtn.addEventListener('click', spin);
+    buildWheel();
+  </script>
+
+</body>
+</html>

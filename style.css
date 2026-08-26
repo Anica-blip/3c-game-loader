@@ -464,20 +464,18 @@ main {
 }
 
 .card-back {
-  background: var(--card-back) no-repeat center/cover;
-  border: 2px solid var(--brand-neon-gold);
-  box-shadow: 0 0 15px rgba(255, 237, 74, 0.3);
+  background: #1a0f2e;
+  border: 2px solid rgba(255, 255, 255, 0.15);
 }
 
 .card-front {
   transform: rotateY(180deg);
-  background: var(--glass-bg);
+  background: #1a0f2e;
   backdrop-filter: blur(20px);
   padding: var(--spacing-sm);
   color: var(--text-primary);
   font-weight: 600;
-  border: 2px solid var(--brand-light-blue);
-  box-shadow: 0 0 15px rgba(3, 218, 198, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Footer - Modern Centered Design */

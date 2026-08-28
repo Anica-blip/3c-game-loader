@@ -82,17 +82,29 @@ const CATEGORY_MESSAGES = {
   }
 };
 
+// Any image/background field can be given as either a full Cloudflare URL
+// or just a bare filename meant to live in this game's own assets/ folder.
+// This is what actually tells them apart — if it isn't already a full
+// address, treat it as a repo-relative path automatically.
+function resolveAssetUrl(url) {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url) || url.startsWith('assets/') || url.startsWith('/')) {
+    return url;
+  }
+  return 'assets/' + url;
+}
+
 function preloadAssets(config) {
   const urls = [];
   if (config.background && config.background.url && config.background.type !== 'video') {
-    urls.push(config.background.url);
+    urls.push(resolveAssetUrl(config.background.url));
   }
   (config.decisions || []).forEach(d => {
-    if (d.background && d.background.url && d.background.type !== 'video') urls.push(d.background.url);
-    if (d.image && d.image.url) urls.push(d.image.url);
-    if (d.overlayImage && d.overlayImage.url) urls.push(d.overlayImage.url);
+    if (d.background && d.background.url && d.background.type !== 'video') urls.push(resolveAssetUrl(d.background.url));
+    if (d.image && d.image.url) urls.push(resolveAssetUrl(d.image.url));
+    if (d.overlayImage && d.overlayImage.url) urls.push(resolveAssetUrl(d.overlayImage.url));
   });
-  (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
+  (config.characterImages || []).forEach(img => { if (img.url) urls.push(resolveAssetUrl(img.url)); });
 
   const loadPromises = urls.map(url => new Promise(resolve => {
     const img = new Image();
@@ -187,7 +199,7 @@ export function startGame(config, container) {
       bgLayer.appendChild(video);
       video.play().catch(() => {});
     } else {
-      bgLayer.style.backgroundImage = `url('${effective.url}')`;
+      bgLayer.style.backgroundImage = `url('${resolveAssetUrl(effective.url)}')`;
       bgLayer.style.backgroundSize = 'cover';
       bgLayer.style.backgroundPosition = 'center';
       bgLayer.style.backgroundRepeat = 'no-repeat';
@@ -218,7 +230,7 @@ export function startGame(config, container) {
 
     if (scene.overlayImage && scene.overlayImage.url) {
       const img = document.createElement('img');
-      img.src = scene.overlayImage.url;
+      img.src = resolveAssetUrl(scene.overlayImage.url);
       img.alt = '';
       img.className = 'aurion-overlay-img aurion-overlay-' + (scene.overlayImage.position || 'center');
       wrap.appendChild(img);
@@ -294,7 +306,7 @@ export function startGame(config, container) {
       const b = document.createElement('button');
       b.className = 'aurion-btn';
       if (btn.image) {
-        b.style.backgroundImage = `url('${btn.image}')`;
+        b.style.backgroundImage = `url('${resolveAssetUrl(btn.image)}')`;
         b.classList.add('aurion-btn-imaged');
       }
       b.textContent = btn.text || 'Continue';
@@ -352,17 +364,17 @@ export function startGame(config, container) {
 
     const closedImg = document.createElement('img');
     closedImg.className = 'aurion-door-img aurion-door-closed';
-    closedImg.src = (scene.image && scene.image.url) || '';
+    closedImg.src = resolveAssetUrl((scene.image && scene.image.url) || '');
     closedImg.alt = '';
 
     const openImg = document.createElement('img');
     openImg.className = 'aurion-door-img aurion-door-open';
-    openImg.src = scene.mechanicData.openImage || '';
+    openImg.src = resolveAssetUrl(scene.mechanicData.openImage || '');
     openImg.alt = '';
 
     const revealImg = document.createElement('img');
     revealImg.className = 'aurion-door-reveal';
-    revealImg.src = scene.mechanicData.revealImage || '';
+    revealImg.src = resolveAssetUrl(scene.mechanicData.revealImage || '');
     revealImg.alt = '';
 
     stage.append(closedImg, openImg, revealImg);
@@ -459,7 +471,7 @@ export function startGame(config, container) {
       tile.className = 'aurion-sort-tile';
       tile.dataset.category = cat;
       if (categoryImages[cat]) {
-        tile.style.backgroundImage = `url('${categoryImages[cat]}')`;
+        tile.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
       }
       const countBadge = document.createElement('span');
       countBadge.className = 'aurion-sort-count';
@@ -560,7 +572,7 @@ export function startGame(config, container) {
     wheel.className = 'aurion-wheel';
     const wheelImage = scene.mechanicData && scene.mechanicData.wheelImage;
     if (wheelImage) {
-      wheel.style.backgroundImage = `url('${wheelImage}')`;
+      wheel.style.backgroundImage = `url('${resolveAssetUrl(wheelImage)}')`;
     } else {
       wheel.style.background = 'conic-gradient(rgba(59,42,94,0.9) 0deg 45deg, rgba(79,209,232,0.55) 45deg 90deg, rgba(240,180,41,0.55) 90deg 135deg, rgba(59,42,94,0.9) 135deg 180deg, rgba(79,209,232,0.55) 180deg 225deg, rgba(240,180,41,0.55) 225deg 270deg, rgba(59,42,94,0.9) 270deg 315deg, rgba(79,209,232,0.55) 315deg 360deg)';
     }
@@ -598,7 +610,7 @@ export function startGame(config, container) {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-reveal-tile';
       if (categoryImages[cat]) {
-        tile.style.backgroundImage = `url('${categoryImages[cat]}')`;
+        tile.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
       }
 
       const isChosen = chosenCategories.includes(cat);

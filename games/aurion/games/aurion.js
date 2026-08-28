@@ -138,7 +138,7 @@ export function startGame(config, container) {
   // of any button logic, purely a polite way to leave at any point.
   const exitBtn = document.createElement('button');
   exitBtn.className = 'aurion-exit-btn';
-  exitBtn.textContent = '\u2715';
+  exitBtn.style.backgroundImage = `url('${resolveAssetUrl('goal.01-exitsymbol.png')}')`;
   exitBtn.setAttribute('aria-label', 'Exit');
   exitBtn.addEventListener('click', () => {
     if (ambientAudio) ambientAudio.pause();

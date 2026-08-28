@@ -121,8 +121,8 @@ const MECHANIC_OPTIONS = [
   { value: 'none', label: 'None (generic scene)' },
   { value: 'door', label: 'Door (open and reveal)' },
   { value: 'word-picker', label: 'Word picker (pick 5 from 30)' },
-  { value: 'sorting', label: 'Sorting (coming soon)' },
-  { value: 'spin-wheel', label: 'Spin wheel (coming soon)' },
+  { value: 'sorting', label: 'Sorting (drag words to categories)' },
+  { value: 'spin-wheel', label: 'Spin wheel (decorative)' },
   { value: 'reveal-cards', label: 'Reveal cards (coming soon)' }
 ];
 
@@ -137,6 +137,26 @@ function renderMechanicFields(decision) {
     wrap.appendChild(label);
     wrap.appendChild(textField('Open door image URL (repo or Cloudflare)', decision.mechanicData.openImage, v => { decision.mechanicData.openImage = v; }));
     wrap.appendChild(textField('Reveal image URL, e.g. the sticky note (repo or Cloudflare)', decision.mechanicData.revealImage, v => { decision.mechanicData.revealImage = v; }));
+  }
+
+  if (decision.mechanic === 'sorting') {
+    const label = document.createElement('span');
+    label.className = 'admin-small-label';
+    label.textContent = 'Sorting mechanic — one cover image per category container';
+    wrap.appendChild(label);
+    if (!decision.mechanicData.categoryImages) decision.mechanicData.categoryImages = {};
+    ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'].forEach(cat => {
+      if (!decision.mechanicData.categoryImages[cat]) decision.mechanicData.categoryImages[cat] = '';
+      wrap.appendChild(textField(cat + ' container image URL', decision.mechanicData.categoryImages[cat], v => { decision.mechanicData.categoryImages[cat] = v; }));
+    });
+  }
+
+  if (decision.mechanic === 'spin-wheel') {
+    const label = document.createElement('span');
+    label.className = 'admin-small-label';
+    label.textContent = 'Spin wheel — decorative only, tap to spin, button appears once it stops';
+    wrap.appendChild(label);
+    wrap.appendChild(textField('Wheel image URL, full wheel graphic (repo or Cloudflare)', decision.mechanicData.wheelImage, v => { decision.mechanicData.wheelImage = v; }));
   }
 
   return wrap;

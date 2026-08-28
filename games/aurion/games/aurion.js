@@ -64,6 +64,7 @@ export function startGame(config, container) {
   let sceneIndex = 0;
   let ambientAudio = null;
   let selectedWords = []; // the 5 words chosen in Scene 5, carried forward to Scene 6
+  let categoryCounts = {}; // filled in once Scene 6's sorting is complete, used by Scene 8
 
   container.classList.add('aurion-game');
   container.innerHTML = '';
@@ -210,6 +211,16 @@ export function startGame(config, container) {
     if (scene.mechanic === 'word-picker') {
       mechanicGatesButton = true;
       buildWordPickerMechanic(mechanicSlot, revealButtons);
+    }
+
+    if (scene.mechanic === 'sorting') {
+      mechanicGatesButton = true;
+      buildSortingMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'spin-wheel') {
+      mechanicGatesButton = true;
+      buildSpinWheelMechanic(mechanicSlot, scene, revealButtons);
     }
 
     if (scene.video) {
@@ -369,5 +380,138 @@ export function startGame(config, container) {
     }
 
     slot.append(counter, grid, popup);
+  }
+
+  function buildSortingMechanic(slot, scene, onComplete) {
+    const categoryImages = (scene.mechanicData && scene.mechanicData.categoryImages) || {};
+    const categories = ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'];
+    let placedCount = 0;
+
+    const board = document.createElement('div');
+    board.className = 'aurion-sort-board';
+    const tiles = {};
+    categories.forEach(cat => {
+      const tile = document.createElement('div');
+      tile.className = 'aurion-sort-tile';
+      tile.dataset.category = cat;
+      if (categoryImages[cat]) {
+        tile.style.backgroundImage = `url('${categoryImages[cat]}')`;
+      }
+      const countBadge = document.createElement('span');
+      countBadge.className = 'aurion-sort-count';
+      countBadge.textContent = '0';
+      tile.appendChild(countBadge);
+      board.appendChild(tile);
+      tiles[cat] = { el: tile, count: 0, badge: countBadge };
+    });
+
+    const tray = document.createElement('div');
+    tray.className = 'aurion-sort-tray';
+
+    const trayTitle = document.createElement('h2');
+    trayTitle.className = 'aurion-sort-tray-title';
+    trayTitle.textContent = 'Your List Of Five';
+
+    const trayStars = document.createElement('div');
+    trayStars.className = 'aurion-word-stars';
+    for (let i = 0; i < selectedWords.length; i++) {
+      const star = document.createElement('span');
+      star.textContent = '\u2605';
+      trayStars.appendChild(star);
+    }
+
+    const chipList = document.createElement('div');
+    chipList.className = 'aurion-sort-chip-list';
+
+    tray.append(trayTitle, trayStars, chipList);
+
+    selectedWords.forEach(entry => {
+      const chip = document.createElement('div');
+      chip.className = 'aurion-sort-chip';
+      chip.textContent = entry.word;
+      chipList.appendChild(chip);
+
+      let startX = 0, startY = 0, offsetX = 0, offsetY = 0, dragging = false;
+
+      chip.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        chip.setPointerCapture(e.pointerId);
+        chip.classList.add('dragging');
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+
+      chip.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        offsetX = e.clientX - startX;
+        offsetY = e.clientY - startY;
+        chip.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      });
+
+      chip.addEventListener('pointerup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        chip.classList.remove('dragging');
+
+        let landedTile = null;
+        for (const cat of categories) {
+          const rect = tiles[cat].el.getBoundingClientRect();
+          if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            landedTile = cat;
+            break;
+          }
+        }
+
+        if (landedTile === entry.category) {
+          tiles[landedTile].el.classList.add('lit');
+          tiles[landedTile].count += 1;
+          tiles[landedTile].badge.textContent = String(tiles[landedTile].count);
+          categoryCounts[landedTile] = (categoryCounts[landedTile] || 0) + 1;
+          chip.classList.add('placed');
+          chip.style.transform = 'translate(0, 0)';
+          placedCount += 1;
+          if (placedCount === selectedWords.length) {
+            onComplete();
+          }
+        } else {
+          chip.style.transform = 'translate(0, 0)';
+        }
+      });
+    });
+
+    const sortWrap = document.createElement('div');
+    sortWrap.className = 'aurion-sort-wrap';
+    sortWrap.append(board, tray);
+    slot.appendChild(sortWrap);
+  }
+
+  function buildSpinWheelMechanic(slot, scene, onComplete) {
+    const stage = document.createElement('div');
+    stage.className = 'aurion-wheel-stage';
+
+    const pointer = document.createElement('div');
+    pointer.className = 'aurion-wheel-pointer';
+
+    const wheel = document.createElement('div');
+    wheel.className = 'aurion-wheel';
+    const wheelImage = scene.mechanicData && scene.mechanicData.wheelImage;
+    if (wheelImage) {
+      wheel.style.backgroundImage = `url('${wheelImage}')`;
+    } else {
+      wheel.style.background = 'conic-gradient(rgba(59,42,94,0.9) 0deg 45deg, rgba(79,209,232,0.55) 45deg 90deg, rgba(240,180,41,0.55) 90deg 135deg, rgba(59,42,94,0.9) 135deg 180deg, rgba(79,209,232,0.55) 180deg 225deg, rgba(240,180,41,0.55) 225deg 270deg, rgba(59,42,94,0.9) 270deg 315deg, rgba(79,209,232,0.55) 315deg 360deg)';
+    }
+
+    let spun = false;
+    stage.addEventListener('click', () => {
+      if (spun) return;
+      spun = true;
+      const extraSpins = 5 + Math.floor(Math.random() * 3);
+      const randomOffset = Math.floor(Math.random() * 360);
+      wheel.style.transform = `rotate(${extraSpins * 360 + randomOffset}deg)`;
+      setTimeout(onComplete, 4600);
+    });
+
+    stage.append(pointer, wheel);
+    slot.appendChild(stage);
   }
 }

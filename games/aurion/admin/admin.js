@@ -101,6 +101,8 @@ function blankScene(id) {
   return {
     id: id,
     adminLabel: '',
+    mechanic: 'none',
+    mechanicData: {},
     situation: '',
     image: { label: '', url: '' },
     motion: '',
@@ -113,6 +115,31 @@ function blankScene(id) {
     buttons: [{}],
     options: []
   };
+}
+
+const MECHANIC_OPTIONS = [
+  { value: 'none', label: 'None (generic scene)' },
+  { value: 'door', label: 'Door (open and reveal)' },
+  { value: 'word-picker', label: 'Word picker (coming soon)' },
+  { value: 'sorting', label: 'Sorting (coming soon)' },
+  { value: 'spin-wheel', label: 'Spin wheel (coming soon)' },
+  { value: 'reveal-cards', label: 'Reveal cards (coming soon)' }
+];
+
+function renderMechanicFields(decision) {
+  const wrap = document.createElement('div');
+  if (!decision.mechanicData) decision.mechanicData = {};
+
+  if (decision.mechanic === 'door') {
+    const label = document.createElement('span');
+    label.className = 'admin-small-label';
+    label.textContent = 'Door mechanic — closed door lives in the regular "Duck / character image" field above';
+    wrap.appendChild(label);
+    wrap.appendChild(textField('Open door image URL (repo or Cloudflare)', decision.mechanicData.openImage, v => { decision.mechanicData.openImage = v; }));
+    wrap.appendChild(textField('Reveal image URL, e.g. the sticky note (repo or Cloudflare)', decision.mechanicData.revealImage, v => { decision.mechanicData.revealImage = v; }));
+  }
+
+  return wrap;
 }
 
 // ---- GitHub API ----
@@ -630,6 +657,9 @@ function renderActiveScene() {
   activeLeft.appendChild(overlayImageField(decision.overlayImage,
     'Overlay image — flat, no container, portrait, medium size (this is where Chef adds the landing/consent/etc image if using the stage default background)'
   ));
+
+  activeLeft.appendChild(selectField('Mechanic', decision.mechanic || 'none', MECHANIC_OPTIONS, v => { decision.mechanic = v; renderForm(); }));
+  activeLeft.appendChild(renderMechanicFields(decision));
 
   activeLeft.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
   activeLeft.appendChild(sliderField('Speed, seconds to cross the screen (lower is faster)', decision.duration ?? 4, 2, 8, v => { decision.duration = v; }));

@@ -326,3 +326,25 @@ body {
   cursor: pointer;
   padding: 0 4px;
 }
+
+/* Setting the Stage gets its own darker zone so it visually reads as
+   "not where the scene work happens" */
+#global-root {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Setting the Scene gets a bold header bar instead of plain text, the
+   opposite visual weight from the stage zone above */
+.admin-scene-header-bar {
+  background: var(--brand-neon-gold);
+  color: #14141a;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-bottom: var(--spacing-md);
+}

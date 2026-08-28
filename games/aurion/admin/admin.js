@@ -287,6 +287,10 @@ function makeDrawer(titleText) {
   header.append(title, closeBtn);
   drawer.appendChild(header);
 
+  // Mounted on body directly, not inside the field it belongs to — anything
+  // with backdrop-filter (like .admin-card) creates a new positioning
+  // boundary that breaks position:fixed for anything nested inside it.
+  document.body.appendChild(drawer);
   return drawer;
 }
 
@@ -326,7 +330,7 @@ function styledTextGroup(prefix, obj, fontOptions, defaults, sectionLabel, useTe
   styleBtn.addEventListener('click', () => drawer.classList.add('open'));
 
   row.append(contentEl, styleBtn);
-  wrap.append(row, drawer);
+  wrap.append(row);
   return wrap;
 }
 
@@ -367,7 +371,7 @@ function styledButtonGroup(obj, sectionLabel) {
   styleBtn.addEventListener('click', () => drawer.classList.add('open'));
 
   row.append(textInput, styleBtn);
-  wrap.append(row, drawer);
+  wrap.append(row);
   return wrap;
 }
 
@@ -390,13 +394,14 @@ function drawerTextField(buttonLabel, drawerTitleText, value, onChange) {
 
   openBtn.addEventListener('click', () => drawer.classList.add('open'));
 
-  wrap.append(openBtn, drawer);
+  wrap.append(openBtn);
   return wrap;
 }
 
 // ---- main render ----
 
 function renderForm() {
+  document.querySelectorAll('.admin-drawer').forEach(d => d.remove());
   renderGlobal();
   renderSceneTabs();
   renderActiveScene();
@@ -435,30 +440,24 @@ function renderGlobal() {
   bgSection.appendChild(textField('Cloudflare or repo URL', state.background.url, v => { state.background.url = v; }));
   globalRoot.appendChild(bgSection);
 
-  globalRoot.appendChild(textField(
-    'Intro image (repo path, do not use a Cloudflare URL here)',
-    state.introImage,
-    v => { state.introImage = v; }
-  ));
-
-  globalRoot.appendChild(textField(
-    'Finale image (repo path, do not use a Cloudflare URL here)',
-    state.finaleImage,
-    v => { state.finaleImage = v; }
-  ));
-
   // Four page overlay images: landing, consent, begin game, finale
   const pageImgSection = document.createElement('div');
   pageImgSection.className = 'admin-section';
   pageImgSection.appendChild(sectionTitle('Page images — flat, centered, no container, portrait, medium size'));
-  if (!state.pageImages) state.pageImages = { landing: { url: '' }, consent: { url: '' }, beginGame: { url: '' }, finale: { url: '' } };
+  if (!state.pageImages) state.pageImages = { landing: { url: '', position: 'center' }, consent: { url: '', position: 'center' }, beginGame: { url: '', position: 'center' }, finale: { url: '', position: 'top' } };
 
   const pageImgGrid = document.createElement('div');
   pageImgGrid.className = 'admin-scene-columns';
   ['landing', 'consent', 'beginGame', 'finale'].forEach(key => {
-    if (!state.pageImages[key]) state.pageImages[key] = { url: '' };
-    const labelMap = { landing: 'Landing page', consent: 'Consent page', beginGame: 'Begin game page', finale: 'Finale page' };
-    pageImgGrid.appendChild(textField(labelMap[key] + ' (repo or Cloudflare URL)', state.pageImages[key].url, v => { state.pageImages[key].url = v; }));
+    if (!state.pageImages[key]) state.pageImages[key] = { url: '', position: key === 'finale' ? 'top' : 'center' };
+    const labelMap = { landing: 'Landing page', consent: 'Consent page', beginGame: 'Begin game page (was Intro)', finale: 'Finale page' };
+    const cell = document.createElement('div');
+    cell.appendChild(textField(labelMap[key] + ' (repo or Cloudflare URL)', state.pageImages[key].url, v => { state.pageImages[key].url = v; }));
+    cell.appendChild(selectField('Position', state.pageImages[key].position || 'center',
+      [{ value: 'center', label: 'Center' }, { value: 'top', label: 'Top' }, { value: 'bottom', label: 'Bottom' }],
+      v => { state.pageImages[key].position = v; }
+    ));
+    pageImgGrid.appendChild(cell);
   });
   pageImgSection.appendChild(pageImgGrid);
   globalRoot.appendChild(pageImgSection);
@@ -591,12 +590,16 @@ function renderActiveScene() {
   activeLeft.appendChild(textField('Name', decision.image.label, v => { decision.image.label = v; }));
   activeLeft.appendChild(textField('Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
 
-  if (!decision.overlayImage) decision.overlayImage = { url: '' };
+  if (!decision.overlayImage) decision.overlayImage = { url: '', position: 'center' };
   const overlayLabel = document.createElement('span');
   overlayLabel.className = 'admin-small-label';
   overlayLabel.textContent = 'Overlay image — flat, centered, no container, portrait, medium size (repo path or Cloudflare URL)';
   activeLeft.appendChild(overlayLabel);
   activeLeft.appendChild(textField('Image URL', decision.overlayImage.url, v => { decision.overlayImage.url = v; }));
+  activeLeft.appendChild(selectField('Position', decision.overlayImage.position || 'center',
+    [{ value: 'center', label: 'Center' }, { value: 'top', label: 'Top' }, { value: 'bottom', label: 'Bottom' }],
+    v => { decision.overlayImage.position = v; }
+  ));
 
   activeLeft.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
   activeLeft.appendChild(sliderField('Speed, seconds to cross the screen (lower is faster)', decision.duration ?? 4, 2, 8, v => { decision.duration = v; }));

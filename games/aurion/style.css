@@ -1,21 +1,22 @@
 /* Repo path: games/aurion/style.css */
 
 :root {
-  --maverick-purple: #3b2a5e;
-  --maverick-teal: #2ec4d6;
-  --maverick-gold: #f0b429;
-  --maverick-dark: #14141a;
-  --maverick-text: #ffffff;
+  --aurion-dark: #1a0f2e;
+  --aurion-gold: #f0b429;
+  --aurion-text: #ffffff;
 }
 
 body {
   margin: 0;
-  font-family: 'Montserrat', Arial, sans-serif;
-  background-color: var(--maverick-dark);
-  color: var(--maverick-text);
+  font-family: 'Poppins', Arial, sans-serif;
+  background-color: var(--aurion-dark);
+  color: var(--aurion-text);
 }
 
-/* Full-page background wrapper — used by landing.html and consent.html */
+/* Full-page background wrapper — used by landing.html and consent.html.
+   Class name kept as "maverick-bg-page" since that's what those two HTML
+   files already reference — purely a naming leftover, not a functional tie
+   to Maverick's own styling, same reuse choice made for the admin panel. */
 .maverick-bg-page {
   min-height: 100vh;
   min-height: 100dvh;
@@ -28,7 +29,6 @@ body {
   position: relative;
 }
 
-/* Top watermark — landing page only: diamond + 3C Thread To Success (no TM) */
 .maverick-top-watermark {
   position: absolute;
   top: 16px;
@@ -39,7 +39,7 @@ body {
   justify-content: center;
   gap: 6px;
   font-size: 0.95rem;
-  color: var(--maverick-text);
+  color: var(--aurion-text);
   opacity: 0.85;
 }
 
@@ -52,7 +52,6 @@ body {
   object-fit: contain;
 }
 
-/* Bottom watermark — consent page only: Designed and Built credit */
 .maverick-bottom-watermark {
   position: absolute;
   bottom: 12px;
@@ -60,58 +59,14 @@ body {
   right: 0;
   text-align: center;
   font-size: 0.7rem;
-  color: var(--maverick-text);
+  color: var(--aurion-text);
   opacity: 0.7;
   padding: 0 16px;
 }
 
-/* Used by game.html's #game-container — split into a persistent background
-   layer and a content layer, so switching scenes never interrupts a
-   looping background video */
-#game-container.maverick-game {
-  position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow: hidden;
-}
-
-.maverick-bg-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.maverick-bg-image {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.maverick-bg-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.maverick-content {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.maverick-exit-btn {
-  display: none;
-}
-
 .maverick-screen {
   background: rgba(20, 20, 26, 0.72);
-  border: 2px solid var(--maverick-gold);
+  border: 2px solid var(--aurion-gold);
   border-radius: 16px;
   padding: 24px;
   max-width: 420px;
@@ -126,35 +81,17 @@ body {
   margin-bottom: 12px;
 }
 
-.maverick-duck-surf {
-  width: 180px;
-}
-
 .maverick-screen h1 {
+  font-family: 'Luckiest Guy', cursive;
   font-size: 1.4rem;
   margin: 8px 0;
-  color: var(--maverick-gold);
+  color: var(--aurion-gold);
 }
 
 .maverick-body-text {
   font-size: 1rem;
   line-height: 1.5;
   margin: 12px 0;
-}
-
-.maverick-progress {
-  font-size: 0.85rem;
-  color: var(--maverick-teal);
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.maverick-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 16px;
 }
 
 .maverick-btn {
@@ -173,23 +110,11 @@ body {
 }
 
 .maverick-btn-primary {
-  background: var(--maverick-teal);
-  color: var(--maverick-dark);
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
   font-weight: 700;
   text-decoration: none;
   display: inline-block;
-}
-
-.maverick-btn-option {
-  background: var(--maverick-purple);
-  color: var(--maverick-text);
-  border: 1px solid var(--maverick-teal);
-}
-
-.maverick-score-line {
-  font-size: 0.9rem;
-  color: var(--maverick-gold);
-  margin-top: 4px;
 }
 
 @media (max-width: 480px) {
@@ -199,65 +124,9 @@ body {
   .maverick-duck-img {
     width: 110px;
   }
-  .maverick-duck-surf {
-    width: 150px;
-  }
 }
 
-/* Motion stage — used during each decision's travel animation */
-.maverick-stage {
-  position: relative;
-  width: 100%;
-  max-width: 700px;
-  height: 220px;
-  margin: 40px auto 0;
-}
-
-.maverick-duck-moving {
-  position: absolute;
-  left: 0;
-}
-
-/* Glass "click" prompt — appears when the character reaches the end of the pass */
-.maverick-glass-btn {
-  position: absolute;
-  right: 35%;
-  top: 50%;
-  background: rgba(46, 196, 214, 0.18);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 2px solid var(--maverick-teal);
-  border-radius: 999px;
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--maverick-text);
-  font-weight: 700;
-  font-size: 0.8rem;
-  cursor: pointer;
-  animation: maverick-pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes maverick-pulse {
-  0%, 100% { transform: translateY(-50%) scale(1); box-shadow: 0 0 0 0 rgba(46, 196, 214, 0.5); }
-  50% { transform: translateY(-50%) scale(1.08); box-shadow: 0 0 0 10px rgba(46, 196, 214, 0); }
-}
-
-/* Credits screen and the link that opens it from the finale screen */
-.maverick-btn-link {
-  background: none;
-  border: none;
-  color: var(--maverick-teal);
-  text-decoration: underline;
-  font-size: 0.85rem;
-  cursor: pointer;
-  margin-top: 8px;
-  padding: 4px 8px;
-}
-
-/* Loading screen hourglass, used instead of a generic spinner */
+/* Loading screen hourglass */
 .loading-hourglass {
   width: 56px;
   height: 84px;
@@ -273,7 +142,7 @@ body {
   left: 0;
   width: 100%;
   height: 50%;
-  border: 2px solid var(--maverick-gold);
+  border: 2px solid var(--aurion-gold);
   background: rgba(240, 180, 41, 0.12);
 }
 
@@ -294,7 +163,7 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--maverick-gold);
+  background: var(--aurion-gold);
   transform: translateX(-50%);
   animation: sand-fall 3s ease-in-out infinite;
 }
@@ -313,79 +182,145 @@ body {
   100% { opacity: 0; }
 }
 
-.maverick-credits-text {
-  font-size: 0.85rem;
-  line-height: 1.6;
-  text-align: center;
-  white-space: pre-wrap;
-  margin: 12px 0 20px;
-  color: var(--maverick-text);
-  opacity: 0.9;
+/* ---- In-game engine styles (aurion.js) ---- */
+
+#game-container.aurion-game {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
 }
 
-.maverick-bottom-row {
+.aurion-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.aurion-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aurion-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-top: 6px;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
-.maverick-off-btn {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--maverick-gold);
-  border-radius: 999px;
-  color: var(--maverick-gold);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 6px 16px;
+.aurion-exit-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.9rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.maverick-off-btn:hover {
-  background: rgba(240, 180, 41, 0.15);
+.aurion-exit-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Maverick message page, video with no container, hidden toolbar */
-.maverick-msg-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 900px;
+.aurion-scene-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
 }
 
-.maverick-msg-video {
-  width: auto;
-  max-width: 500px;
-  max-height: 55vh;
+.aurion-overlay-img {
+  max-width: 260px;
+  width: 60%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.aurion-overlay-center { align-self: center; }
+.aurion-overlay-top { align-self: flex-start; margin-top: -10vh; }
+.aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
+
+.aurion-scene-title {
+  font-family: 'Luckiest Guy', cursive;
+  color: var(--aurion-gold);
+  font-size: 28px;
+  margin: 6px 0 10px;
+}
+
+.aurion-scene-desc {
+  font-family: 'Poppins', sans-serif;
+  color: var(--aurion-text);
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+
+.aurion-mechanic-slot {
+  width: 100%;
+}
+
+.aurion-scene-video {
+  width: 100%;
+  max-width: 480px;
   border-radius: 16px;
-  overflow: hidden;
   display: block;
   background: transparent;
 }
 
-.maverick-msg-video::-webkit-media-controls,
-.maverick-msg-video::-webkit-media-controls-enclosure,
-.maverick-msg-video::-webkit-media-controls-panel {
+.aurion-scene-video::-webkit-media-controls,
+.aurion-scene-video::-webkit-media-controls-enclosure,
+.aurion-scene-video::-webkit-media-controls-panel {
   display: none !important;
 }
 
-.maverick-flip-btn {
-  background: transparent;
-  border: 2px solid var(--maverick-gold);
-  color: var(--maverick-gold);
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.03em;
-  padding: 10px 32px;
-  border-radius: 999px;
-  cursor: pointer;
+.aurion-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
 }
 
-.maverick-flip-btn:hover {
-  background: rgba(240, 180, 41, 0.12);
+.aurion-btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--aurion-text);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.aurion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.aurion-btn-imaged {
+  background-size: cover;
+  background-position: center;
+  background-color: transparent;
+  min-width: 140px;
+  min-height: 48px;
 }

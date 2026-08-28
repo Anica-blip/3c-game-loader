@@ -1,0 +1,25 @@
+<!-- Repo path: games/aurion/game.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aurion Challenge — 3C Thread To Success</title>
+  <!-- TODO: confirm exact favicon filename saved in /shared -->
+  <link rel="icon" href="../../shared/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Bangers&family=Fredoka:wght@400;700&family=Poppins:wght@400;700&family=Nunito:wght@400;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container"></div>
+
+  <!-- Loads the shared engine already in the repo root.
+       It reads ?configName=week-1 (or whichever theme) from this page's URL,
+       fetches config/<themeName>.json (relative to this page),
+       then loads games/aurion.js (relative to this page)
+       and calls its startGame(config, container) function. -->
+  <script type="module" src="../../loader.js"></script>
+</body>
+</html>

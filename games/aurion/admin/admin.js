@@ -120,7 +120,7 @@ function blankScene(id) {
 const MECHANIC_OPTIONS = [
   { value: 'none', label: 'None (generic scene)' },
   { value: 'door', label: 'Door (open and reveal)' },
-  { value: 'word-picker', label: 'Word picker (coming soon)' },
+  { value: 'word-picker', label: 'Word picker (pick 5 from 30)' },
   { value: 'sorting', label: 'Sorting (coming soon)' },
   { value: 'spin-wheel', label: 'Spin wheel (coming soon)' },
   { value: 'reveal-cards', label: 'Reveal cards (coming soon)' }

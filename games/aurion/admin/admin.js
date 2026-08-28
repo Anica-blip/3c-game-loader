@@ -10,7 +10,30 @@ const MOTION_OPTIONS = [
   { value: 'glide-bob', label: 'Glide and bob' },
   { value: 'straight-glide', label: 'Straight glide' },
   { value: 'wave-jump', label: 'Wave jump' },
-  { value: 'wipeout-spin', label: 'Wipeout spin' }
+  { value: 'wipeout-spin', label: 'Wipeout spin' },
+  { value: 'zigzag', label: 'Zigzag' },
+  { value: 'float-drift', label: 'Float and drift' },
+  { value: 'bounce-hop', label: 'Bounce and hop' },
+  { value: 'pulse-glow', label: 'Pulse and glow (stationary)' }
+];
+
+const HEADER_FONTS = [
+  { value: 'Luckiest Guy', label: 'Luckiest Guy (Aurion default)' },
+  { value: 'Bangers', label: 'Bangers' },
+  { value: 'Fredoka', label: 'Fredoka' },
+  { value: 'Montserrat', label: 'Montserrat (Maverick)' }
+];
+
+const BODY_FONTS = [
+  { value: 'Poppins', label: 'Poppins (Aurion default)' },
+  { value: 'Nunito', label: 'Nunito' },
+  { value: 'Quicksand', label: 'Quicksand' },
+  { value: 'Montserrat', label: 'Montserrat (Maverick)' }
+];
+
+const BUTTON_TEXT_COLORS = [
+  { value: '#ffffff', label: 'White' },
+  { value: '#000000', label: 'Black' }
 ];
 
 let state = null;
@@ -216,6 +239,48 @@ function sliderField(labelText, value, min, max, onChange) {
   return wrap;
 }
 
+function colorField(labelText, value, onChange) {
+  const input = document.createElement('input');
+  input.type = 'color';
+  input.className = 'admin-input';
+  input.style.height = '38px';
+  input.style.padding = '4px';
+  input.value = value || '#f0b429';
+  input.addEventListener('input', () => onChange(input.value));
+  return fieldWrap(labelText, input);
+}
+
+function checkboxField(labelText, checked, onChange) {
+  const wrap = document.createElement('label');
+  wrap.className = 'admin-checkbox-row';
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.checked = !!checked;
+  input.addEventListener('change', () => onChange(input.checked));
+  const span = document.createElement('span');
+  span.textContent = labelText;
+  wrap.append(input, span);
+  return wrap;
+}
+
+// A reusable group: text + font + color + size + bold, used for titles and
+// descriptions wherever a scene needs styled text rather than plain text.
+function styledTextGroup(prefix, obj, fontOptions, defaults, sectionLabel) {
+  const wrap = document.createElement('div');
+  const label = document.createElement('span');
+  label.className = 'admin-small-label';
+  label.textContent = sectionLabel;
+  wrap.appendChild(label);
+
+  wrap.appendChild(textareaField('Text', obj[prefix + 'Text'], v => { obj[prefix + 'Text'] = v; }));
+  wrap.appendChild(selectField('Font', obj[prefix + 'Font'] || defaults.font, fontOptions, v => { obj[prefix + 'Font'] = v; }));
+  wrap.appendChild(colorField('Color', obj[prefix + 'Color'] || defaults.color, v => { obj[prefix + 'Color'] = v; }));
+  wrap.appendChild(sliderField('Size (px)', obj[prefix + 'Size'] ?? defaults.size, defaults.minSize, defaults.maxSize, v => { obj[prefix + 'Size'] = v; }));
+  wrap.appendChild(checkboxField('Bold', obj[prefix + 'Bold'] ?? defaults.bold, v => { obj[prefix + 'Bold'] = v; }));
+
+  return wrap;
+}
+
 function sectionTitle(text) {
   const el = document.createElement('div');
   el.className = 'admin-section-title';
@@ -266,11 +331,40 @@ function renderGlobal() {
     v => { state.finaleImage = v; }
   ));
 
-  globalRoot.appendChild(textField(
-    'Maverick message video, Cloudflare URL (.mp4, plays before the result, leave blank to skip)',
+  const endSection = document.createElement('div');
+  endSection.className = 'admin-section';
+  endSection.appendChild(sectionTitle('End message (video page, before the results)'));
+
+  endSection.appendChild(textField(
+    'End video, Cloudflare URL (.mp4, plays before the result, leave blank to skip)',
     state.maverickVideo,
     v => { state.maverickVideo = v; }
   ));
+
+  if (!state.endMessage) state.endMessage = {};
+  if (!state.endMessage.overlayImage) state.endMessage.overlayImage = { url: '' };
+  const endImgLabel = document.createElement('span');
+  endImgLabel.className = 'admin-small-label';
+  endImgLabel.textContent = 'Overlay image — flat, centered, no container, portrait, medium size (repo path or Cloudflare URL)';
+  endSection.appendChild(endImgLabel);
+  endSection.appendChild(textField('Image URL', state.endMessage.overlayImage.url, v => { state.endMessage.overlayImage.url = v; }));
+
+  endSection.appendChild(styledTextGroup('title', state.endMessage, HEADER_FONTS,
+    { font: 'Luckiest Guy', color: '#f0b429', size: 24, minSize: 16, maxSize: 40, bold: true },
+    'End screen title'
+  ));
+
+  if (!state.endMessage.button) state.endMessage.button = { text: 'Flip Over', font: 'Poppins', color: '#ffffff', size: 16 };
+  const endBtnLabel = document.createElement('span');
+  endBtnLabel.className = 'admin-small-label';
+  endBtnLabel.textContent = 'End screen button';
+  endSection.appendChild(endBtnLabel);
+  endSection.appendChild(textField('Button text', state.endMessage.button.text, v => { state.endMessage.button.text = v; }));
+  endSection.appendChild(selectField('Font', state.endMessage.button.font, BODY_FONTS, v => { state.endMessage.button.font = v; }));
+  endSection.appendChild(selectField('Text color', state.endMessage.button.color, BUTTON_TEXT_COLORS, v => { state.endMessage.button.color = v; }));
+  endSection.appendChild(sliderField('Size (px)', state.endMessage.button.size ?? 16, 12, 28, v => { state.endMessage.button.size = v; }));
+
+  globalRoot.appendChild(endSection);
 
   const creditsSection = document.createElement('div');
   creditsSection.className = 'admin-section';
@@ -377,9 +471,37 @@ function renderActiveScene() {
   activeLeft.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
   activeLeft.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
 
+  if (!decision.overlayImage) decision.overlayImage = { url: '' };
+  const overlayLabel = document.createElement('span');
+  overlayLabel.className = 'admin-small-label';
+  overlayLabel.textContent = 'Overlay image — flat, centered, no container, portrait, medium size (repo path or Cloudflare URL)';
+  activeLeft.appendChild(overlayLabel);
+  activeLeft.appendChild(textField('Image URL', decision.overlayImage.url, v => { decision.overlayImage.url = v; }));
+
   // Right: setting the scene, situation and choices only
   activeRight.appendChild(sectionTitle(`Scene ${activeSceneIndex + 1}, setting the scene`));
-  activeRight.appendChild(textareaField('Situation', decision.situation, v => { decision.situation = v; }));
+
+  activeRight.appendChild(styledTextGroup('title', decision, HEADER_FONTS,
+    { font: 'Luckiest Guy', color: '#f0b429', size: 28, minSize: 16, maxSize: 48, bold: true },
+    'Title (optional, shown above the description)'
+  ));
+
+  activeRight.appendChild(styledTextGroup('desc', decision, BODY_FONTS,
+    { font: 'Poppins', color: '#ffffff', size: 16, minSize: 12, maxSize: 24, bold: false },
+    'Description'
+  ));
+
+  if (!decision.button) decision.button = { text: '', image: '', font: 'Poppins', color: '#ffffff', size: 16 };
+  const btnLabel = document.createElement('span');
+  btnLabel.className = 'admin-small-label';
+  btnLabel.textContent = 'Button (one per scene — the final page keeps its own three: Play again, Credits, Off)';
+  activeRight.appendChild(btnLabel);
+  activeRight.appendChild(textField('Button image URL, optional (repo or Cloudflare)', decision.button.image, v => { decision.button.image = v; }));
+  activeRight.appendChild(textField('Button text', decision.button.text, v => { decision.button.text = v; }));
+  activeRight.appendChild(selectField('Font', decision.button.font, BODY_FONTS, v => { decision.button.font = v; }));
+  activeRight.appendChild(selectField('Text color', decision.button.color, BUTTON_TEXT_COLORS, v => { decision.button.color = v; }));
+  activeRight.appendChild(sliderField('Size (px)', decision.button.size ?? 16, 12, 28, v => { decision.button.size = v; }));
+
   activeRight.appendChild(renderOptions(decision));
 }
 

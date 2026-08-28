@@ -10,6 +10,7 @@ const PAT_STORAGE_KEY = 'gameAdminPAT';
 const DEFAULT_THEME = 'CHANGE_THIS'; // CHANGE THIS: that character's own default seed name
 
 const MOTION_OPTIONS = [
+  { value: '', label: 'Choose a motion' },
   { value: 'glide-bob', label: 'Glide and bob' },
   { value: 'straight-glide', label: 'Straight glide' },
   { value: 'wave-jump', label: 'Wave jump' },
@@ -37,6 +38,12 @@ const BODY_FONTS = [
 const BUTTON_TEXT_COLORS = [
   { value: '#ffffff', label: 'White' },
   { value: '#000000', label: 'Black' }
+];
+
+const POSITION_OPTIONS = [
+  { value: 'center', label: 'Center' },
+  { value: 'top', label: 'Top' },
+  { value: 'bottom', label: 'Bottom' }
 ];
 
 let state = null;
@@ -96,17 +103,18 @@ function slugify(name) {
 function blankScene(id) {
   return {
     id: id,
+    adminLabel: '',
     situation: '',
     image: { label: '', url: '' },
-    motion: 'glide-bob',
+    motion: '',
     duration: 4,
     verticalPosition: 40,
     soundEffect: '',
+    video: '',
     background: { type: 'image', url: '' },
-    options: [
-      { text: '', scoreDelta: 1 },
-      { text: '', scoreDelta: 1 }
-    ]
+    overlayImage: { url: '', position: 'center' },
+    buttons: [{}],
+    options: []
   };
 }
 
@@ -266,24 +274,6 @@ function checkboxField(labelText, checked, onChange) {
   return wrap;
 }
 
-// A reusable group: text + font + color + size + bold, used for titles and
-// descriptions wherever a scene needs styled text rather than plain text.
-function styledTextGroup(prefix, obj, fontOptions, defaults, sectionLabel) {
-  const wrap = document.createElement('div');
-  const label = document.createElement('span');
-  label.className = 'admin-small-label';
-  label.textContent = sectionLabel;
-  wrap.appendChild(label);
-
-  wrap.appendChild(textareaField('Text', obj[prefix + 'Text'], v => { obj[prefix + 'Text'] = v; }));
-  wrap.appendChild(selectField('Font', obj[prefix + 'Font'] || defaults.font, fontOptions, v => { obj[prefix + 'Font'] = v; }));
-  wrap.appendChild(colorField('Color', obj[prefix + 'Color'] || defaults.color, v => { obj[prefix + 'Color'] = v; }));
-  wrap.appendChild(sliderField('Size (px)', obj[prefix + 'Size'] ?? defaults.size, defaults.minSize, defaults.maxSize, v => { obj[prefix + 'Size'] = v; }));
-  wrap.appendChild(checkboxField('Bold', obj[prefix + 'Bold'] ?? defaults.bold, v => { obj[prefix + 'Bold'] = v; }));
-
-  return wrap;
-}
-
 function sectionTitle(text) {
   const el = document.createElement('div');
   el.className = 'admin-section-title';
@@ -291,97 +281,237 @@ function sectionTitle(text) {
   return el;
 }
 
+function makeDrawer(titleText) {
+  const drawer = document.createElement('div');
+  drawer.className = 'admin-drawer';
+
+  const header = document.createElement('div');
+  header.className = 'admin-drawer-header';
+  const title = document.createElement('span');
+  title.textContent = titleText;
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'admin-drawer-close';
+  closeBtn.textContent = '\u00d7';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.addEventListener('click', () => drawer.classList.remove('open'));
+  header.append(title, closeBtn);
+  drawer.appendChild(header);
+
+  // Mounted on body directly — anything with backdrop-filter (like
+  // .admin-card) creates a new positioning boundary that breaks
+  // position:fixed for anything nested inside it.
+  document.body.appendChild(drawer);
+  return drawer;
+}
+
+function styledTextGroup(prefix, obj, fontOptions, defaults, sectionLabel, useTextarea) {
+  const wrap = document.createElement('div');
+  wrap.className = 'admin-styled-group';
+
+  const label = document.createElement('span');
+  label.className = 'admin-small-label';
+  label.textContent = sectionLabel;
+  wrap.appendChild(label);
+
+  const row = document.createElement('div');
+  row.className = 'admin-item-row';
+
+  const contentEl = useTextarea ? document.createElement('textarea') : document.createElement('input');
+  if (!useTextarea) contentEl.type = 'text';
+  contentEl.className = useTextarea ? 'admin-textarea' : 'admin-input';
+  contentEl.style.flex = '1';
+  contentEl.value = obj[prefix + 'Text'] || '';
+  contentEl.addEventListener('input', () => { obj[prefix + 'Text'] = contentEl.value; });
+
+  const styleBtn = document.createElement('button');
+  styleBtn.type = 'button';
+  styleBtn.className = 'admin-btn admin-style-btn';
+  styleBtn.textContent = 'Style';
+
+  const drawer = makeDrawer(sectionLabel + ' style');
+  drawer.appendChild(selectField('Font', obj[prefix + 'Font'] || defaults.font, fontOptions, v => { obj[prefix + 'Font'] = v; }));
+  drawer.appendChild(colorField('Color', obj[prefix + 'Color'] || defaults.color, v => { obj[prefix + 'Color'] = v; }));
+  drawer.appendChild(sliderField('Size (px)', obj[prefix + 'Size'] ?? defaults.size, defaults.minSize, defaults.maxSize, v => { obj[prefix + 'Size'] = v; }));
+  drawer.appendChild(checkboxField('Bold', obj[prefix + 'Bold'] ?? defaults.bold, v => { obj[prefix + 'Bold'] = v; }));
+
+  styleBtn.addEventListener('click', () => drawer.classList.add('open'));
+
+  row.append(contentEl, styleBtn);
+  wrap.append(row);
+  return wrap;
+}
+
+function styledButtonGroup(obj, sectionLabel) {
+  const wrap = document.createElement('div');
+  wrap.className = 'admin-styled-group';
+
+  const label = document.createElement('span');
+  label.className = 'admin-small-label';
+  label.textContent = sectionLabel;
+  wrap.appendChild(label);
+
+  wrap.appendChild(textField('Button image URL, optional (repo or Cloudflare)', obj.image, v => { obj.image = v; }));
+
+  const row = document.createElement('div');
+  row.className = 'admin-item-row';
+
+  const textInput = document.createElement('input');
+  textInput.type = 'text';
+  textInput.className = 'admin-input';
+  textInput.style.flex = '1';
+  textInput.placeholder = 'Button text';
+  textInput.value = obj.text || '';
+  textInput.addEventListener('input', () => { obj.text = textInput.value; });
+
+  const styleBtn = document.createElement('button');
+  styleBtn.type = 'button';
+  styleBtn.className = 'admin-btn admin-style-btn';
+  styleBtn.textContent = 'Style';
+
+  const drawer = makeDrawer(sectionLabel + ' style');
+  drawer.appendChild(selectField('Font', obj.font || 'Poppins', BODY_FONTS, v => { obj.font = v; }));
+  drawer.appendChild(selectField('Text color', obj.color || '#ffffff', BUTTON_TEXT_COLORS, v => { obj.color = v; }));
+  drawer.appendChild(sliderField('Size (px)', obj.size ?? 16, 12, 28, v => { obj.size = v; }));
+
+  styleBtn.addEventListener('click', () => drawer.classList.add('open'));
+
+  row.append(textInput, styleBtn);
+  wrap.append(row);
+  return wrap;
+}
+
+function drawerTextField(buttonLabel, drawerTitleText, value, onChange) {
+  const wrap = document.createElement('div');
+
+  const openBtn = document.createElement('button');
+  openBtn.type = 'button';
+  openBtn.className = 'admin-btn';
+  openBtn.textContent = buttonLabel;
+
+  const drawer = makeDrawer(drawerTitleText);
+  const textarea = document.createElement('textarea');
+  textarea.className = 'admin-textarea admin-textarea-large';
+  textarea.value = value || '';
+  textarea.addEventListener('input', () => onChange(textarea.value));
+  drawer.appendChild(textarea);
+
+  openBtn.addEventListener('click', () => drawer.classList.add('open'));
+
+  wrap.append(openBtn);
+  return wrap;
+}
+
+function overlayImageField(obj, labelText) {
+  const wrap = document.createElement('div');
+  const label = document.createElement('span');
+  label.className = 'admin-small-label';
+  label.textContent = labelText;
+  wrap.appendChild(label);
+  wrap.appendChild(textField('Image URL (repo or Cloudflare)', obj.url, v => { obj.url = v; }));
+  wrap.appendChild(selectField('Position', obj.position || 'center', POSITION_OPTIONS, v => { obj.position = v; }));
+  return wrap;
+}
+
+function renderButtonsList(decision) {
+  const wrap = document.createElement('div');
+  const label = document.createElement('span');
+  label.className = 'admin-small-label';
+  label.textContent = 'Buttons — always centered, whether there\u2019s one, two, or three';
+  wrap.appendChild(label);
+
+  if (!decision.buttons || !decision.buttons.length) decision.buttons = [{}];
+
+  decision.buttons.forEach((btn, i) => {
+    const card = document.createElement('div');
+    card.className = 'admin-item-card';
+
+    if (decision.buttons.length > 1) {
+      const header = document.createElement('div');
+      header.className = 'admin-row-header';
+      const heading = document.createElement('span');
+      heading.className = 'admin-small-label';
+      heading.textContent = `Button ${i + 1}`;
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'admin-btn admin-btn-remove';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => {
+        decision.buttons.splice(i, 1);
+        renderForm();
+      });
+      header.append(heading, removeBtn);
+      card.appendChild(header);
+    }
+
+    card.appendChild(styledButtonGroup(btn, `Button ${i + 1}`));
+    wrap.appendChild(card);
+  });
+
+  if (decision.buttons.length < 3) {
+    const addBtn = document.createElement('button');
+    addBtn.className = 'admin-btn';
+    addBtn.textContent = 'Add another button';
+    addBtn.addEventListener('click', () => {
+      decision.buttons.push({});
+      renderForm();
+    });
+    wrap.appendChild(addBtn);
+  }
+
+  return wrap;
+}
+
 // ---- main render ----
 
 function renderForm() {
+  document.querySelectorAll('.admin-drawer').forEach(d => d.remove());
   renderGlobal();
   renderSceneTabs();
   renderActiveScene();
   renderResults();
 }
 
-// Top, full width: only what's genuinely global, nothing scene-specific
+// Top, full width: only what's genuinely global — everything page-specific
+// now lives inside Scenes instead, including Send-off and Final.
 function renderGlobal() {
   globalRoot.innerHTML = '';
   globalRoot.appendChild(sectionTitle('Main settings'));
 
-  globalRoot.appendChild(textField('Title', state.title, v => { state.title = v; }));
+  globalRoot.appendChild(textField('Title (this is the theme name)', state.title, v => { state.title = v; }));
 
-  const soundSection = document.createElement('div');
-  soundSection.className = 'admin-section';
-  soundSection.appendChild(sectionTitle('Ambient sound'));
-  soundSection.appendChild(textField(
-    'Cloudflare URL (.mp3, leave blank for silence)',
-    state.ambientSound,
-    v => { state.ambientSound = v; }
-  ));
-  soundSection.appendChild(sliderField(
-    'Volume (0 to 5, 5 is full track volume)',
+  const fileRow = document.createElement('div');
+  fileRow.className = 'admin-item-row';
+  fileRow.appendChild(textField('File name for export, e.g. goals-01', state.fileName, v => { state.fileName = v; }));
+  fileRow.appendChild(textField('Ambient sound Cloudflare URL (.mp3, blank for silence)', state.ambientSound, v => { state.ambientSound = v; }));
+  globalRoot.appendChild(fileRow);
+
+  globalRoot.appendChild(sliderField(
+    'Ambient volume (0 to 5, 5 is full track volume)',
     state.ambientVolume ?? 3, 0, 5,
     v => { state.ambientVolume = v; }
   ));
-  globalRoot.appendChild(soundSection);
 
-  globalRoot.appendChild(textField(
-    'Intro image (repo path, do not use a Cloudflare URL here)',
-    state.introImage,
-    v => { state.introImage = v; }
+  const bgSection = document.createElement('div');
+  bgSection.className = 'admin-section';
+  bgSection.appendChild(sectionTitle('Stage background (fallback default — used whenever a scene doesn\u2019t set its own)'));
+  if (!state.background) state.background = { type: 'image', url: '' };
+  bgSection.appendChild(selectField(
+    'Type',
+    state.background.type,
+    [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
+    v => { state.background.type = v; }
   ));
-
-  globalRoot.appendChild(textField(
-    'Finale image (repo path, do not use a Cloudflare URL here)',
-    state.finaleImage,
-    v => { state.finaleImage = v; }
-  ));
-
-  const endSection = document.createElement('div');
-  endSection.className = 'admin-section';
-  endSection.appendChild(sectionTitle('End message (video page, before the results)'));
-
-  endSection.appendChild(textField(
-    'End video, Cloudflare URL (.mp4, plays before the result, leave blank to skip)',
-    state.maverickVideo,
-    v => { state.maverickVideo = v; }
-  ));
-
-  if (!state.endMessage) state.endMessage = {};
-  if (!state.endMessage.overlayImage) state.endMessage.overlayImage = { url: '' };
-  const endImgLabel = document.createElement('span');
-  endImgLabel.className = 'admin-small-label';
-  endImgLabel.textContent = 'Overlay image — flat, centered, no container, portrait, medium size (repo path or Cloudflare URL)';
-  endSection.appendChild(endImgLabel);
-  endSection.appendChild(textField('Image URL', state.endMessage.overlayImage.url, v => { state.endMessage.overlayImage.url = v; }));
-
-  endSection.appendChild(styledTextGroup('title', state.endMessage, HEADER_FONTS,
-    { font: 'Luckiest Guy', color: '#f0b429', size: 24, minSize: 16, maxSize: 40, bold: true },
-    'End screen title'
-  ));
-
-  if (!state.endMessage.button) state.endMessage.button = { text: 'Flip Over', font: 'Poppins', color: '#ffffff', size: 16 };
-  const endBtnLabel = document.createElement('span');
-  endBtnLabel.className = 'admin-small-label';
-  endBtnLabel.textContent = 'End screen button';
-  endSection.appendChild(endBtnLabel);
-  endSection.appendChild(textField('Button text', state.endMessage.button.text, v => { state.endMessage.button.text = v; }));
-  endSection.appendChild(selectField('Font', state.endMessage.button.font, BODY_FONTS, v => { state.endMessage.button.font = v; }));
-  endSection.appendChild(selectField('Text color', state.endMessage.button.color, BUTTON_TEXT_COLORS, v => { state.endMessage.button.color = v; }));
-  endSection.appendChild(sliderField('Size (px)', state.endMessage.button.size ?? 16, 12, 28, v => { state.endMessage.button.size = v; }));
-
-  globalRoot.appendChild(endSection);
+  bgSection.appendChild(textField('Repo or Cloudflare URL', state.background.url, v => { state.background.url = v; }));
+  globalRoot.appendChild(bgSection);
 
   const creditsSection = document.createElement('div');
   creditsSection.className = 'admin-section';
   creditsSection.appendChild(sectionTitle('Credits'));
-  creditsSection.appendChild(textareaField(
-    'Credits text (shown on its own screen after the result)',
-    state.credits,
-    v => { state.credits = v; },
-    true
-  ));
+  creditsSection.appendChild(drawerTextField('Write credits', 'Credits', state.credits, v => { state.credits = v; }));
   globalRoot.appendChild(creditsSection);
 }
 
-// The tab bar itself
+// The tab bar itself — labeled by Chef's own mapping name when given
 function renderSceneTabs() {
   sceneTabs.innerHTML = '';
   if (!state.decisions) state.decisions = [];
@@ -395,21 +525,8 @@ function renderSceneTabs() {
     tab.className = 'admin-tab' + (index === activeSceneIndex ? ' admin-tab-active' : '');
 
     const label = document.createElement('span');
-    label.textContent = `Scene ${index + 1}`;
+    label.textContent = decision.adminLabel || `Scene ${index + 1}`;
     tab.appendChild(label);
-
-    const closeBtn = document.createElement('span');
-    closeBtn.className = 'admin-tab-close';
-    closeBtn.textContent = 'x';
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      state.decisions.splice(index, 1);
-      if (activeSceneIndex >= state.decisions.length) {
-        activeSceneIndex = state.decisions.length - 1;
-      }
-      renderForm();
-    });
-    tab.appendChild(closeBtn);
 
     tab.addEventListener('click', () => {
       activeSceneIndex = index;
@@ -430,7 +547,7 @@ function renderSceneTabs() {
   sceneTabs.appendChild(addTab);
 }
 
-// Whichever scene is active: left panel (stage) and right panel (content), both fully its own
+// Whichever scene is active: left panel (stage) and right panel (content)
 function renderActiveScene() {
   activeLeft.innerHTML = '';
   activeRight.innerHTML = '';
@@ -448,10 +565,53 @@ function renderActiveScene() {
   // Left: setting the stage for this scene only
   activeLeft.appendChild(sectionTitle(`Scene ${activeSceneIndex + 1}, setting the stage`));
 
+  const moveRow = document.createElement('div');
+  moveRow.className = 'admin-item-row';
+  const moveEarlierBtn = document.createElement('button');
+  moveEarlierBtn.className = 'admin-btn';
+  moveEarlierBtn.textContent = '\u25c0 Move earlier';
+  moveEarlierBtn.disabled = activeSceneIndex === 0;
+  moveEarlierBtn.addEventListener('click', () => {
+    const arr = state.decisions;
+    [arr[activeSceneIndex - 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex - 1]];
+    activeSceneIndex -= 1;
+    renderForm();
+  });
+  const moveLaterBtn = document.createElement('button');
+  moveLaterBtn.className = 'admin-btn';
+  moveLaterBtn.textContent = 'Move later \u25b6';
+  moveLaterBtn.disabled = activeSceneIndex === state.decisions.length - 1;
+  moveLaterBtn.addEventListener('click', () => {
+    const arr = state.decisions;
+    [arr[activeSceneIndex + 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex + 1]];
+    activeSceneIndex += 1;
+    renderForm();
+  });
+  moveRow.append(moveEarlierBtn, moveLaterBtn);
+  activeLeft.appendChild(moveRow);
+
+  const removeSceneBtn = document.createElement('button');
+  removeSceneBtn.className = 'admin-btn admin-btn-remove';
+  removeSceneBtn.textContent = 'Remove this scene';
+  removeSceneBtn.style.marginBottom = 'var(--spacing-md)';
+  removeSceneBtn.addEventListener('click', () => {
+    if (!window.confirm('Remove this scene? This cannot be undone.')) return;
+    state.decisions.splice(activeSceneIndex, 1);
+    if (activeSceneIndex >= state.decisions.length) activeSceneIndex = state.decisions.length - 1;
+    renderForm();
+  });
+  activeLeft.appendChild(removeSceneBtn);
+
+  activeLeft.appendChild(textField(
+    'Scene label, for your own mapping (e.g. Landing, Consent, Send-off, Final)',
+    decision.adminLabel,
+    v => { decision.adminLabel = v; }
+  ));
+
   if (!decision.background) decision.background = { type: 'image', url: '' };
   const bgLabel = document.createElement('span');
   bgLabel.className = 'admin-small-label';
-  bgLabel.textContent = 'Background image';
+  bgLabel.textContent = 'Background image (leave URL blank to use the stage default — a full image here can act as a whole page background, e.g. the landing page)';
   activeLeft.appendChild(bgLabel);
   activeLeft.appendChild(selectField(
     'Type',
@@ -459,51 +619,52 @@ function renderActiveScene() {
     [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
     v => { decision.background.type = v; }
   ));
-  activeLeft.appendChild(textField('Cloudflare URL', decision.background.url, v => { decision.background.url = v; }));
+  activeLeft.appendChild(textField('Repo or Cloudflare URL', decision.background.url, v => { decision.background.url = v; }));
 
   if (!decision.image) decision.image = { label: '', url: '' };
   const imgLabel = document.createElement('span');
   imgLabel.className = 'admin-small-label';
-  imgLabel.textContent = 'Duck image';
+  imgLabel.textContent = 'Duck / character image';
   activeLeft.appendChild(imgLabel);
   activeLeft.appendChild(textField('Name', decision.image.label, v => { decision.image.label = v; }));
-  activeLeft.appendChild(textField('Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
+  activeLeft.appendChild(textField('Repo or Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
+
+  if (!decision.overlayImage) decision.overlayImage = { url: '', position: 'center' };
+  activeLeft.appendChild(overlayImageField(decision.overlayImage,
+    'Overlay image — flat, no container, portrait, medium size (this is where Chef adds the landing/consent/etc image if using the stage default background)'
+  ));
 
   activeLeft.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
   activeLeft.appendChild(sliderField('Speed, seconds to cross the screen (lower is faster)', decision.duration ?? 4, 2, 8, v => { decision.duration = v; }));
   activeLeft.appendChild(sliderField('Vertical start position (0 top, 100 bottom)', decision.verticalPosition ?? 40, 0, 100, v => { decision.verticalPosition = v; }));
-  activeLeft.appendChild(textField('Voice line Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
+  activeLeft.appendChild(textField('Voice line, Cloudflare URL (.mp3, optional)', decision.soundEffect, v => { decision.soundEffect = v; }));
+  activeLeft.appendChild(textField('Video, Cloudflare URL (.mp4, only needed if this is the Send-off scene)', decision.video, v => { decision.video = v; }));
 
-  if (!decision.overlayImage) decision.overlayImage = { url: '' };
-  const overlayLabel = document.createElement('span');
-  overlayLabel.className = 'admin-small-label';
-  overlayLabel.textContent = 'Overlay image — flat, centered, no container, portrait, medium size (repo path or Cloudflare URL)';
-  activeLeft.appendChild(overlayLabel);
-  activeLeft.appendChild(textField('Image URL', decision.overlayImage.url, v => { decision.overlayImage.url = v; }));
-
-  // Right: setting the scene, situation and choices only
-  activeRight.appendChild(sectionTitle(`Scene ${activeSceneIndex + 1}, setting the scene`));
+  // Right: setting the scene, content
+  const sceneHeaderBar = document.createElement('div');
+  sceneHeaderBar.className = 'admin-scene-header-bar';
+  sceneHeaderBar.textContent = `Scene ${activeSceneIndex + 1}, setting the scene`;
+  activeRight.appendChild(sceneHeaderBar);
 
   activeRight.appendChild(styledTextGroup('title', decision, HEADER_FONTS,
     { font: 'Luckiest Guy', color: '#f0b429', size: 28, minSize: 16, maxSize: 48, bold: true },
-    'Title (optional, shown above the description)'
+    'Title (blank means no title)'
   ));
 
   activeRight.appendChild(styledTextGroup('desc', decision, BODY_FONTS,
     { font: 'Poppins', color: '#ffffff', size: 16, minSize: 12, maxSize: 24, bold: false },
-    'Description'
+    'Text container (blank means no description)', true
   ));
 
-  if (!decision.button) decision.button = { text: '', image: '', font: 'Poppins', color: '#ffffff', size: 16 };
-  const btnLabel = document.createElement('span');
-  btnLabel.className = 'admin-small-label';
-  btnLabel.textContent = 'Button (one per scene — the final page keeps its own three: Play again, Credits, Off)';
-  activeRight.appendChild(btnLabel);
-  activeRight.appendChild(textField('Button image URL, optional (repo or Cloudflare)', decision.button.image, v => { decision.button.image = v; }));
-  activeRight.appendChild(textField('Button text', decision.button.text, v => { decision.button.text = v; }));
-  activeRight.appendChild(selectField('Font', decision.button.font, BODY_FONTS, v => { decision.button.font = v; }));
-  activeRight.appendChild(selectField('Text color', decision.button.color, BUTTON_TEXT_COLORS, v => { decision.button.color = v; }));
-  activeRight.appendChild(sliderField('Size (px)', decision.button.size ?? 16, 12, 28, v => { decision.button.size = v; }));
+  // Migrate old single "button" field into the new "buttons" list, if this
+  // scene was saved before buttons became a list — otherwise that content
+  // silently goes missing on reload.
+  if ((!decision.buttons || !decision.buttons.length) && decision.button && (decision.button.text || decision.button.image)) {
+    decision.buttons = [decision.button];
+    delete decision.button;
+  }
+
+  activeRight.appendChild(renderButtonsList(decision));
 
   activeRight.appendChild(renderOptions(decision));
 }
@@ -512,7 +673,7 @@ function renderOptions(decision) {
   const wrap = document.createElement('div');
   const label = document.createElement('span');
   label.className = 'admin-small-label';
-  label.textContent = 'Answer choices';
+  label.textContent = 'Answer choices (legacy, optional — only needed for branching/scored scenes)';
   wrap.appendChild(label);
 
   if (!decision.options) decision.options = [];
@@ -564,7 +725,7 @@ function renderResults() {
   resultsRoot.innerHTML = '';
   const section = document.createElement('div');
   section.className = 'admin-section';
-  section.appendChild(sectionTitle('Results'));
+  section.appendChild(sectionTitle('Results (optional — leave empty for non-scored games)'));
 
   if (!state.results) state.results = [];
 
@@ -728,7 +889,7 @@ saveAsBtn.addEventListener('click', async () => {
 });
 
 exportBtn.addEventListener('click', () => {
-  const baseName = state.title ? slugify(state.title) : (currentTheme || 'theme');
+  const baseName = state.fileName ? slugify(state.fileName) : (state.title ? slugify(state.title) : (currentTheme || 'theme'));
   const filename = `${baseName}.json`;
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -739,7 +900,7 @@ exportBtn.addEventListener('click', () => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  saveStatus.textContent = `Downloaded ${filename}. Rename it however you like, then add it to games/maverick-surfboard/config/ in the repo.`;
+  saveStatus.textContent = `Downloaded ${filename}. Add it to games/aurion/config/ in the repo.`;
 });
 
 // On load, if a token is already saved, skip straight to the theme list

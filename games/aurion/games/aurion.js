@@ -1,5 +1,42 @@
 // Repo path: games/aurion/games/aurion.js
 
+// This game's word bank for Scene 5 — 30 words, each tagged with its
+// hidden category. The player never sees the category, only the word.
+// Specific to goal-01; a future themed week with a different word set
+// would need this made admin-editable rather than hardcoded here.
+const WORD_BANK = [
+  { word: 'Exercise', category: 'BODY' },
+  { word: 'Travel', category: 'LIFE' },
+  { word: 'Save More', category: 'WORK' },
+  { word: 'Making Things', category: 'CREATE' },
+  { word: 'Call Family', category: 'PEOPLE' },
+  { word: 'Learn a skill', category: 'YOU' },
+  { word: 'Declutter', category: 'HOME' },
+  { word: 'Find love', category: 'PEOPLE' },
+  { word: 'Eat healthier', category: 'BODY' },
+  { word: 'Give back', category: 'GIVE' },
+  { word: 'Start a business', category: 'WORK' },
+  { word: 'Read more', category: 'YOU' },
+  { word: 'More adventure', category: 'LIFE' },
+  { word: 'Be kinder', category: 'GIVE' },
+  { word: 'Improve home', category: 'HOME' },
+  { word: 'Support a cause', category: 'GIVE' },
+  { word: 'Sleep better', category: 'BODY' },
+  { word: 'Change career', category: 'WORK' },
+  { word: 'Write something', category: 'CREATE' },
+  { word: 'Make friends', category: 'PEOPLE' },
+  { word: 'Try something', category: 'YOU' },
+  { word: 'Earn more', category: 'WORK' },
+  { word: 'Take a break', category: 'BODY' },
+  { word: 'Help others', category: 'GIVE' },
+  { word: 'Build confidence', category: 'YOU' },
+  { word: 'Start creating', category: 'CREATE' },
+  { word: 'See a new place', category: 'LIFE' },
+  { word: 'Organise life', category: 'HOME' },
+  { word: 'Listen more', category: 'PEOPLE' },
+  { word: 'Reduce stress', category: 'BODY' }
+];
+
 function preloadAssets(config) {
   const urls = [];
   if (config.background && config.background.url && config.background.type !== 'video') {
@@ -26,6 +63,7 @@ function preloadAssets(config) {
 export function startGame(config, container) {
   let sceneIndex = 0;
   let ambientAudio = null;
+  let selectedWords = []; // the 5 words chosen in Scene 5, carried forward to Scene 6
 
   container.classList.add('aurion-game');
   container.innerHTML = '';
@@ -169,6 +207,11 @@ export function startGame(config, container) {
       buildDoorMechanic(mechanicSlot, scene, revealButtons);
     }
 
+    if (scene.mechanic === 'word-picker') {
+      mechanicGatesButton = true;
+      buildWordPickerMechanic(mechanicSlot, revealButtons);
+    }
+
     if (scene.video) {
       const video = document.createElement('video');
       video.className = 'aurion-scene-video';
@@ -255,5 +298,76 @@ export function startGame(config, container) {
     });
 
     slot.appendChild(stage);
+  }
+
+  function buildWordPickerMechanic(slot, onComplete) {
+    const MAX_PICKS = 5;
+    const picked = [];
+
+    const counter = document.createElement('div');
+    counter.className = 'aurion-word-counter';
+    counter.textContent = `0 of ${MAX_PICKS}`;
+
+    const grid = document.createElement('div');
+    grid.className = 'aurion-word-grid';
+
+    const popup = document.createElement('div');
+    popup.className = 'aurion-word-popup';
+
+    WORD_BANK.forEach(entry => {
+      const card = document.createElement('button');
+      card.className = 'aurion-word-card';
+      card.textContent = entry.word;
+      card.addEventListener('click', () => {
+        if (card.classList.contains('picked')) return;
+        if (picked.length >= MAX_PICKS) return;
+
+        card.classList.add('picked');
+        picked.push(entry);
+        counter.textContent = `${picked.length} of ${MAX_PICKS}`;
+
+        if (picked.length === MAX_PICKS) {
+          selectedWords = picked.slice();
+          showSummary();
+        }
+      });
+      grid.appendChild(card);
+    });
+
+    function showSummary() {
+      popup.innerHTML = '';
+      popup.classList.add('open');
+
+      const title = document.createElement('h2');
+      title.textContent = 'Your List Of Five';
+
+      const stars = document.createElement('div');
+      stars.className = 'aurion-word-stars';
+      for (let i = 0; i < MAX_PICKS; i++) {
+        const star = document.createElement('span');
+        star.textContent = '\u2605';
+        stars.appendChild(star);
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'aurion-word-summary-list';
+      picked.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = entry.word;
+        list.appendChild(li);
+      });
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'aurion-btn';
+      closeBtn.textContent = 'Close';
+      closeBtn.addEventListener('click', () => {
+        popup.classList.remove('open');
+        onComplete();
+      });
+
+      popup.append(title, stars, list, closeBtn);
+    }
+
+    slot.append(counter, grid, popup);
   }
 }

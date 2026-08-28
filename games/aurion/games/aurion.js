@@ -290,7 +290,7 @@ export function startGame(config, container) {
     const buttonRow = document.createElement('div');
     buttonRow.className = 'aurion-button-row';
     buttonRow.style.visibility = 'hidden';
-    (scene.buttons || []).forEach(btn => {
+    (scene.buttons || []).forEach((btn, btnIndex) => {
       const b = document.createElement('button');
       b.className = 'aurion-btn';
       if (btn.image) {
@@ -301,10 +301,24 @@ export function startGame(config, container) {
       if (btn.font) b.style.fontFamily = `'${btn.font}', sans-serif`;
       if (btn.color) b.style.color = btn.color;
       if (btn.size) b.style.fontSize = btn.size + 'px';
-      b.addEventListener('click', () => {
-        if (ambientAudio && isLastScene) { /* leave ambient running on finale */ }
-        if (!isLastScene) renderScene(sceneIndex + 1);
-      });
+
+      if (isLastScene) {
+        // Finale's three buttons, in order: Another Round (restart),
+        // The Team (credits), Over & Out (end) — matching Maverick's pattern
+        if (btnIndex === 0) {
+          b.addEventListener('click', () => renderScene(0));
+        } else if (btnIndex === 1) {
+          b.addEventListener('click', renderCredits);
+        } else {
+          b.addEventListener('click', () => {
+            renderGoodbye();
+            window.close();
+          });
+        }
+      } else {
+        b.addEventListener('click', () => renderScene(sceneIndex + 1));
+      }
+
       buttonRow.appendChild(b);
     });
     wrap.appendChild(buttonRow);
@@ -637,5 +651,43 @@ export function startGame(config, container) {
 
     wrap.append(board, popup);
     slot.appendChild(wrap);
+  }
+
+  function renderCredits() {
+    content.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'maverick-screen aurion-credits';
+
+    const title = document.createElement('h1');
+    title.textContent = 'Credits';
+
+    const text = document.createElement('p');
+    text.className = 'aurion-credits-text';
+    text.textContent = config.credits || 'Credits coming soon.';
+
+    const backBtn = document.createElement('button');
+    backBtn.className = 'maverick-btn maverick-btn-primary';
+    backBtn.textContent = 'Back';
+    backBtn.addEventListener('click', () => renderScene(config.decisions.length - 1));
+
+    wrap.append(title, text, backBtn);
+    content.appendChild(wrap);
+  }
+
+  function renderGoodbye() {
+    if (ambientAudio) {
+      ambientAudio.pause();
+      ambientAudio = null;
+    }
+    content.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'maverick-screen';
+
+    const message = document.createElement('p');
+    message.className = 'maverick-body-text';
+    message.textContent = 'Thanks for playing!';
+
+    wrap.appendChild(message);
+    content.appendChild(wrap);
   }
 }

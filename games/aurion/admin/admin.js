@@ -123,7 +123,7 @@ const MECHANIC_OPTIONS = [
   { value: 'word-picker', label: 'Word picker (pick 5 from 30)' },
   { value: 'sorting', label: 'Sorting (drag words to categories)' },
   { value: 'spin-wheel', label: 'Spin wheel (decorative)' },
-  { value: 'reveal-cards', label: 'Reveal cards (coming soon)' }
+  { value: 'reveal-cards', label: 'Reveal cards (only chosen categories flash)' }
 ];
 
 function renderMechanicFields(decision) {
@@ -157,6 +157,18 @@ function renderMechanicFields(decision) {
     label.textContent = 'Spin wheel — decorative only, tap to spin, button appears once it stops';
     wrap.appendChild(label);
     wrap.appendChild(textField('Wheel image URL, full wheel graphic (repo or Cloudflare)', decision.mechanicData.wheelImage, v => { decision.mechanicData.wheelImage = v; }));
+  }
+
+  if (decision.mechanic === 'reveal-cards') {
+    const label = document.createElement('span');
+    label.className = 'admin-small-label';
+    label.textContent = 'Reveal cards — same 8 container images as the Sorting scene, only the ones the player actually picked will flash and open; wording is fixed and built in, nothing to type here';
+    wrap.appendChild(label);
+    if (!decision.mechanicData.categoryImages) decision.mechanicData.categoryImages = {};
+    ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'].forEach(cat => {
+      if (!decision.mechanicData.categoryImages[cat]) decision.mechanicData.categoryImages[cat] = '';
+      wrap.appendChild(textField(cat + ' container image URL', decision.mechanicData.categoryImages[cat], v => { decision.mechanicData.categoryImages[cat] = v; }));
+    });
   }
 
   return wrap;

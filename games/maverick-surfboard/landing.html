@@ -30,6 +30,43 @@
       var params = new URLSearchParams(window.location.search);
       var configName = params.get('configName') || 'maverick-surfboard';
       document.getElementById('continue-link').href = 'consent.html?configName=' + encodeURIComponent(configName);
+
+      // Start warming the browser's cache the instant Landing opens, so by
+      // the time the player has clicked through Consent and into the game,
+      // every image/video/audio file is already sitting ready, not loading
+      // mid-scene. Fire-and-forget, never blocks anything on this page.
+      fetch('config/' + encodeURIComponent(configName) + '.json')
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (config) {
+          if (!config) return;
+          var urls = [];
+
+          function addImg(obj) {
+            if (obj && obj.url && obj.type !== 'video') urls.push(obj.url);
+          }
+
+          addImg(config.background);
+          (config.decisions || []).forEach(function (d) {
+            addImg(d.background);
+            if (d.image && d.image.url) urls.push(d.image.url);
+            if (d.overlayImage && d.overlayImage.url) urls.push(d.overlayImage.url);
+          });
+          (config.characterImages || []).forEach(function (img) {
+            if (img.url) urls.push(img.url);
+          });
+
+          urls.forEach(function (url) {
+            var img = new Image();
+            img.src = url;
+          });
+
+          if (config.ambientSound) {
+            var audio = new Audio();
+            audio.preload = 'auto';
+            audio.src = config.ambientSound;
+          }
+        })
+        .catch(function () { /* preload is best-effort, never block the page for it */ });
     })();
   </script>
 </body>

@@ -324,3 +324,48 @@ body {
   min-width: 140px;
   min-height: 48px;
 }
+
+/* Scene 3 — the door: closed and open images crossfade on click, then the
+   reveal image (e.g. the sticky note) fades in on top a moment later */
+.aurion-door-stage {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.aurion-door-img,
+.aurion-door-reveal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.aurion-door-closed {
+  opacity: 1;
+  z-index: 1;
+}
+
+.aurion-door-open {
+  z-index: 2;
+}
+
+.aurion-door-reveal {
+  z-index: 3;
+  transition-delay: 0.5s;
+}
+
+.aurion-door-stage.opened .aurion-door-closed {
+  opacity: 0;
+}
+
+.aurion-door-stage.opened .aurion-door-open,
+.aurion-door-stage.opened .aurion-door-reveal {
+  opacity: 1;
+}

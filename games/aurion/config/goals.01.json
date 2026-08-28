@@ -10,13 +10,13 @@
   },
   "ambientSound": "",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
   "characterImages": [],
   "decisions": [
     {
       "id": 1,
       "situation": "PLACEHOLDER situation text, this whole file just proves the admin panel works end to end.",
-      "motion": "glide-bob",
+      "motion": "",
       "verticalPosition": 0,
       "soundEffect": "",
       "options": [
@@ -34,7 +34,7 @@
         "url": ""
       },
       "image": {
-        "label": "aurion langing",
+        "label": "aurion landing",
         "url": ""
       },
       "overlayImage": {
@@ -46,16 +46,23 @@
         "size": 16,
         "image": "goal-01.button.png"
       },
-      "duration": 2
+      "duration": 2,
+      "buttons": [
+        {
+          "text": "Ready",
+          "image": "goal-01.button.png"
+        }
+      ],
+      "adminLabel": "landing page"
     },
     {
       "id": 2,
       "situation": "",
       "image": {
         "label": "aurion concent",
-        "url": "goal-01.consent.png"
+        "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
@@ -74,14 +81,21 @@
         }
       ],
       "overlayImage": {
-        "url": "",
+        "url": "goal-01.consent.png",
         "position": "center"
       },
       "button": {
         "image": "goal-01.button.png",
         "text": "Step In"
       },
-      "titleText": ""
+      "titleText": "",
+      "buttons": [
+        {
+          "image": "goal-01.button.png",
+          "text": "Step In"
+        }
+      ],
+      "adminLabel": "consent page"
     },
     {
       "id": 3,
@@ -90,7 +104,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
@@ -100,11 +114,11 @@
       },
       "options": [
         {
-          "text": "",
+          "text": "goal-01.button.png",
           "scoreDelta": 1
         },
         {
-          "text": "",
+          "text": "What's Hiding?",
           "scoreDelta": 1
         }
       ],
@@ -116,7 +130,11 @@
         "image": "goal-01.button.png",
         "text": "What's Hiding?"
       },
-      "titleText": "Open The Door"
+      "titleText": "Open The Door",
+      "buttons": [
+        {}
+      ],
+      "adminLabel": "let's begin"
     },
     {
       "id": 4,
@@ -125,7 +143,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/04%20Intro%20Page%20-%20goal.01.mp3",
@@ -152,7 +170,14 @@
         "text": "Let's Explore"
       },
       "titleText": "Welcome To Setting Your Goals",
-      "descText": "Empty Your Thoughts\n\nInclude Everything\n\nBig things. Small things. Serious things.\nRidiculous things. Things you've been\nputting off. Things you'd love to try.\nThings you keep saying \"one day\" about."
+      "descText": "Empty Your Thoughts\n\nInclude Everything\n\nBig things. Small things. Serious things.\nRidiculous things. Things you've been\nputting off. Things you'd love to try.\nThings you keep saying \"one day\" about.",
+      "buttons": [
+        {
+          "image": "goal-01.button.png",
+          "text": "Let's Explore"
+        }
+      ],
+      "adminLabel": "introduction page"
     },
     {
       "id": 5,
@@ -161,7 +186,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
@@ -188,7 +213,15 @@
         "text": "Find Some"
       },
       "titleText": "The Goal Collector List",
-      "descText": "Which 5 Would You Take With You?"
+      "descText": "Which 5 Would You Take With You?",
+      "buttons": [
+        {
+          "image": "goal-01.button.png",
+          "text": "Find Some",
+          "size": 14
+        }
+      ],
+      "adminLabel": "scene 1"
     },
     {
       "id": 6,
@@ -197,7 +230,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/06%20List%20page%20-%20goal.01.mp3",
@@ -224,7 +257,15 @@
         "text": "Got Them"
       },
       "titleText": "The Sorting Room",
-      "descText": "Place Them In Their Spot"
+      "descText": "Place Them In Their Spot",
+      "buttons": [
+        {
+          "text": "Got Them",
+          "image": "goal-01.button.png",
+          "size": 14
+        }
+      ],
+      "adminLabel": "scene 2"
     },
     {
       "id": 7,
@@ -233,7 +274,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
@@ -260,7 +301,15 @@
         "text": "I'm Curious"
       },
       "titleText": "The Sorting Reveal",
-      "descText": "Try The Wheel"
+      "descText": "Try The Wheel",
+      "buttons": [
+        {
+          "text": "I'm Curious",
+          "image": "goal-01.button.png",
+          "size": 14
+        }
+      ],
+      "adminLabel": "scene 3"
     },
     {
       "id": 8,
@@ -269,7 +318,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/08%20Reveal%20page%20-%20%20goal.01.mp3",
@@ -296,7 +345,15 @@
         "text": "Guide Me"
       },
       "titleText": "The Reveal Area",
-      "descText": "See What You're Aiming For"
+      "descText": "See What You're Aiming For",
+      "buttons": [
+        {
+          "text": "Guide Me",
+          "image": "goal-01.button.png",
+          "size": 14
+        }
+      ],
+      "adminLabel": "scene 4"
     },
     {
       "id": 9,
@@ -305,42 +362,7 @@
         "label": "",
         "url": ""
       },
-      "motion": "glide-bob",
-      "duration": 2,
-      "verticalPosition": 0,
-      "soundEffect": "",
-      "background": {
-        "type": "image",
-        "url": ""
-      },
-      "options": [
-        {
-          "text": "",
-          "scoreDelta": 1
-        },
-        {
-          "text": "",
-          "scoreDelta": 1
-        }
-      ],
-      "overlayImage": {
-        "url": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4",
-        "position": "center"
-      },
-      "button": {
-        "image": "goal-01.button.png",
-        "text": "Take It With You"
-      },
-      "titleText": "We're Done Here"
-    },
-    {
-      "id": 10,
-      "situation": "",
-      "image": {
-        "label": "aurion goals end",
-        "url": "goal-01.finale.png"
-      },
-      "motion": "glide-bob",
+      "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
@@ -364,8 +386,71 @@
       },
       "button": {
         "image": "goal-01.button.png",
+        "text": "Take It With You"
+      },
+      "titleText": "We're Done Here",
+      "buttons": [
+        {
+          "text": "Take It With You",
+          "image": "goal-01.button.png",
+          "size": 14
+        }
+      ],
+      "adminLabel": "send-off page",
+      "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
+    },
+    {
+      "id": 10,
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [
+        {
+          "text": "",
+          "scoreDelta": 1
+        },
+        {
+          "text": "",
+          "scoreDelta": 1
+        }
+      ],
+      "overlayImage": {
+        "url": "goal-01.finale.png",
+        "position": "center"
+      },
+      "button": {
+        "image": "goal-01.button.png",
         "text": "Another Round"
-      }
+      },
+      "buttons": [
+        {
+          "image": "goal-01.button.png",
+          "text": "Another Round",
+          "color": "#000000",
+          "size": 14
+        },
+        {
+          "image": "goal-01.button.png",
+          "text": "The Team",
+          "size": 14
+        },
+        {
+          "image": "goal-01.button.png",
+          "text": "Over & Out",
+          "size": 14
+        }
+      ],
+      "adminLabel": "final page"
     }
   ],
   "results": [

@@ -157,11 +157,17 @@ export function startGame(config, container) {
     }
 
     // Reserved space for this scene's special mechanic (door, word picker,
-    // sorting, wheel, reveal cards) — filled in by dedicated code per scene
-    // in later builds. Empty for now on scenes that need one.
+    // sorting, wheel, reveal cards) — filled in by dedicated code per scene.
     const mechanicSlot = document.createElement('div');
     mechanicSlot.className = 'aurion-mechanic-slot';
     wrap.appendChild(mechanicSlot);
+
+    let mechanicGatesButton = false;
+
+    if (scene.mechanic === 'door' && scene.mechanicData) {
+      mechanicGatesButton = true;
+      buildDoorMechanic(mechanicSlot, scene, revealButtons);
+    }
 
     if (scene.video) {
       const video = document.createElement('video');
@@ -205,11 +211,13 @@ export function startGame(config, container) {
       buttonRow.style.visibility = 'visible';
     }
 
-    // Button timing: a scene with its own voice line waits for that voice to
-    // finish; a video scene shows its button immediately, same as Maverick;
-    // everything else shows its button right away until a specific scene's
-    // mechanic is built to hold it back for an action instead.
-    if (scene.soundEffect) {
+    // Button timing: a mechanic that gates its own completion (like the
+    // door) controls reveal itself. Otherwise, a scene with its own voice
+    // line waits for that voice to finish; everything else shows its
+    // button right away.
+    if (mechanicGatesButton) {
+      // buildDoorMechanic (or whichever mechanic) calls revealButtons itself
+    } else if (scene.soundEffect) {
       setTimeout(() => {
         const voice = new Audio(scene.soundEffect);
         voice.addEventListener('ended', revealButtons);
@@ -218,5 +226,34 @@ export function startGame(config, container) {
     } else {
       revealButtons();
     }
+  }
+
+  function buildDoorMechanic(slot, scene, onOpened) {
+    const stage = document.createElement('div');
+    stage.className = 'aurion-door-stage';
+
+    const closedImg = document.createElement('img');
+    closedImg.className = 'aurion-door-img aurion-door-closed';
+    closedImg.src = (scene.image && scene.image.url) || '';
+    closedImg.alt = '';
+
+    const openImg = document.createElement('img');
+    openImg.className = 'aurion-door-img aurion-door-open';
+    openImg.src = scene.mechanicData.openImage || '';
+    openImg.alt = '';
+
+    const revealImg = document.createElement('img');
+    revealImg.className = 'aurion-door-reveal';
+    revealImg.src = scene.mechanicData.revealImage || '';
+    revealImg.alt = '';
+
+    stage.append(closedImg, openImg, revealImg);
+    stage.addEventListener('click', () => {
+      if (stage.classList.contains('opened')) return;
+      stage.classList.add('opened');
+      onOpened();
+    });
+
+    slot.appendChild(stage);
   }
 }

@@ -525,19 +525,6 @@ function renderSceneTabs() {
     label.textContent = decision.adminLabel || `Scene ${index + 1}`;
     tab.appendChild(label);
 
-    const closeBtn = document.createElement('span');
-    closeBtn.className = 'admin-tab-close';
-    closeBtn.textContent = 'x';
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      state.decisions.splice(index, 1);
-      if (activeSceneIndex >= state.decisions.length) {
-        activeSceneIndex = state.decisions.length - 1;
-      }
-      renderForm();
-    });
-    tab.appendChild(closeBtn);
-
     tab.addEventListener('click', () => {
       activeSceneIndex = index;
       renderForm();
@@ -574,6 +561,43 @@ function renderActiveScene() {
 
   // Left: setting the stage for this scene only
   activeLeft.appendChild(sectionTitle(`Scene ${activeSceneIndex + 1}, setting the stage`));
+
+  const moveRow = document.createElement('div');
+  moveRow.className = 'admin-item-row';
+  const moveEarlierBtn = document.createElement('button');
+  moveEarlierBtn.className = 'admin-btn';
+  moveEarlierBtn.textContent = '\u25c0 Move earlier';
+  moveEarlierBtn.disabled = activeSceneIndex === 0;
+  moveEarlierBtn.addEventListener('click', () => {
+    const arr = state.decisions;
+    [arr[activeSceneIndex - 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex - 1]];
+    activeSceneIndex -= 1;
+    renderForm();
+  });
+  const moveLaterBtn = document.createElement('button');
+  moveLaterBtn.className = 'admin-btn';
+  moveLaterBtn.textContent = 'Move later \u25b6';
+  moveLaterBtn.disabled = activeSceneIndex === state.decisions.length - 1;
+  moveLaterBtn.addEventListener('click', () => {
+    const arr = state.decisions;
+    [arr[activeSceneIndex + 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex + 1]];
+    activeSceneIndex += 1;
+    renderForm();
+  });
+  moveRow.append(moveEarlierBtn, moveLaterBtn);
+  activeLeft.appendChild(moveRow);
+
+  const removeSceneBtn = document.createElement('button');
+  removeSceneBtn.className = 'admin-btn admin-btn-remove';
+  removeSceneBtn.textContent = 'Remove this scene';
+  removeSceneBtn.style.marginBottom = 'var(--spacing-md)';
+  removeSceneBtn.addEventListener('click', () => {
+    if (!window.confirm('Remove this scene? This cannot be undone.')) return;
+    state.decisions.splice(activeSceneIndex, 1);
+    if (activeSceneIndex >= state.decisions.length) activeSceneIndex = state.decisions.length - 1;
+    renderForm();
+  });
+  activeLeft.appendChild(removeSceneBtn);
 
   activeLeft.appendChild(textField(
     'Scene label, for your own mapping (e.g. Landing, Consent, Send-off, Final)',
@@ -614,7 +638,10 @@ function renderActiveScene() {
   activeLeft.appendChild(textField('Video, Cloudflare URL (.mp4, only needed if this is the Send-off scene)', decision.video, v => { decision.video = v; }));
 
   // Right: setting the scene, content
-  activeRight.appendChild(sectionTitle(`Scene ${activeSceneIndex + 1}, setting the scene`));
+  const sceneHeaderBar = document.createElement('div');
+  sceneHeaderBar.className = 'admin-scene-header-bar';
+  sceneHeaderBar.textContent = `Scene ${activeSceneIndex + 1}, setting the scene`;
+  activeRight.appendChild(sceneHeaderBar);
 
   activeRight.appendChild(styledTextGroup('title', decision, HEADER_FONTS,
     { font: 'Luckiest Guy', color: '#f0b429', size: 28, minSize: 16, maxSize: 48, bold: true },
@@ -625,6 +652,14 @@ function renderActiveScene() {
     { font: 'Poppins', color: '#ffffff', size: 16, minSize: 12, maxSize: 24, bold: false },
     'Text container (blank means no description)', true
   ));
+
+  // Migrate old single "button" field into the new "buttons" list, if this
+  // scene was saved before buttons became a list — otherwise that content
+  // silently goes missing on reload.
+  if ((!decision.buttons || !decision.buttons.length) && decision.button && (decision.button.text || decision.button.image)) {
+    decision.buttons = [decision.button];
+    delete decision.button;
+  }
 
   activeRight.appendChild(renderButtonsList(decision));
 

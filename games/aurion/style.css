@@ -677,3 +677,13 @@ body {
   line-height: 1.5;
   margin: 0 0 16px;
 }
+
+.aurion-credits-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-wrap;
+  margin: 12px 0 20px;
+  color: var(--aurion-text);
+  opacity: 0.9;
+}

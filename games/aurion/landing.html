@@ -48,20 +48,26 @@
             document.getElementById('landing-title').textContent = config.title;
           }
 
+          function resolveAssetUrl(url) {
+            if (!url) return url;
+            if (/^https?:\/\//i.test(url) || url.indexOf('assets/') === 0 || url.indexOf('/') === 0) return url;
+            return 'assets/' + url;
+          }
+
           var urls = [];
 
           function addImg(obj) {
-            if (obj && obj.url && obj.type !== 'video') urls.push(obj.url);
+            if (obj && obj.url && obj.type !== 'video') urls.push(resolveAssetUrl(obj.url));
           }
 
           addImg(config.background);
           (config.decisions || []).forEach(function (d) {
             addImg(d.background);
-            if (d.image && d.image.url) urls.push(d.image.url);
-            if (d.overlayImage && d.overlayImage.url) urls.push(d.overlayImage.url);
+            if (d.image && d.image.url) urls.push(resolveAssetUrl(d.image.url));
+            if (d.overlayImage && d.overlayImage.url) urls.push(resolveAssetUrl(d.overlayImage.url));
           });
           (config.characterImages || []).forEach(function (img) {
-            if (img.url) urls.push(img.url);
+            if (img.url) urls.push(resolveAssetUrl(img.url));
           });
 
           urls.forEach(function (url) {

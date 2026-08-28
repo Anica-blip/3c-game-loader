@@ -602,3 +602,78 @@ body {
   background-position: center;
   transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
 }
+
+/* Scene 9 — reveal: only chosen categories flash and open, others stay dim */
+.aurion-reveal-wrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.aurion-reveal-tile {
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.aurion-reveal-tile.dim {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.aurion-reveal-tile.flashing {
+  animation: reveal-flash 1.4s ease-in-out infinite;
+}
+
+.aurion-reveal-tile.opened {
+  opacity: 1;
+  border-color: var(--aurion-gold);
+  animation: none;
+}
+
+@keyframes reveal-flash {
+  0%, 100% { opacity: 0.6; box-shadow: 0 0 0 rgba(240, 180, 41, 0); }
+  50% { opacity: 1; box-shadow: 0 0 16px rgba(240, 180, 41, 0.7); }
+}
+
+.aurion-reveal-popup {
+  display: none;
+  width: 220px;
+  max-width: 80vw;
+  background: var(--aurion-dark);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 18px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.aurion-reveal-popup.open {
+  display: block;
+}
+
+.aurion-reveal-popup h2 {
+  font-family: 'Luckiest Guy', cursive;
+  color: #ffbd59;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.aurion-reveal-subtitle {
+  font-family: 'Poppins', sans-serif;
+  color: #ffbd59;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.aurion-reveal-body {
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}

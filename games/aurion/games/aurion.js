@@ -37,6 +37,51 @@ const WORD_BANK = [
   { word: 'Reduce stress', category: 'BODY' }
 ];
 
+// The eight reveal messages — Chef's final wording, built directly into the
+// engine since this text doesn't change per theme.
+const CATEGORY_MESSAGES = {
+  YOU: {
+    title: '\ud83e\udde0 YOU',
+    subtitle: 'Personal Growth',
+    body: "Your choices point towards YOU learning, developing, understanding yourself or becoming more capable. This may reveal a desire to grow, a need to invest more attention in yourself, or a decision that something you've been putting off is ready for a closer look. Growth starts when curiosity turns into action."
+  },
+  PEOPLE: {
+    title: '\u2764\ufe0f PEOPLE',
+    subtitle: 'Family & Relationships',
+    body: "Your choices point towards PEOPLE connection, family, friendship, communication or relationships. This may reveal a need for more connection, a desire to strengthen an important relationship, or a decision to give someone, including yourself, a little more time and attention. Sometimes the goal isn't about doing more; it's about being more present."
+  },
+  BODY: {
+    title: '\ud83c\udfc3 BODY',
+    subtitle: 'Health & Wellbeing',
+    body: "Your choices point towards YOU + BODY energy, movement, food, rest and feeling better in yourself. This may reveal a need to look after your energy, a desire to feel stronger or healthier, or a decision to make one small change that supports the way you want to live. Your body is part of the journey, not something to deal with later."
+  },
+  WORK: {
+    title: '\ud83d\udcbc WORK',
+    subtitle: 'Career & Finances',
+    body: "Your choices point towards WORK career, money, projects, achievement or creating greater independence. This may reveal a desire for progress, a need for greater security or direction, or a decision to start moving towards something you've been considering. A bigger change often begins with one practical move."
+  },
+  LIFE: {
+    title: '\ud83c\udf0d LIFE',
+    subtitle: 'Experiences & Adventure',
+    body: "Your choices point towards LIFE travel, adventure, exploration, hobbies, fun and experiences. This may reveal a desire for something new, a need for more variety or excitement, or a decision to stop waiting for the \u201cright time\u201d to experience something you've been wanting to do. Life isn't only about what you accomplish; it's also about what you experience."
+  },
+  HOME: {
+    title: '\ud83c\udfe0 HOME',
+    subtitle: 'Home & Environment',
+    body: "Your choices point towards LIFE AROUND YOU your home, surroundings, routines and the spaces in which you spend your time. This may reveal a need for greater order, comfort or simplicity, a desire to create an environment that works better for you, or a decision to change something around you so everyday life feels easier. Sometimes changing the space around you changes how you move through it."
+  },
+  CREATE: {
+    title: '\ud83c\udfa8 CREATE',
+    subtitle: 'Creativity & Projects',
+    body: "Your choices point towards CREATION making, writing, building, designing, experimenting or bringing an idea into the world. This may reveal a desire to create something of your own, a need for an outlet, or a decision to stop keeping an idea in your head and give it somewhere to go. Ideas become real when you give them a place to begin."
+  },
+  GIVE: {
+    title: '\ud83c\udf31 GIVE',
+    subtitle: 'Community & Giving',
+    body: "Your choices point towards CONTRIBUTION helping, teaching, supporting, volunteering or making a difference beyond yourself. This may reveal a desire to be useful, a need for greater connection to something meaningful, or a decision to share some of what you have with others. Sometimes progress feels different when it creates value beyond yourself."
+  }
+};
+
 function preloadAssets(config) {
   const urls = [];
   if (config.background && config.background.url && config.background.type !== 'video') {
@@ -221,6 +266,11 @@ export function startGame(config, container) {
     if (scene.mechanic === 'spin-wheel') {
       mechanicGatesButton = true;
       buildSpinWheelMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'reveal-cards') {
+      mechanicGatesButton = true;
+      buildRevealMechanic(mechanicSlot, scene, revealButtons);
     }
 
     if (scene.video) {
@@ -513,5 +563,79 @@ export function startGame(config, container) {
 
     stage.append(pointer, wheel);
     slot.appendChild(stage);
+  }
+
+  function buildRevealMechanic(slot, scene, onComplete) {
+    const categoryImages = (scene.mechanicData && scene.mechanicData.categoryImages) || {};
+    const categories = ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'];
+    const chosenCategories = categories.filter(cat => categoryCounts[cat] > 0);
+    let openedCount = 0;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'aurion-reveal-wrap';
+
+    const board = document.createElement('div');
+    board.className = 'aurion-sort-board';
+
+    const popup = document.createElement('div');
+    popup.className = 'aurion-reveal-popup';
+
+    categories.forEach(cat => {
+      const tile = document.createElement('button');
+      tile.className = 'aurion-sort-tile aurion-reveal-tile';
+      if (categoryImages[cat]) {
+        tile.style.backgroundImage = `url('${categoryImages[cat]}')`;
+      }
+
+      const isChosen = chosenCategories.includes(cat);
+      if (!isChosen) {
+        tile.classList.add('dim');
+        tile.disabled = true;
+      } else {
+        tile.classList.add('flashing');
+      }
+
+      tile.addEventListener('click', () => {
+        if (!isChosen || tile.classList.contains('opened')) return;
+
+        popup.innerHTML = '';
+        popup.classList.add('open');
+        const msg = CATEGORY_MESSAGES[cat];
+
+        const title = document.createElement('h2');
+        title.textContent = msg.title;
+
+        const subtitle = document.createElement('p');
+        subtitle.className = 'aurion-reveal-subtitle';
+        subtitle.textContent = msg.subtitle;
+
+        const body = document.createElement('p');
+        body.className = 'aurion-reveal-body';
+        body.textContent = msg.body;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'aurion-btn';
+        closeBtn.textContent = 'Close';
+        closeBtn.addEventListener('click', () => {
+          popup.classList.remove('open');
+        });
+
+        popup.append(title, subtitle, body, closeBtn);
+
+        if (!tile.classList.contains('opened')) {
+          tile.classList.remove('flashing');
+          tile.classList.add('opened');
+          openedCount += 1;
+          if (openedCount === chosenCategories.length) {
+            onComplete();
+          }
+        }
+      });
+
+      board.appendChild(tile);
+    });
+
+    wrap.append(board, popup);
+    slot.appendChild(wrap);
   }
 }

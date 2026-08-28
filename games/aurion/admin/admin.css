@@ -262,3 +262,18 @@ body {
   text-align: right;
   color: var(--brand-neon-gold);
 }
+
+.admin-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.admin-checkbox-row input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

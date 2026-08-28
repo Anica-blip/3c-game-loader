@@ -277,3 +277,52 @@ body {
   height: 16px;
   cursor: pointer;
 }
+
+.admin-styled-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-style-btn {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.admin-drawer {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  max-width: 85vw;
+  height: 100%;
+  background: #1a0f2e;
+  border-left: 1px solid var(--glass-border);
+  padding: var(--spacing-lg);
+  box-sizing: border-box;
+  transition: right 0.3s ease;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.admin-drawer.open {
+  right: 0;
+}
+
+.admin-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+  color: var(--brand-neon-gold);
+  font-size: 0.9rem;
+}
+
+.admin-drawer-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}

@@ -455,3 +455,150 @@ body {
   font-size: 13px;
   line-height: 1.7;
 }
+
+/* Scene 6/7 (whichever numbers you land on) — sorting: category tiles on
+   the left, the "Your List Of Five" tray panel on the right, matching the
+   actual reference screenshots rather than my earlier bottom-tray guess */
+.aurion-sort-wrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.aurion-sort-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  flex: 1;
+  min-width: 240px;
+  max-width: 420px;
+}
+
+@media (max-width: 700px) {
+  .aurion-sort-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.aurion-sort-tile {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  opacity: 0.5;
+  transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+
+.aurion-sort-tile.lit {
+  opacity: 1;
+  border-color: var(--aurion-gold);
+  box-shadow: 0 0 14px rgba(240, 180, 41, 0.5);
+}
+
+.aurion-sort-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-sort-tray {
+  width: 160px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+}
+
+.aurion-sort-tray-title {
+  font-family: 'Luckiest Guy', cursive;
+  color: var(--aurion-gold);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.aurion-sort-chip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  touch-action: none;
+}
+
+.aurion-sort-chip {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--aurion-text);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.25s ease;
+}
+
+.aurion-sort-chip.dragging {
+  transition: none;
+  z-index: 30;
+  cursor: grabbing;
+  position: relative;
+}
+
+.aurion-sort-chip.placed {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Scene 8 — spin wheel, decorative, tap the wheel itself to spin */
+.aurion-wheel-stage {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  max-width: 60vw;
+  max-height: 60vw;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.aurion-wheel-pointer {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 18px solid var(--aurion-gold);
+  z-index: 2;
+  filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
+}
+
+.aurion-wheel {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background-size: cover;
+  background-position: center;
+  transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
+}

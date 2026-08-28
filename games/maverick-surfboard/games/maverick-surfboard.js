@@ -111,11 +111,17 @@ export function startGame(config, container) {
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-loading';
 
+    const hourglass = document.createElement('div');
+    hourglass.className = 'loading-hourglass';
+    const sandDot = document.createElement('div');
+    sandDot.className = 'sand-dot';
+    hourglass.appendChild(sandDot);
+
     const msg = document.createElement('p');
     msg.className = 'maverick-body-text';
-    msg.textContent = "Hang on, Maverick's getting his things together...";
+    msg.textContent = "Buddy! This is a bit slow isn't it? Gees, the internet can't find the waves fast enough. Hang in there, I'm swimming to the shore to shout at them.";
 
-    wrap.appendChild(msg);
+    wrap.append(hourglass, msg);
     content.appendChild(wrap);
   }
 

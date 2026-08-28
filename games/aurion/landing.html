@@ -20,8 +20,8 @@
     </div>
     <div class="maverick-screen">
       <img src="assets/aurion-intro.png" alt="Aurion" class="maverick-duck-img">
-      <h1>PLACEHOLDER — Aurion Challenge</h1>
-      <p class="maverick-body-text">
+      <h1 id="landing-title">Aurion</h1>
+      <p class="maverick-body-text" id="landing-text">
         Get ready for a new challenge. Every call you make shapes how the story unfolds.
       </p>
       <a href="consent.html" id="continue-link" class="maverick-btn maverick-btn-primary">Continue</a>
@@ -37,11 +37,17 @@
       // Start warming the browser's cache the instant Landing opens, so by
       // the time the player has clicked through Consent and into the game,
       // every image/video/audio file is already sitting ready, not loading
-      // mid-scene. Fire-and-forget, never blocks anything on this page.
+      // mid-scene. Also pulls the real title through onto this page, which
+      // used to just say "PLACEHOLDER" no matter what — fixed here.
       fetch('config/' + encodeURIComponent(configName) + '.json')
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (config) {
           if (!config) return;
+
+          if (config.title) {
+            document.getElementById('landing-title').textContent = config.title;
+          }
+
           var urls = [];
 
           function addImg(obj) {

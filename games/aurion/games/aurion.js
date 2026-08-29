@@ -558,7 +558,14 @@ export function startGame(config, container) {
   function buildSortingMechanic(slot, scene, onComplete) {
     const categoryImages = (scene.mechanicData && scene.mechanicData.categoryImages) || {};
     const categories = ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'];
-    let placedCount = 0;
+
+    // The board is the fixed point of this scene — built once, at full
+    // size, and never touched again by anything below. The word queue is a
+    // small floating card that overlays it (see .aurion-drag-card in
+    // style.css: position: absolute, anchored to .aurion-sort-stage) so it
+    // can never force the board to share width or shrink.
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sort-stage';
 
     const board = document.createElement('div');
     board.className = 'aurion-sort-board';
@@ -578,32 +585,35 @@ export function startGame(config, container) {
       tiles[cat] = { el: tile, count: 0, badge: countBadge };
     });
 
-    const tray = document.createElement('div');
-    tray.className = 'aurion-sort-tray';
+    // One word at a time instead of all 5 in a permanent tray: the card
+    // closes the moment a word is placed correctly, then reopens with the
+    // next word, until the queue is empty. A wrong drop just snaps the chip
+    // back — the card stays open and doesn't advance.
+    const queue = selectedWords.slice();
+    let placedCount = 0;
 
-    const trayTitle = document.createElement('h2');
-    trayTitle.className = 'aurion-sort-tray-title';
-    trayTitle.textContent = 'Your List Of Five';
+    const dragCard = document.createElement('div');
+    dragCard.className = 'aurion-drag-card';
 
-    const trayStars = document.createElement('div');
-    trayStars.className = 'aurion-word-stars';
-    for (let i = 0; i < selectedWords.length; i++) {
-      const star = document.createElement('span');
-      star.textContent = '★';
-      trayStars.appendChild(star);
-    }
+    function showNextChip() {
+      dragCard.innerHTML = '';
+      if (queue.length === 0) return;
+      dragCard.classList.add('open');
 
-    const chipList = document.createElement('div');
-    chipList.className = 'aurion-sort-chip-list';
+      const entry = queue[0];
+      const label = document.createElement('div');
+      label.className = 'aurion-drag-card-label';
+      label.textContent = 'Drag This Word';
 
-    tray.append(trayTitle, trayStars, chipList);
-
-    selectedWords.forEach(entry => {
       const chip = document.createElement('div');
       chip.className = 'aurion-sort-chip';
       chip.textContent = entry.word;
-      chipList.appendChild(chip);
 
+      dragCard.append(label, chip);
+      wireChipDrag(chip, entry);
+    }
+
+    function wireChipDrag(chip, entry) {
       let startX = 0, startY = 0, offsetX = 0, offsetY = 0, dragging = false;
 
       chip.addEventListener('pointerdown', (e) => {
@@ -640,22 +650,25 @@ export function startGame(config, container) {
           tiles[landedTile].count += 1;
           tiles[landedTile].badge.textContent = String(tiles[landedTile].count);
           categoryCounts[landedTile] = (categoryCounts[landedTile] || 0) + 1;
-          chip.classList.add('placed');
-          chip.style.transform = 'translate(0, 0)';
           placedCount += 1;
+
+          dragCard.classList.remove('open');
+          queue.shift();
+
           if (placedCount === selectedWords.length) {
-            onComplete();
+            setTimeout(onComplete, 300);
+          } else {
+            setTimeout(showNextChip, 400);
           }
         } else {
           chip.style.transform = 'translate(0, 0)';
         }
       });
-    });
+    }
 
-    const sortWrap = document.createElement('div');
-    sortWrap.className = 'aurion-sort-wrap';
-    sortWrap.append(board, tray);
-    slot.appendChild(sortWrap);
+    stage.append(board, dragCard);
+    slot.appendChild(stage);
+    showNextChip();
   }
 
   function buildSpinWheelMechanic(slot, scene, onComplete) {
@@ -694,8 +707,12 @@ export function startGame(config, container) {
     const chosenCategories = categories.filter(cat => categoryCounts[cat] > 0);
     let openedCount = 0;
 
-    const wrap = document.createElement('div');
-    wrap.className = 'aurion-reveal-wrap';
+    // Same .aurion-sort-stage + .aurion-sort-board as Scene 6, so the grid
+    // is identical in both scenes. The message popup floats above it the
+    // same way the drag card does in Scene 6 — an overlay, not a sibling
+    // that competes with the board for width.
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sort-stage';
 
     const board = document.createElement('div');
     board.className = 'aurion-sort-board';
@@ -758,8 +775,8 @@ export function startGame(config, container) {
       board.appendChild(tile);
     });
 
-    wrap.append(board, popup);
-    slot.appendChild(wrap);
+    stage.append(board, popup);
+    slot.appendChild(stage);
   }
 
   function renderCredits() {

@@ -230,7 +230,7 @@
       "options": [],
       "overlayImage": { "url": "goal-01.finale.png", "position": "center" },
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Another Round", "color": "#000000", "size": 12 },
+        { "image": "goal.01.button.png", "text": "Another Round", "color": "#000000", "size": 12, "textNudge": -3 },
         { "image": "goal.01.button.png", "text": "The Team", "size": 12 },
         { "image": "goal.01.button.png", "text": "Over & Out", "size": 12 }
       ],

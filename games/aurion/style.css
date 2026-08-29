@@ -262,6 +262,24 @@ body {
   min-height: calc(100dvh - 80px);
 }
 
+/* Scenes with no mechanic (plain title/description moments) read better
+   centered as one block rather than pinned to the top with dead space
+   below, which is what the top/middle/bottom split looks like when the
+   middle has nothing in it */
+.aurion-scene-wrap.aurion-no-mechanic {
+  justify-content: center;
+  min-height: auto;
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-mechanic-slot {
+  display: none;
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-button-row {
+  margin-top: 28px;
+  padding-top: 0;
+}
+
 .aurion-overlay-img {
   max-width: 260px;
   width: 60%;
@@ -277,7 +295,7 @@ body {
   font-family: 'Luckiest Guy', cursive;
   color: var(--aurion-gold);
   font-size: 28px;
-  margin: 6px 0 10px;
+  margin: 6px 0 20px;
 }
 
 .aurion-scene-desc {
@@ -299,10 +317,11 @@ body {
 
 .aurion-scene-video {
   width: 100%;
-  max-width: 480px;
+  max-width: 340px;
   border-radius: 16px;
   display: block;
   background: transparent;
+  margin: 0 auto;
 }
 
 .aurion-scene-video::-webkit-media-controls,
@@ -332,10 +351,12 @@ body {
   color: var(--aurion-text);
   cursor: pointer;
   transition: transform 0.15s ease;
-  max-width: 200px;
+  max-width: 220px;
   white-space: normal;
   word-wrap: break-word;
+  overflow-wrap: break-word;
   line-height: 1.3;
+  height: auto;
 }
 
 .aurion-btn:hover {
@@ -343,11 +364,12 @@ body {
 }
 
 .aurion-btn-imaged {
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   background-color: transparent;
   min-width: 140px;
   min-height: 48px;
+  padding: 14px 20px;
 }
 
 /* Scene 3 — the door: closed and open images crossfade on click, then the
@@ -355,7 +377,7 @@ body {
 .aurion-door-stage {
   position: relative;
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   aspect-ratio: 3 / 4;
   margin: 0 auto;
   cursor: pointer;
@@ -399,7 +421,8 @@ body {
    narrow ones, same underlying 30 buttons either way */
 .aurion-word-counter {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   color: var(--aurion-gold);
   margin-bottom: 10px;
   text-align: center;
@@ -407,29 +430,29 @@ body {
 
 .aurion-word-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  max-height: 60vh;
-  overflow-y: auto;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  width: 100%;
 }
 
 @media (max-width: 480px) {
   .aurion-word-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 .aurion-word-card {
   background: rgba(120, 80, 200, 0.18);
   border: 1px solid rgba(240, 180, 41, 0.5);
-  border-radius: 999px;
+  border-radius: 6px;
   color: var(--aurion-text);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  font-size: 13px;
-  padding: 10px 8px;
+  font-size: 11px;
+  padding: 6px 4px;
   cursor: pointer;
   text-align: center;
+  line-height: 1.25;
 }
 
 .aurion-word-card.picked {
@@ -484,21 +507,26 @@ body {
 /* Scene 6/7 (whichever numbers you land on) — sorting: category tiles on
    the left, the "Your List Of Five" tray panel on the right, matching the
    actual reference screenshots rather than my earlier bottom-tray guess */
+.aurion-scene-wrap.aurion-has-side-panel {
+  max-width: 720px;
+}
+
 .aurion-sort-wrap {
   display: flex;
   gap: 16px;
   align-items: flex-start;
   justify-content: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .aurion-sort-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 12px;
   flex: 1;
-  min-width: 240px;
-  max-width: 420px;
+  min-width: 280px;
+  max-width: 520px;
 }
 
 @media (max-width: 700px) {
@@ -596,10 +624,10 @@ body {
 /* Scene 8 — spin wheel, decorative, tap the wheel itself to spin */
 .aurion-wheel-stage {
   position: relative;
-  width: 220px;
-  height: 220px;
-  max-width: 60vw;
-  max-height: 60vw;
+  width: 280px;
+  height: 280px;
+  max-width: 75vw;
+  max-height: 75vw;
   margin: 0 auto;
   cursor: pointer;
 }
@@ -635,6 +663,7 @@ body {
   align-items: flex-start;
   justify-content: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .aurion-reveal-tile {

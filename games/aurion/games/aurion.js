@@ -141,8 +141,8 @@ export function startGame(config, container) {
   exitBtn.style.backgroundImage = `url('${resolveAssetUrl('goal.01-exitsymbol.png')}')`;
   exitBtn.setAttribute('aria-label', 'Exit');
   exitBtn.addEventListener('click', () => {
-    if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
-    renderScene(0);
+    if (ambientAudio) ambientAudio.pause();
+    window.location.href = 'landing.html';
   });
 
   renderLoading();
@@ -674,7 +674,7 @@ export function startGame(config, container) {
   function renderCredits() {
     content.innerHTML = '';
     const wrap = document.createElement('div');
-    wrap.className = 'maverick-screen aurion-credits';
+    wrap.className = 'aurion-page-card aurion-credits';
 
     const title = document.createElement('h1');
     title.textContent = 'Credits';
@@ -684,7 +684,7 @@ export function startGame(config, container) {
     text.textContent = config.credits || 'Credits coming soon.';
 
     const backBtn = document.createElement('button');
-    backBtn.className = 'maverick-btn maverick-btn-primary';
+    backBtn.className = 'aurion-page-btn aurion-page-btn-primary';
     backBtn.textContent = 'Back';
     backBtn.addEventListener('click', () => renderScene(config.decisions.length - 1));
 
@@ -699,10 +699,10 @@ export function startGame(config, container) {
     }
     content.innerHTML = '';
     const wrap = document.createElement('div');
-    wrap.className = 'maverick-screen';
+    wrap.className = 'aurion-page-card';
 
     const message = document.createElement('p');
-    message.className = 'maverick-body-text';
+    message.className = 'aurion-page-text';
     message.textContent = 'Thanks for playing!';
 
     wrap.appendChild(message);

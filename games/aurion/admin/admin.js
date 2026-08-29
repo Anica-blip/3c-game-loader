@@ -718,6 +718,15 @@ function renderActiveScene() {
     'Title (blank means no title)'
   ));
 
+  // Sits between the title and the description, styled distinctly from
+  // both by default (gold accent like the title, but body-text sized) —
+  // matches aurion.js's built-in default look for decision.subtitleText,
+  // stays editable per scene here the same way title/desc already are.
+  activeRight.appendChild(styledTextGroup('subtitle', decision, BODY_FONTS,
+    { font: 'Poppins', color: '#f0b429', size: 18, minSize: 12, maxSize: 28, bold: true },
+    'Subtitle (blank means no subtitle — sits between title and description)'
+  ));
+
   activeRight.appendChild(styledTextGroup('desc', decision, BODY_FONTS,
     { font: 'Poppins', color: '#ffffff', size: 16, minSize: 12, maxSize: 24, bold: false },
     'Text container (blank means no description)', true

@@ -41,42 +41,42 @@ const WORD_BANK = [
 // engine since this text doesn't change per theme.
 const CATEGORY_MESSAGES = {
   YOU: {
-    title: '\ud83e\udde0 YOU',
+    title: '🧠 YOU',
     subtitle: 'Personal Growth',
     body: "Your choices point towards YOU learning, developing, understanding yourself or becoming more capable. This may reveal a desire to grow, a need to invest more attention in yourself, or a decision that something you've been putting off is ready for a closer look. Growth starts when curiosity turns into action."
   },
   PEOPLE: {
-    title: '\u2764\ufe0f PEOPLE',
+    title: '❤️ PEOPLE',
     subtitle: 'Family & Relationships',
     body: "Your choices point towards PEOPLE connection, family, friendship, communication or relationships. This may reveal a need for more connection, a desire to strengthen an important relationship, or a decision to give someone, including yourself, a little more time and attention. Sometimes the goal isn't about doing more; it's about being more present."
   },
   BODY: {
-    title: '\ud83c\udfc3 BODY',
+    title: '🏃 BODY',
     subtitle: 'Health & Wellbeing',
     body: "Your choices point towards YOU + BODY energy, movement, food, rest and feeling better in yourself. This may reveal a need to look after your energy, a desire to feel stronger or healthier, or a decision to make one small change that supports the way you want to live. Your body is part of the journey, not something to deal with later."
   },
   WORK: {
-    title: '\ud83d\udcbc WORK',
+    title: '💼 WORK',
     subtitle: 'Career & Finances',
     body: "Your choices point towards WORK career, money, projects, achievement or creating greater independence. This may reveal a desire for progress, a need for greater security or direction, or a decision to start moving towards something you've been considering. A bigger change often begins with one practical move."
   },
   LIFE: {
-    title: '\ud83c\udf0d LIFE',
+    title: '🌍 LIFE',
     subtitle: 'Experiences & Adventure',
-    body: "Your choices point towards LIFE travel, adventure, exploration, hobbies, fun and experiences. This may reveal a desire for something new, a need for more variety or excitement, or a decision to stop waiting for the \u201cright time\u201d to experience something you've been wanting to do. Life isn't only about what you accomplish; it's also about what you experience."
+    body: "Your choices point towards LIFE travel, adventure, exploration, hobbies, fun and experiences. This may reveal a desire for something new, a need for more variety or excitement, or a decision to stop waiting for the “right time” to experience something you've been wanting to do. Life isn't only about what you accomplish; it's also about what you experience."
   },
   HOME: {
-    title: '\ud83c\udfe0 HOME',
+    title: '🏠 HOME',
     subtitle: 'Home & Environment',
     body: "Your choices point towards LIFE AROUND YOU your home, surroundings, routines and the spaces in which you spend your time. This may reveal a need for greater order, comfort or simplicity, a desire to create an environment that works better for you, or a decision to change something around you so everyday life feels easier. Sometimes changing the space around you changes how you move through it."
   },
   CREATE: {
-    title: '\ud83c\udfa8 CREATE',
+    title: '🎨 CREATE',
     subtitle: 'Creativity & Projects',
     body: "Your choices point towards CREATION making, writing, building, designing, experimenting or bringing an idea into the world. This may reveal a desire to create something of your own, a need for an outlet, or a decision to stop keeping an idea in your head and give it somewhere to go. Ideas become real when you give them a place to begin."
   },
   GIVE: {
-    title: '\ud83c\udf31 GIVE',
+    title: '🌱 GIVE',
     subtitle: 'Community & Giving',
     body: "Your choices point towards CONTRIBUTION helping, teaching, supporting, volunteering or making a difference beyond yourself. This may reveal a desire to be useful, a need for greater connection to something meaningful, or a decision to share some of what you have with others. Sometimes progress feels different when it creates value beyond yourself."
   }
@@ -94,19 +94,46 @@ function resolveAssetUrl(url) {
   return 'assets/' + url;
 }
 
+// Every still image any scene could show gets warmed up here, while the
+// hourglass loading screen is up, so nothing pops in late once the player
+// is actually moving through scenes. This was previously missing every
+// mechanic-specific image (door open/reveal art, all 8 category tiles used
+// by both the sorting and reveal-cards scenes, the spin wheel face, and
+// every button graphic) — those were only ever fetched the first time their
+// scene actually rendered, which is exactly the kind of lag Scenes 3, 6, 7
+// and 8 (the heaviest ones) would have shown.
 function preloadAssets(config) {
-  const urls = [];
+  const urls = new Set();
+  const add = (url) => { if (url) urls.add(resolveAssetUrl(url)); };
+
   if (config.background && config.background.url && config.background.type !== 'video') {
-    urls.push(resolveAssetUrl(config.background.url));
+    add(config.background.url);
   }
   (config.decisions || []).forEach(d => {
-    if (d.background && d.background.url && d.background.type !== 'video') urls.push(resolveAssetUrl(d.background.url));
-    if (d.image && d.image.url) urls.push(resolveAssetUrl(d.image.url));
-    if (d.overlayImage && d.overlayImage.url) urls.push(resolveAssetUrl(d.overlayImage.url));
-  });
-  (config.characterImages || []).forEach(img => { if (img.url) urls.push(resolveAssetUrl(img.url)); });
+    if (d.background && d.background.url && d.background.type !== 'video') add(d.background.url);
+    if (d.image && d.image.url) add(d.image.url);
+    if (d.overlayImage && d.overlayImage.url) add(d.overlayImage.url);
 
-  const loadPromises = urls.map(url => new Promise(resolve => {
+    (d.buttons || []).forEach(btn => { if (btn.image) add(btn.image); });
+
+    const mechanicData = d.mechanicData || {};
+    if (d.mechanic === 'door') {
+      add(mechanicData.openImage);
+      add(mechanicData.revealImage);
+    }
+    if (d.mechanic === 'spin-wheel') {
+      add(mechanicData.wheelImage);
+    }
+    if (d.mechanic === 'sorting' || d.mechanic === 'reveal-cards') {
+      Object.values(mechanicData.categoryImages || {}).forEach(add);
+    }
+  });
+  (config.characterImages || []).forEach(img => { if (img.url) add(img.url); });
+
+  // Used on every scene but the last, not tied to any one decision
+  add('goal.01-exitsymbol.png');
+
+  const loadPromises = Array.from(urls).map(url => new Promise(resolve => {
     const img = new Image();
     img.onload = resolve;
     img.onerror = resolve;
@@ -135,14 +162,18 @@ export function startGame(config, container) {
   container.appendChild(content);
 
   // Exit symbol — present on every scene except the last (Final), independent
-  // of any button logic, purely a polite way to leave at any point.
+  // of any button logic, purely a polite way to leave at any point. This
+  // closes the game in place (same end-of-session pattern as the Finale's
+  // "Over & Out" button below) — it does NOT jump to another scene inside
+  // the game, since exit means leaving, not navigating.
   const exitBtn = document.createElement('button');
   exitBtn.className = 'aurion-exit-btn';
   exitBtn.style.backgroundImage = `url('${resolveAssetUrl('goal.01-exitsymbol.png')}')`;
   exitBtn.setAttribute('aria-label', 'Exit');
   exitBtn.addEventListener('click', () => {
     if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
-    renderScene(2);
+    renderGoodbye();
+    window.close();
   });
 
   renderLoading();
@@ -271,6 +302,13 @@ export function startGame(config, container) {
     }
     if (scene.mechanic === 'sorting' || scene.mechanic === 'reveal-cards' || scene.mechanic === 'word-picker') {
       wrap.classList.add('aurion-has-side-panel');
+    }
+    // Landing and consent are the only two scenes whose overlay image should
+    // render smaller — scoped to these two specifically (by adminLabel, set
+    // in the config) so the shared .aurion-overlay-img class doesn't also
+    // shrink the finale scene, which uses the same class.
+    if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page') {
+      wrap.classList.add('aurion-intro-scene');
     }
 
     if (scene.overlayImage && scene.overlayImage.url) {
@@ -436,9 +474,22 @@ export function startGame(config, container) {
     const MAX_PICKS = 5;
     const picked = [];
 
+    // Counter is 5 stars (matching the summary popup's own stars) instead
+    // of a "0 of 5" number, sitting in its own row above the grid rather
+    // than beside it.
+    const pickerWrap = document.createElement('div');
+    pickerWrap.className = 'aurion-word-picker-wrap';
+
     const counter = document.createElement('div');
     counter.className = 'aurion-word-counter';
-    counter.textContent = `0 of ${MAX_PICKS}`;
+    const counterStars = [];
+    for (let i = 0; i < MAX_PICKS; i++) {
+      const star = document.createElement('span');
+      star.className = 'aurion-word-counter-star';
+      star.textContent = '★';
+      counter.appendChild(star);
+      counterStars.push(star);
+    }
 
     const grid = document.createElement('div');
     grid.className = 'aurion-word-grid';
@@ -456,7 +507,7 @@ export function startGame(config, container) {
 
         card.classList.add('picked');
         picked.push(entry);
-        counter.textContent = `${picked.length} of ${MAX_PICKS}`;
+        counterStars[picked.length - 1].classList.add('filled');
 
         if (picked.length === MAX_PICKS) {
           selectedWords = picked.slice();
@@ -477,7 +528,7 @@ export function startGame(config, container) {
       stars.className = 'aurion-word-stars';
       for (let i = 0; i < MAX_PICKS; i++) {
         const star = document.createElement('span');
-        star.textContent = '\u2605';
+        star.textContent = '★';
         stars.appendChild(star);
       }
 
@@ -500,7 +551,8 @@ export function startGame(config, container) {
       popup.append(title, stars, list, closeBtn);
     }
 
-    slot.append(counter, grid, popup);
+    pickerWrap.append(counter, grid);
+    slot.append(pickerWrap, popup);
   }
 
   function buildSortingMechanic(slot, scene, onComplete) {
@@ -537,7 +589,7 @@ export function startGame(config, container) {
     trayStars.className = 'aurion-word-stars';
     for (let i = 0; i < selectedWords.length; i++) {
       const star = document.createElement('span');
-      star.textContent = '\u2605';
+      star.textContent = '★';
       trayStars.appendChild(star);
     }
 

@@ -7,27 +7,65 @@ const MOTION_PRESETS = {
   'wipeout-spin': (progress) => ({ y: Math.sin(progress * Math.PI * 10) * 35, rotation: progress * 1080 })
 };
 
-function preloadAssets(config) {
-  const urls = [];
-  if (config.background && config.background.url && config.background.type !== 'video') {
-    urls.push(config.background.url);
-  }
-  (config.decisions || []).forEach(d => {
-    if (d.background && d.background.url && d.background.type !== 'video') urls.push(d.background.url);
-    if (d.image && d.image.url) urls.push(d.image.url);
-  });
-  (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
-
-  const loadPromises = urls.map(url => new Promise(resolve => {
+function preloadImageList(urls) {
+  const list = Array.from(new Set(urls.filter(Boolean)));
+  return Promise.all(list.map(url => new Promise(resolve => {
     const img = new Image();
     img.onload = resolve;
     img.onerror = resolve;
     img.src = url;
-  }));
+  })));
+}
 
-  const timeout = new Promise(resolve => setTimeout(resolve, 8000));
+// Two tiers, not one. The old single preloadAssets() swept every background
+// and character image across all 5 decisions plus intro/finale (11+ mostly
+// external, full-size photo backgrounds) into one Promise.all racing an
+// 8-second timeout. On a real connection that sweep can easily outrun 8
+// seconds, the timeout wins the race, and the game proceeds into scenes
+// whose images are still mid-download — which is exactly the "loads top to
+// bottom, dark screen" symptom reported. It also never included introImage
+// or finaleImage at all, so those two were guaranteed to load cold on
+// first use regardless of timing.
+//
+// Critical tier: only what's seen before the player makes a single choice
+// — the landing background, the intro artwork, and decision 1's own
+// background + character image. Small enough to actually finish, so the
+// hourglass is tied to real work, not a race it can lose.
+function preloadCriticalAssets(config) {
+  const urls = [];
+  if (config.background && config.background.url && config.background.type !== 'video') {
+    urls.push(config.background.url);
+  }
+  if (config.introImage) urls.push(config.introImage);
 
-  return Promise.race([Promise.all(loadPromises), timeout]);
+  const first = (config.decisions || [])[0];
+  if (first) {
+    if (first.background && first.background.url && first.background.type !== 'video') urls.push(first.background.url);
+    if (first.image && first.image.url) urls.push(first.image.url);
+  }
+  (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
+
+  const timeout = new Promise(resolve => setTimeout(resolve, 15000));
+  return Promise.race([preloadImageList(urls), timeout]);
+}
+
+// Everything else — decisions 2 onward, plus the finale image. Kicked off
+// at the exact same moment as the critical tier, but nothing waits on it.
+// By the time the player has read the intro and sat through decision 1's
+// several-second animation, this has almost always finished quietly in the
+// background, so later scenes' backgrounds are already cached rather than
+// streaming in live when their scene arrives. This is the "first image
+// loads first while the others work their way in" behavior asked for.
+function preloadRemainingAssets(config) {
+  const urls = [];
+  if (config.finaleImage) urls.push(config.finaleImage);
+
+  (config.decisions || []).slice(1).forEach(d => {
+    if (d.background && d.background.url && d.background.type !== 'video') urls.push(d.background.url);
+    if (d.image && d.image.url) urls.push(d.image.url);
+  });
+
+  return preloadImageList(urls);
 }
 
 export function startGame(config, container) {
@@ -49,11 +87,13 @@ export function startGame(config, container) {
   container.appendChild(content);
 
   renderLoading();
-  preloadAssets(config).then(() => {
+  preloadRemainingAssets(config); // fire-and-forget, runs alongside the wait below
+  preloadCriticalAssets(config).then(() => {
     renderIntro();
   });
 
   function setupBackground(layer, background) {
+    layer.classList.remove('maverick-bg-ready');
     layer.innerHTML = '';
     layer.classList.remove('maverick-bg-image');
     layer.style.backgroundImage = '';
@@ -75,13 +115,19 @@ export function startGame(config, container) {
       layer.classList.add('maverick-bg-image');
       layer.style.backgroundImage = `url('${background.url}')`;
     }
+    // Fades the layer in rather than a hard cut — a cushion against exactly
+    // the "dark screen for a moment" complaint, on top of (not instead of)
+    // the preloading above actually having the image ready by this point.
+    requestAnimationFrame(() => layer.classList.add('maverick-bg-ready'));
   }
 
   function setSolidBackground(layer, hex) {
+    layer.classList.remove('maverick-bg-ready');
     layer.innerHTML = '';
     layer.classList.remove('maverick-bg-image');
     layer.style.backgroundImage = '';
     layer.style.backgroundColor = hex;
+    requestAnimationFrame(() => layer.classList.add('maverick-bg-ready'));
   }
 
   function getCharacterImageUrl(decision) {
@@ -111,11 +157,50 @@ export function startGame(config, container) {
     const wrap = document.createElement('div');
     wrap.className = 'maverick-screen maverick-loading';
 
+    // Same layered SVG hourglass Aurion uses (real glass/sand geometry, not
+    // a flat CSS shape), recolored to Maverick's own teal/gold palette
+    // instead of Aurion's purple/gold, with ambient sparkles reading as sea
+    // spray rather than starlight. Maverick's own loading line stays as-is.
     const hourglass = document.createElement('div');
-    hourglass.className = 'loading-hourglass';
-    const sandDot = document.createElement('div');
-    sandDot.className = 'sand-dot';
-    hourglass.appendChild(sandDot);
+    hourglass.className = 'maverick-hourglass-illustration';
+    hourglass.innerHTML = `
+      <svg width="100%" height="100%" viewBox="0 0 380 260" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="maverickGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1c5560"/>
+            <stop offset="100%" stop-color="#14141a"/>
+          </linearGradient>
+          <linearGradient id="maverickSandGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffe9b3"/>
+            <stop offset="100%" stop-color="#f0b429"/>
+          </linearGradient>
+        </defs>
+        <circle cx="70" cy="40" r="2" fill="#9be8f0" opacity="0.8">
+          <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="300" cy="60" r="2.5" fill="#9be8f0" opacity="0.6">
+          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.1s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="320" cy="180" r="1.8" fill="#9be8f0" opacity="0.7">
+          <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.7s" repeatCount="indefinite"/>
+        </circle>
+        <g transform="translate(190,130)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate" values="0;0;180;180;360" keyTimes="0;0.4;0.5;0.9;1" dur="6s" repeatCount="indefinite"/>
+            <path d="M -55 -85 Q -55 -95 -45 -95 L 45 -95 Q 55 -95 55 -85 Q 55 -55 15 -8 Q 8 0 15 8 Q 55 55 55 85 Q 55 95 45 95 L -45 95 Q -55 95 -55 85 Q -55 55 -15 8 Q -8 0 -15 -8 Q -55 -55 -55 -85 Z" fill="url(#maverickGlassGrad)" stroke="#f0b429" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M -47 -82 Q -47 -88 -40 -88 L 40 -88 Q 47 -88 47 -82 Q 47 -56 12 -10 Q 12 -6 -12 -10 Q -47 -56 -47 -82 Z" fill="url(#maverickSandGrad)" opacity="0.9"/>
+            <path d="M -8 40 Q -8 70 -30 82 Q -35 85 -35 88 L 35 88 Q 35 85 30 82 Q 8 70 8 40 Q 8 55 0 60 Q -8 55 -8 40 Z" fill="url(#maverickSandGrad)" opacity="0.9"/>
+            <rect x="-1.5" y="-8" width="3" height="16" fill="#ffe9b3">
+              <animate attributeName="height" values="16;4;16" dur="1.2s" repeatCount="indefinite"/>
+            </rect>
+          </g>
+        </g>
+        <circle cx="190" cy="122" r="3" fill="#ffe9b3">
+          <animate attributeName="cy" values="105;150;105" dur="1.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;1;0" dur="1.4s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    `;
 
     const msg = document.createElement('p');
     msg.className = 'maverick-body-text';

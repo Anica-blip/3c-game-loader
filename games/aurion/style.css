@@ -606,11 +606,26 @@ body {
    is set to match the art's real proportions (570:876) instead of the
    arbitrary 3:4 that was forcing a mismatched crop. Full opacity always —
    dimming is a Scene 8 (reveal) concept only, Scene 6 shows every container
-   clearly from the start since nothing's been sorted into any of them yet. */
+   clearly from the start since nothing's been sorted into any of them yet.
+   background-color restored (checked the actual pixel data in the live
+   goal-01.*.png files to be sure this time): every card's own fill is only
+   ~40% opaque by design, not a solid color — it's meant to be tinted by
+   whatever sits behind it. Removing the tile's background-color earlier
+   didn't just fix the border gap, it also left that 40%-opaque fill with
+   nothing reliable behind it, so it composited against whatever happened
+   to be there (the starfield scene background) instead of a consistent
+   color — that's why it was reading pale/washed out instead of the rich
+   purple it's meant to be. This is safe now because the border-gap issue
+   was actually caused by the old TRANSPARENT PADDING around the art (fixed
+   above by cropping), not by having a background-color at all — so
+   restoring it here doesn't bring that bug back. Solid (not translucent)
+   on purpose, so the result is the same regardless of what's behind the
+   tile on any given scene. */
 .aurion-sort-tile {
   position: relative;
   aspect-ratio: 570 / 876;
   border-radius: 10px;
+  background-color: var(--aurion-dark);
   background-size: cover;
   background-position: center;
   border: none;

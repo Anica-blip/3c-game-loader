@@ -339,6 +339,12 @@ export function startGame(config, container) {
       wrap.appendChild(img);
     }
 
+    // Title stays exactly where it always has — pinned at the top,
+    // appended straight to the wrap, never part of the centered block
+    // below. Only the subtitle + description move as their own centered
+    // unit within the space between the title and the button (which
+    // keeps anchoring to the bottom via .aurion-button-row's own
+    // margin-top: auto, untouched by any of this).
     if (scene.titleText) {
       const title = document.createElement('h1');
       title.className = 'aurion-scene-title';
@@ -347,12 +353,29 @@ export function startGame(config, container) {
       wrap.appendChild(title);
     }
 
+    // Scoped to no-mechanic scenes in the CSS, so a scene with an actual
+    // mechanic (which already lays its content out around the mechanic
+    // slot) isn't affected by this at all.
+    const textBlock = document.createElement('div');
+    textBlock.className = 'aurion-scene-textblock';
+    wrap.appendChild(textBlock);
+
+    // Optional — only present when the scene's JSON sets "subtitleText"
+    // (not exposed in the admin panel yet). Renders as its own styled
+    // line above the description.
+    if (scene.subtitleText) {
+      const subtitle = document.createElement('p');
+      subtitle.className = 'aurion-scene-subtitle';
+      subtitle.textContent = scene.subtitleText;
+      textBlock.appendChild(subtitle);
+    }
+
     if (scene.descText) {
       const desc = document.createElement('p');
       desc.className = 'aurion-scene-desc';
       desc.textContent = scene.descText;
       applyStyledText(desc, scene, 'desc');
-      wrap.appendChild(desc);
+      textBlock.appendChild(desc);
     }
 
     // Reserved space for this scene's special mechanic (door, word picker,
@@ -470,11 +493,14 @@ export function startGame(config, container) {
     if (mechanicGatesButton) {
       // buildDoorMechanic (or whichever mechanic) calls revealButtons itself
     } else if (scene.soundEffect) {
+      // Was 1000ms — landing on the page and hearing Aurion start talking
+      // immediately didn't leave any time to actually read the text first.
+      // 2000ms gives a beat to read before the voice line starts.
       setTimeout(() => {
         const voice = new Audio(scene.soundEffect);
         voice.addEventListener('ended', revealButtons);
         voice.play().catch(revealButtons);
-      }, 1000);
+      }, 2000);
     } else {
       revealButtons();
     }

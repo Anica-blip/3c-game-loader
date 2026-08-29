@@ -207,7 +207,7 @@ export function startGame(config, container) {
   }
 
   function applyStyledText(el, obj, prefix) {
-    if (obj[prefix + 'Font']) el.style.fontFamily = `'${obj[prefix + 'Font']}', sans-serif`;
+    if (obj[prefix + 'Font']) el.style.fontFamily = `'${obj[prefix + 'Font']}', Luckiest Guy`;
     if (obj[prefix + 'Color']) el.style.color = obj[prefix + 'Color'];
     if (obj[prefix + 'Size']) el.style.fontSize = obj[prefix + 'Size'] + 'px';
     if (obj[prefix + 'Bold']) el.style.fontWeight = '700';
@@ -316,7 +316,7 @@ export function startGame(config, container) {
         b.classList.add('aurion-btn-imaged');
       }
       b.textContent = btn.text || 'Continue';
-      if (btn.font) b.style.fontFamily = `'${btn.font}', sans-serif`;
+      if (btn.font) b.style.fontFamily = `'${btn.font}', Poppins`;
       if (btn.color) b.style.color = btn.color;
       if (btn.size) b.style.fontSize = btn.size + 'px';
 

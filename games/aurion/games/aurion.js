@@ -360,13 +360,15 @@ export function startGame(config, container) {
     textBlock.className = 'aurion-scene-textblock';
     wrap.appendChild(textBlock);
 
-    // Optional — only present when the scene's JSON sets "subtitleText"
-    // (not exposed in the admin panel yet). Renders as its own styled
-    // line above the description.
+    // Optional — only present when a scene sets "subtitleText". Renders
+    // as its own styled line above the description; font/color/size/bold
+    // are editable per scene from the admin panel's Subtitle field, same
+    // as title and description already are.
     if (scene.subtitleText) {
       const subtitle = document.createElement('p');
       subtitle.className = 'aurion-scene-subtitle';
       subtitle.textContent = scene.subtitleText;
+      applyStyledText(subtitle, scene, 'subtitle');
       textBlock.appendChild(subtitle);
     }
 

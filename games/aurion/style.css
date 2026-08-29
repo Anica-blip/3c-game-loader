@@ -321,33 +321,50 @@ body {
    PNG already has whatever shape/corners were designed into it — the base
    .aurion-btn rule's 999px pill radius was clipping that art on top of the
    stretch.
-   max-width dropped from 220px to 90px — checked actual rendered text
-   widths at this exact font (Poppins 700, 12px): "What's Hiding?" (92px),
-   "Take It With You" (99px) and "Another Round" (92px) all exceed 90px and
-   now wrap to 2 lines at a natural word break (no word here is wider than
-   50px, so nothing splits mid-word); every shorter label ("Guide Me",
-   "I'm Curious", "Let's Explore", "Find Some", "Got Them", "The Team",
-   "Over & Out", "Step In", "Ready", "Close") stays comfortably under 90px
-   and renders on one line, unchanged. min-width dropped to match — 140px
-   was fighting the new 90px cap.
+   min/max-width reverted back to 140px/220px (this button's own size, the
+   pill graphic's real footprint) — the previous pass shrank these to 70/90
+   to force long labels to wrap, but that shrank the whole button image
+   along with the text, since background-size: cover scales to whatever
+   box it's given. The wrap threshold now lives on .aurion-btn-label below
+   instead, so the button itself stays full size and only the text wraps.
    padding is intentionally uneven (16px top / 11px bottom) instead of the
    button's usual symmetric split: the pill artwork is a 3D graphic (top
    highlight, flat face, bottom shadow rim), and background-size: cover
    crops it centered on the box's geometric middle — which lands text a few
    pixels above the artwork's actual flat/readable face, not on it. The
    extra bottom padding nudges the centered text down onto that face
-   without touching the max-width/wrap logic above or the image crop math
-   (background-origin is padding-box, so this shifts text, not the art). */
+   without touching the image crop math (background-origin is padding-box,
+   so this shifts text, not the art). */
 .aurion-btn-imaged {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
   border-radius: 0;
-  min-width: 70px;
-  max-width: 90px;
+  min-width: 140px;
+  max-width: 220px;
   min-height: 48px;
   padding: 16px 20px 11px;
+}
+
+/* The wrap threshold for long labels, decoupled from the button's own
+   size above. aurion.js now wraps each imaged button's text in a
+   <span class="aurion-btn-label"> instead of setting it as a raw text
+   node — max-width here controls when text wraps to a second line
+   without shrinking the pill graphic it sits on. 90px was checked against
+   actual rendered widths at Poppins 700/12px: "What's Hiding?" (92px),
+   "Take It With You" (99px) and "Another Round" (92px) exceed it and wrap
+   at a natural word break (longest single word is 50px, nothing splits
+   mid-word); every shorter label stays on one line. line-height tightened
+   to 1.05 for the wrapped case — 1.3 (the base button's line-height) read
+   as too loose once a label is two lines tall in a fixed-height pill. */
+.aurion-btn-label {
+  display: block;
+  max-width: 90px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.05;
 }
 
 /* Scene 3 — the door: closed and open images crossfade on click, then the
@@ -741,26 +758,21 @@ body {
   box-shadow: none;
 }
 
-/* Previously this just animated the tile's own box-shadow — a thin ring
-   sitting right at the tile's edge, easy to mistake for "in front of" the
-   card once the border-gap bug made that edge messy. This is a real glow
-   BEHIND the container instead: a blurred, pulsing halo on a ::before
-   pseudo-element, pushed to z-index: -1 so it always paints behind the
-   tile's own background (the card art), never over it. */
+/* Reverted — the ::before glow from the previous pass wasn't rendering.
+   Root cause: .aurion-reveal-tile is position: relative but has no
+   z-index of its own, so it never establishes its own stacking context.
+   A child with z-index: -1 in that situation doesn't stay pinned "just
+   behind this one tile" — it escapes upward to whatever ancestor DOES
+   establish a stacking context (the grid, the stage, possibly higher),
+   which on this page meant it was landing behind the scene's own
+   background art, invisible. Back to the box-shadow ring that was
+   already confirmed working — it's a non-inset shadow, which CSS always
+   paints outside the box, never over the card's content, so it was never
+   actually "in front of" the artwork; it just reads as a border/glow
+   around the container rather than a halo behind it. */
 .aurion-reveal-tile.flashing {
   opacity: 1;
-  box-shadow: none;
-}
-
-.aurion-reveal-tile.flashing::before {
-  content: '';
-  position: absolute;
-  inset: -14px;
-  border-radius: inherit;
-  background: radial-gradient(circle, var(--aurion-neon-purple-glow-bright) 0%, var(--aurion-neon-purple-glow-soft) 45%, transparent 72%);
-  filter: blur(9px);
-  z-index: -1;
-  animation: reveal-flash-glow 1.4s ease-in-out infinite;
+  animation: reveal-flash 1.4s ease-in-out infinite;
 }
 
 .aurion-reveal-tile.opened {
@@ -769,13 +781,9 @@ body {
   animation: none;
 }
 
-.aurion-reveal-tile.opened::before {
-  content: none;
-}
-
-@keyframes reveal-flash-glow {
-  0%, 100% { opacity: 0.55; transform: scale(0.92); }
-  50% { opacity: 1; transform: scale(1.1); }
+@keyframes reveal-flash {
+  0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
+  50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
 }
 
 /* Reveal message card — fixed to the viewport and centered both axes, so

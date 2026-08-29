@@ -172,7 +172,13 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 480px;
+  /* Widened from 480px so long descriptions (e.g. the Scene 4 intro
+     paragraph) get a standard, comfortable reading measure — not so tight
+     lines wrap constantly, not so wide it stops reading like a centered
+     block. 560px sits in the normal ~60-70 character line-length range at
+     this font size, same on mobile and desktop since it's a max-width, not
+     a fixed width. */
+  max-width: 560px;
   width: 100%;
   min-height: calc(100vh - 80px);
   min-height: calc(100dvh - 80px);
@@ -266,7 +272,8 @@ body {
 
 .aurion-btn {
   font-family: 'Poppins';
-  font-size: 12px;
+  font-size: 14px;
+  text-align: center;
   padding: 12px 24px;
   border-radius: 999px;
   border: none;
@@ -274,6 +281,12 @@ body {
   color: var(--aurion-text);
   cursor: pointer;
   transition: transform 0.15s ease;
+  /* Width is capped and never grows past this — long labels wrap to a
+     second line instead of stretching the button wider. Height stays auto
+     so a wrapped 2-line label isn't clipped; there's no way to guarantee a
+     bigger, wrapped label costs literally zero extra height without either
+     shrinking the font back down or cutting text off, and neither of those
+     is what was asked for. */
   max-width: 220px;
   white-space: normal;
   word-wrap: break-word;
@@ -429,23 +442,22 @@ body {
   box-shadow: 0 0 10px var(--aurion-neon-yellow-glow), 0 0 22px var(--aurion-neon-yellow-glow-soft);
 }
 
-/* Final list card — small, dark-blue glass (same language as the reveal
-   popup), sits on the grid's right edge and is allowed to overlap it
-   slightly rather than take up its own full row */
+/* Final list card — dark-blue glass, back to its original footprint
+   (220px / 20px padding) after a round where it got shrunk too far */
 .aurion-word-popup {
   display: none;
   position: fixed;
   top: 50%;
   right: 16px;
   transform: translateY(-50%);
-  width: 190px;
+  width: 220px;
   max-width: 70vw;
   background: rgba(20, 40, 90, 0.18);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(120, 170, 255, 0.4);
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
   box-sizing: border-box;
   z-index: 20;
   text-align: center;
@@ -473,49 +485,52 @@ body {
   list-style: none;
   margin: 0 0 16px;
   padding: 0;
-  font-size: 13px;
+  font-size: 14px; /* was 13px — the "slightly bigger" bump requested */
   line-height: 1.7;
 }
 
-/* Scene 6/7 (whichever numbers you land on) — sorting: category tiles on
-   the left, the "Your List Of Five" tray panel on the right, matching the
-   actual reference screenshots rather than my earlier bottom-tray guess */
+/* Scenes 6 and 8 — the category grid is the fixed point of both scenes:
+   same size, same position, always fully visible, never resized or pushed
+   aside by anything else on screen. The word-queue card (Scene 6) and the
+   reveal message card (Scene 8) both float ABOVE it as an absolutely
+   positioned overlay instead of sitting beside it as a flex sibling — that
+   old side-by-side layout was what forced the grid to shrink to make room.
+   .aurion-sort-stage is the positioning anchor both cards overlay against. */
 .aurion-scene-wrap.aurion-has-side-panel {
   max-width: 720px;
 }
 
-.aurion-sort-wrap {
+.aurion-sort-stage {
+  position: relative;
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
   justify-content: center;
-  flex-wrap: wrap;
   width: 100%;
 }
 
-/* Category grid — deliberately about half the previous footprint, so the
-   8 tiles read as compact game pieces rather than dominating the scene */
+/* Doubled+ from the previous pass (300px max) back up past the original
+   size — "fills the screen" — since nothing needs to share width with it
+   anymore. At this max-width, 4 columns/12px gaps put each tile at roughly
+   145px wide on desktop, which is what the chip/tab sizing below assumes. */
 .aurion-sort-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  flex: 1;
-  min-width: 200px;
-  max-width: 300px;
+  gap: 12px;
+  width: 100%;
+  max-width: 640px;
+  min-width: 280px;
 }
 
 @media (max-width: 700px) {
   .aurion-sort-board {
     grid-template-columns: repeat(2, 1fr);
-    max-width: 220px;
+    max-width: 320px;
   }
 }
 
-/* No literal border on the tile itself — the category artwork should run
-   edge to edge with nothing separating it from the frame. The "border" is
-   a box-shadow ring drawn outside the box instead, so it never cuts into
-   the image, plus a soft glow beyond that. Idle state uses the same neon
-   purple as the word grid for a consistent look across scenes 5/6/7/8. */
+/* No border at all, not even the box-shadow ring the previous pass used —
+   just a diffuse glow, nothing with a hard edge. The category artwork
+   itself fills the tile completely edge to edge (background-size: cover,
+   no padding), so there's nothing between the image and the glow around it. */
 .aurion-sort-tile {
   position: relative;
   aspect-ratio: 3 / 4;
@@ -524,71 +539,91 @@ body {
   background-position: center;
   background-color: var(--aurion-neon-purple-fill);
   border: none;
-  box-shadow: 0 0 0 1px var(--aurion-neon-purple-glow), 0 0 10px var(--aurion-neon-purple-glow-soft);
+  box-shadow: 0 0 16px var(--aurion-neon-purple-glow-soft);
   opacity: 0.55;
   transition: opacity 0.3s ease, box-shadow 0.3s ease;
 }
 
 .aurion-sort-tile.lit {
   opacity: 1;
-  box-shadow: 0 0 0 1px var(--aurion-neon-yellow), 0 0 14px var(--aurion-neon-yellow-glow), 0 0 26px var(--aurion-neon-yellow-glow-soft);
+  box-shadow: 0 0 24px var(--aurion-neon-yellow-glow), 0 0 44px var(--aurion-neon-yellow-glow-soft);
 }
 
 .aurion-sort-count {
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: 5px;
+  right: 5px;
   background: var(--aurion-gold);
   color: var(--aurion-dark);
   font-family: 'Poppins';
   font-weight: 700;
-  font-size: 9px;
-  width: 14px;
-  height: 14px;
+  font-size: 11px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Tray sized to sit alongside the now-smaller category grid rather than
-   dwarf it — chips stay no larger than a category tile */
-.aurion-sort-tray {
-  width: 130px;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 10px;
-  text-align: center;
-}
-
-.aurion-sort-tray-title {
-  font-family: 'Luckiest Guy';
-  color: var(--aurion-gold);
-  font-size: 13px;
-  margin: 0 0 6px;
-}
-
-.aurion-sort-chip-list {
-  display: flex;
+/* The one-word-at-a-time card — floats above the board's top edge (bottom:
+   100% relative to .aurion-sort-stage), never inside the grid's own layout
+   flow, so the grid never resizes because of it. Closes between words. */
+.aurion-drag-card {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 12px;
+  z-index: 15;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
-  touch-action: none;
+  background: rgba(20, 40, 90, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-sizing: border-box;
 }
 
+.aurion-drag-card.open {
+  display: flex;
+}
+
+.aurion-drag-card-label {
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* The draggable word tab itself. Capped narrower than a category tile
+   (~145px at the board's normal desktop width above) so it can never read
+   as wider than what it's being dragged onto — long words wrap to a second
+   line instead of shrinking the font, per Chef's rule: font size is never
+   the thing that gives here, only the card/tab's own footprint is. */
 .aurion-sort-chip {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--aurion-text);
   font-family: 'Poppins';
   font-weight: 700;
-  font-size: 10px;
-  padding: 6px 8px;
-  border-radius: 7px;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
   cursor: grab;
   user-select: none;
   touch-action: none;
+  max-width: 130px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
   transition: transform 0.25s ease;
 }
 
@@ -597,11 +632,6 @@ body {
   z-index: 30;
   cursor: grabbing;
   position: relative;
-}
-
-.aurion-sort-chip.placed {
-  pointer-events: none;
-  opacity: 0.3;
 }
 
 /* Scene 8 — spin wheel, decorative, tap the wheel itself to spin */
@@ -639,18 +669,9 @@ body {
   transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
 }
 
-/* Scene 9 — reveal: only chosen categories flash and open, others stay dim */
-.aurion-reveal-wrap {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-/* No literal border here either — inherits .aurion-sort-tile's box-shadow
-   ring/glow for its resting look, these three states only change that glow */
+/* Scene 8 — reveal: only chosen categories flash and open, others stay dim.
+   Uses the exact same .aurion-sort-stage + .aurion-sort-board as Scene 6,
+   so the two scenes' grids are identical in size and position. */
 .aurion-reveal-tile {
   cursor: pointer;
 }
@@ -658,7 +679,7 @@ body {
 .aurion-reveal-tile.dim {
   opacity: 0.2;
   cursor: default;
-  box-shadow: 0 0 0 1px var(--aurion-neon-purple-glow-soft);
+  box-shadow: none;
 }
 
 .aurion-reveal-tile.flashing {
@@ -667,29 +688,36 @@ body {
 
 .aurion-reveal-tile.opened {
   opacity: 1;
-  box-shadow: 0 0 0 1px var(--aurion-neon-yellow), 0 0 16px var(--aurion-neon-yellow-glow);
+  box-shadow: 0 0 24px var(--aurion-neon-yellow-glow);
   animation: none;
 }
 
 @keyframes reveal-flash {
-  0%, 100% { box-shadow: 0 0 0 1px var(--aurion-neon-purple-glow), 0 0 6px var(--aurion-neon-purple-glow-soft); }
-  50% { box-shadow: 0 0 0 1px var(--aurion-neon-yellow), 0 0 20px var(--aurion-neon-yellow-glow); }
+  0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
+  50% { box-shadow: 0 0 26px var(--aurion-neon-yellow-glow); }
 }
 
-/* Reveal message card — shrunk to roughly half its previous footprint,
-   dark-blue glass like the word-picker's final list card */
+/* Reveal message card — same floating-above-the-grid treatment as the
+   drag card in Scene 6 (bottom: 100% of .aurion-sort-stage), shrunk again
+   from the previous pass (card size only, not its font sizes below). */
 .aurion-reveal-popup {
   display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 12px;
   width: 100%;
-  max-width: 220px;
+  max-width: 200px;
   background: rgba(20, 40, 90, 0.16);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(120, 170, 255, 0.4);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   box-sizing: border-box;
   text-align: center;
+  z-index: 15;
 }
 
 .aurion-reveal-popup.open {

@@ -327,14 +327,16 @@ body {
    along with the text, since background-size: cover scales to whatever
    box it's given. The wrap threshold now lives on .aurion-btn-label below
    instead, so the button itself stays full size and only the text wraps.
-   padding is intentionally uneven (16px top / 11px bottom) instead of the
+   padding is intentionally uneven (top heavier than bottom) instead of the
    button's usual symmetric split: the pill artwork is a 3D graphic (top
    highlight, flat face, bottom shadow rim), and background-size: cover
-   crops it centered on the box's geometric middle — which lands text a few
-   pixels above the artwork's actual flat/readable face, not on it. The
-   extra bottom padding nudges the centered text down onto that face
-   without touching the image crop math (background-origin is padding-box,
-   so this shifts text, not the art). */
+   crops it centered on the box's geometric middle — which lands text a bit
+   above the artwork's actual flat/readable face, not on it. The extra
+   bottom padding nudges the centered text down onto that face without
+   touching the image crop math (background-origin is padding-box, so this
+   shifts text, not the art). Pushed further down again this round — the
+   first pass (16px/11px) wasn't enough. .aurion-btn-label-wrapped below
+   adds a bit more on top of this for 2-line labels specifically. */
 .aurion-btn-imaged {
   background-size: cover;
   background-position: center;
@@ -344,7 +346,7 @@ body {
   min-width: 140px;
   max-width: 220px;
   min-height: 48px;
-  padding: 16px 20px 11px;
+  padding: 19px 20px 8px;
 }
 
 /* The wrap threshold for long labels, decoupled from the button's own
@@ -365,6 +367,16 @@ body {
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.05;
+}
+
+/* aurion.js measures each label after it's actually laid out (checking the
+   real rendered line count, not guessing from character count) and adds
+   this class only when a label truly wrapped to 2 lines. Two-line labels
+   need a bit more downward push than the padding above already gives —
+   this is that extra, isolated to just those labels instead of moving
+   every button (which would then overcorrect the 1-line ones). */
+.aurion-btn-label-wrapped {
+  margin-top: 4px;
 }
 
 /* Scene 3 — the door: closed and open images crossfade on click, then the
@@ -742,12 +754,17 @@ body {
    border here. Dimming is scoped to Scene 8 only, and only to categories
    with zero words in them — a chosen/flashing/opened tile is always at
    full opacity, never dimmed.
-   The flash is a non-inset box-shadow, which CSS always paints outside the
-   element's box — it was never literally on top of the artwork. It only
-   looked like it was sitting "in front of" the image because the flash
-   color filled that same transparent border gap the image's own padding
-   left behind. With the art now cropped edge-to-edge, the flash reads as a
-   glow strictly around/behind the card, never over it. */
+   Reverted the "back cover" layer (a separate .aurion-reveal-art element
+   behind the tile's own background) — it risked exactly the kind of
+   mismatch that broke the live page: if this CSS ships even slightly out
+   of step with the aurion.js version that creates .aurion-reveal-art, the
+   card art has nowhere correct to render and the tile shows as a blank
+   color, which is what showed up. Back to the simplest version that was
+   already confirmed working end to end: the tile keeps its own
+   background-image directly (set by aurion.js exactly like Scene 6 does),
+   and the flash is a plain box-shadow ring — non-inset, so CSS always
+   paints it outside the box, never over the artwork inside it. Only one
+   moving part, nothing that depends on two files staying in exact sync. */
 .aurion-reveal-tile {
   cursor: pointer;
 }
@@ -758,18 +775,6 @@ body {
   box-shadow: none;
 }
 
-/* Reverted — the ::before glow from the previous pass wasn't rendering.
-   Root cause: .aurion-reveal-tile is position: relative but has no
-   z-index of its own, so it never establishes its own stacking context.
-   A child with z-index: -1 in that situation doesn't stay pinned "just
-   behind this one tile" — it escapes upward to whatever ancestor DOES
-   establish a stacking context (the grid, the stage, possibly higher),
-   which on this page meant it was landing behind the scene's own
-   background art, invisible. Back to the box-shadow ring that was
-   already confirmed working — it's a non-inset shadow, which CSS always
-   paints outside the box, never over the card's content, so it was never
-   actually "in front of" the artwork; it just reads as a border/glow
-   around the container rather than a halo behind it. */
 .aurion-reveal-tile.flashing {
   opacity: 1;
   animation: reveal-flash 1.4s ease-in-out infinite;

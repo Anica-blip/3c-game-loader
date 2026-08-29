@@ -108,7 +108,7 @@
       "titleText": "The Goal Collector List",
       "descText": "Which 5 Would You Take With You?",
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Find Some", "size": 12 }
+        { "image": "goal.01.button.png", "text": "Found Some", "size": 12 }
       ],
       "adminLabel": "scene 1"
     },
@@ -159,7 +159,7 @@
       "options": [],
       "overlayImage": { "url": "", "position": "center" },
       "titleText": "The Sorting Reveal",
-      "descText": "Try The Wheel",
+      "descText": "Press The 3C Diamond",
       "buttons": [
         { "text": "I'm Curious", "image": "goal.01.button.png", "size": 12 }
       ],
@@ -192,7 +192,7 @@
       "titleText": "The Reveal Area",
       "descText": "See What You're Aiming For",
       "buttons": [
-        { "text": "Guide Me", "image": "goal.01.button.png", "size": 12 }
+        { "text": "Got It", "image": "goal.01.button.png", "size": 12 }
       ],
       "adminLabel": "scene 4"
     },

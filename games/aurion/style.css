@@ -65,74 +65,38 @@ body {
     padding: 18px;
   }
 }
-
-/* Loading screen hourglass — layered for real depth, not a flat CSS shape */
-.loading-hourglass {
-  width: 64px;
-  height: 96px;
-  margin: 0 auto 18px;
-  position: relative;
-  animation: hourglass-flip 3s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+/* Loading screen — small illustrated hourglass, the words matter more than
+   the animation, so it stays modest in size */
+.aurion-screen.aurion-loading {
+  text-align: center;
 }
 
-.loading-hourglass::before,
-.loading-hourglass::after {
-  content: '';
-  position: absolute;
-  left: 0;
+.aurion-hourglass-illustration {
+  width: 50px;
+  margin: 0 auto 16px;
+}
+
+.aurion-hourglass-illustration svg {
+  display: block;
   width: 100%;
-  height: 50%;
-  background: linear-gradient(135deg, rgba(240, 180, 41, 0.35) 0%, rgba(240, 180, 41, 0.08) 50%, rgba(240, 180, 41, 0.35) 100%);
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #fddb8a, var(--aurion-gold), #a9760c) 1;
+  height: auto;
 }
 
-.loading-hourglass::before {
-  top: 0;
-  clip-path: polygon(6% 0%, 94% 0%, 52% 96%, 48% 96%);
-  border-radius: 8px 8px 2px 2px;
-}
-
-.loading-hourglass::after {
-  bottom: 0;
-  clip-path: polygon(48% 4%, 52% 4%, 94% 100%, 6% 100%);
-  border-radius: 2px 2px 8px 8px;
-}
-
-.loading-hourglass .sand-dot {
-  position: absolute;
-  top: 46%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff3d0, var(--aurion-gold));
-  transform: translateX(-50%);
-  animation: sand-fall 3s ease-in-out infinite;
-  box-shadow: 0 0 4px rgba(240, 180, 41, 0.8);
-}
-
-@keyframes hourglass-flip {
-  0%, 42% { transform: rotate(0deg); }
-  50%, 92% { transform: rotate(180deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes sand-fall {
-  0% { top: 22%; opacity: 0; }
-  10% { opacity: 1; }
-  45% { top: 76%; opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 0; }
+.aurion-loading-greeting {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 20px;
+  margin: 0 0 10px;
+  text-align: center;
 }
 
 .aurion-loading .aurion-body-text {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
-  max-width: 320px;
+  max-width: 340px;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 
 /* ---- In-game engine styles (aurion.js) ---- */

@@ -141,8 +141,8 @@ export function startGame(config, container) {
   exitBtn.style.backgroundImage = `url('${resolveAssetUrl('goal.01-exitsymbol.png')}')`;
   exitBtn.setAttribute('aria-label', 'Exit');
   exitBtn.addEventListener('click', () => {
-    if (ambientAudio) ambientAudio.pause();
-    window.location.href = 'landing.html';
+    if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
+    renderScene(0);
   });
 
   renderLoading();

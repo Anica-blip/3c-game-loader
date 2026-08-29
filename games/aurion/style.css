@@ -13,58 +13,7 @@ body {
   color: var(--aurion-text);
 }
 
-/* Full-page background wrapper — used by landing.html and consent.html.
-   Class name kept as "maverick-bg-page" since that's what those two HTML
-   files already reference — purely a naming leftover, not a functional tie
-   to Maverick's own styling, same reuse choice made for the admin panel. */
-.maverick-bg-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  background-color: #252a31;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.maverick-top-watermark {
-  position: absolute;
-  top: 16px;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 0.95rem;
-  color: var(--aurion-text);
-  opacity: 0.85;
-}
-
-.maverick-top-watermark img {
-  width: 20px;
-  height: 20px;
-  border: none;
-  outline: none;
-  display: block;
-  object-fit: contain;
-}
-
-.maverick-bottom-watermark {
-  position: absolute;
-  bottom: 12px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 0.7rem;
-  color: var(--aurion-text);
-  opacity: 0.7;
-  padding: 0 16px;
-}
-
-.maverick-screen {
+.aurion-page-card {
   background: rgba(20, 20, 26, 0.72);
   border: 2px solid var(--aurion-gold);
   border-radius: 16px;
@@ -75,26 +24,20 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.maverick-duck-img {
-  width: 140px;
-  height: auto;
-  margin-bottom: 12px;
-}
-
-.maverick-screen h1 {
-  font-family: 'Luckiest Guy', Bangers, Fredoka, Montserrat;
+.aurion-page-card h1 {
+  font-family: 'Luckiest Guy';
   font-size: 1.4rem;
   margin: 8px 0;
   color: var(--aurion-gold);
 }
 
-.maverick-body-text {
+.aurion-page-text {
   font-size: 1rem;
   line-height: 1.5;
   margin: 12px 0;
 }
 
-.maverick-btn {
+.aurion-page-btn {
   font-family: inherit;
   font-size: 1rem;
   padding: 12px 16px;
@@ -104,12 +47,12 @@ body {
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.maverick-btn:hover {
+.aurion-page-btn:hover {
   transform: translateY(-2px);
   opacity: 0.9;
 }
 
-.maverick-btn-primary {
+.aurion-page-btn-primary {
   background: var(--aurion-gold);
   color: var(--aurion-dark);
   font-weight: 700;
@@ -118,11 +61,8 @@ body {
 }
 
 @media (max-width: 480px) {
-  .maverick-screen {
+  .aurion-page-card {
     padding: 18px;
-  }
-  .maverick-duck-img {
-    width: 110px;
   }
 }
 
@@ -187,7 +127,7 @@ body {
   100% { opacity: 0; }
 }
 
-.maverick-loading .maverick-body-text {
+.aurion-loading .aurion-body-text {
   font-size: 14px;
   line-height: 1.6;
   max-width: 320px;

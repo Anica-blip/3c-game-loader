@@ -392,7 +392,14 @@ export function startGame(config, container) {
         b.style.backgroundImage = `url('${resolveAssetUrl(btn.image)}')`;
         b.classList.add('aurion-btn-imaged');
       }
-      b.textContent = btn.text || 'Continue';
+      // Text goes in its own inner span (not a raw text node) so
+      // style.css can give the label a narrower max-width than the
+      // button itself — that's what lets long labels wrap to a second
+      // line without shrinking the whole pill graphic to match.
+      const label = document.createElement('span');
+      label.className = 'aurion-btn-label';
+      label.textContent = btn.text || 'Continue';
+      b.appendChild(label);
       if (btn.font) b.style.fontFamily = `'${btn.font}', Poppins`;
       if (btn.color) b.style.color = btn.color;
       if (btn.size) b.style.fontSize = btn.size + 'px';

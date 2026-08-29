@@ -715,10 +715,11 @@ function renderActiveScene() {
     'Text container (blank means no description)', true
   ));
 
-  // Migrate old single "button" field into the new "buttons" list, if this
-  // scene was saved before buttons became a list — otherwise that content
-  // silently goes missing on reload.
-  if ((!decision.buttons || !decision.buttons.length) && decision.button && (decision.button.text || decision.button.image)) {
+  // Migrate old single "button" field into the new "buttons" list — handles
+  // both a fully missing list AND a list that exists but only has a blank
+  // placeholder object in it, which the earlier version of this check missed.
+  const hasRealButtonData = decision.buttons && decision.buttons.some(b => b.text || b.image);
+  if (!hasRealButtonData && decision.button && (decision.button.text || decision.button.image)) {
     decision.buttons = [decision.button];
     delete decision.button;
   }

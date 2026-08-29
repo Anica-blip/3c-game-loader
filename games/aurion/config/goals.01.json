@@ -108,7 +108,7 @@
       "titleText": "The Goal Collector List",
       "descText": "Which 5 Would You Take With You?",
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Find Some", "size": 14 }
+        { "image": "goal.01.button.png", "text": "Find Some", "size": 12 }
       ],
       "adminLabel": "scene 1"
     },
@@ -139,7 +139,7 @@
       "titleText": "The Sorting Room",
       "descText": "Place Them In Their Spot",
       "buttons": [
-        { "text": "Got Them", "image": "goal.01.button.png", "size": 14 }
+        { "text": "Got Them", "image": "goal.01.button.png", "size": 12 }
       ],
       "adminLabel": "scene 2"
     },
@@ -161,7 +161,7 @@
       "titleText": "The Sorting Reveal",
       "descText": "Try The Wheel",
       "buttons": [
-        { "text": "I'm Curious", "image": "goal.01.button.png", "size": 14 }
+        { "text": "I'm Curious", "image": "goal.01.button.png", "size": 12 }
       ],
       "adminLabel": "scene 3"
     },
@@ -192,7 +192,7 @@
       "titleText": "The Reveal Area",
       "descText": "See What You're Aiming For",
       "buttons": [
-        { "text": "Guide Me", "image": "goal.01.button.png", "size": 14 }
+        { "text": "Guide Me", "image": "goal.01.button.png", "size": 12 }
       ],
       "adminLabel": "scene 4"
     },
@@ -211,7 +211,7 @@
       "overlayImage": { "url": "", "position": "center" },
       "titleText": "We're Done Here",
       "buttons": [
-        { "text": "Take It With You", "image": "goal.01.button.png", "size": 14 }
+        { "text": "Take It With You", "image": "goal.01.button.png", "size": 12 }
       ],
       "adminLabel": "send-off page",
       "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
@@ -230,9 +230,9 @@
       "options": [],
       "overlayImage": { "url": "goal-01.finale.png", "position": "center" },
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Another Round", "color": "#000000", "size": 14 },
-        { "image": "goal.01.button.png", "text": "The Team", "size": 14 },
-        { "image": "goal.01.button.png", "text": "Over & Out", "size": 14 }
+        { "image": "goal.01.button.png", "text": "Another Round", "color": "#000000", "size": 12 },
+        { "image": "goal.01.button.png", "text": "The Team", "size": 12 },
+        { "image": "goal.01.button.png", "text": "Over & Out", "size": 12 }
       ],
       "adminLabel": "final page"
     }

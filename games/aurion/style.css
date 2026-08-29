@@ -8,7 +8,7 @@
 
 body {
   margin: 0;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   background-color: var(--aurion-dark);
   color: var(--aurion-text);
 }
@@ -82,7 +82,7 @@ body {
 }
 
 .maverick-screen h1 {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Luckiest Guy', Bangers, Fredoka, Montserrat;
   font-size: 1.4rem;
   margin: 8px 0;
   color: var(--aurion-gold);
@@ -292,14 +292,14 @@ body {
 .aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
 
 .aurion-scene-title {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Luckiest Guy', Bangers, Fredoka, Montserrat;
   color: var(--aurion-gold);
   font-size: 28px;
   margin: 6px 0 20px;
 }
 
 .aurion-scene-desc {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   color: var(--aurion-text);
   font-size: 16px;
   line-height: 1.5;
@@ -342,8 +342,8 @@ body {
 }
 
 .aurion-btn {
-  font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
+  font-size: 12px;
   padding: 12px 24px;
   border-radius: 999px;
   border: none;
@@ -420,7 +420,7 @@ body {
 /* Scene 5 — word picker: grid on wide screens, one scrollable column on
    narrow ones, same underlying 30 buttons either way */
 .aurion-word-counter {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   font-weight: 700;
   font-size: 13px;
   color: var(--aurion-gold);
@@ -446,7 +446,7 @@ body {
   border: 1px solid rgba(240, 180, 41, 0.5);
   border-radius: 6px;
   color: var(--aurion-text);
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   font-weight: 700;
   font-size: 11px;
   padding: 6px 4px;
@@ -483,7 +483,7 @@ body {
 }
 
 .aurion-word-popup h2 {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Luckiest Guy', Bangers, Fredoka, Montserrat;
   color: var(--aurion-gold);
   font-size: 18px;
   margin: 0 0 10px;
@@ -559,7 +559,7 @@ body {
   right: 4px;
   background: var(--aurion-gold);
   color: var(--aurion-dark);
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   font-weight: 700;
   font-size: 11px;
   width: 18px;
@@ -581,7 +581,7 @@ body {
 }
 
 .aurion-sort-tray-title {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Luckiest Guy', Bangers, Fredoka, Montserrat;
   color: var(--aurion-gold);
   font-size: 15px;
   margin: 0 0 8px;
@@ -598,7 +598,7 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--aurion-text);
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   font-weight: 700;
   font-size: 12px;
   padding: 8px 10px;
@@ -708,7 +708,7 @@ body {
 }
 
 .aurion-reveal-popup h2 {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Luckiest Guy', Bangers, Fredoka, Montserrat;
   color: #ffbd59;
   font-size: 16px;
   font-weight: 700;
@@ -716,18 +716,18 @@ body {
 }
 
 .aurion-reveal-subtitle {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   color: #ffbd59;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   margin: 0 0 10px;
 }
 
 .aurion-reveal-body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', Nunito, Quicksand, Montserrat;
   color: #ffffff;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
   margin: 0 0 16px;
 }

@@ -12,7 +12,7 @@ class ConfigManager {
     const urlParams = this.getUrlParams();
     const configUrl = urlParams.get('configUrl');
     const configName = urlParams.get('configName') || 'card-flip';
-    
+
     try {
       if (configUrl) {
         return await this.fetchFromUrl(configUrl);
@@ -23,8 +23,18 @@ class ConfigManager {
     }
   }
 
+  // Cache-busting: the config JSON is what admin edits change most often, so
+  // it always gets a fresh timestamp query param and cache: 'no-store'. This
+  // is automatic, no version number to remember to bump, unlike style.css/
+  // loader.js in game.html which are only loaded once per page via a plain
+  // tag and need their own "?v=" bumped by hand on deploy.
+  static bustCache(url) {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}_cb=${Date.now()}`;
+  }
+
   static async fetchFromUrl(url) {
-    const response = await fetch(url);
+    const response = await fetch(this.bustCache(url), { cache: 'no-store' });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
@@ -32,7 +42,7 @@ class ConfigManager {
   }
 
   static async fetchFromName(configName) {
-    const response = await fetch(`config/${configName}.json`);
+    const response = await fetch(this.bustCache(`config/${configName}.json`), { cache: 'no-store' });
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error(`Config file '${configName}.json' not found`);
@@ -45,11 +55,11 @@ class ConfigManager {
   static validateConfig(config) {
     const required = ['gameType'];
     const missing = required.filter(field => !config[field]);
-    
+
     if (missing.length > 0) {
       throw new Error(`Missing required config fields: ${missing.join(', ')}`);
     }
-    
+
     return true;
   }
 }
@@ -72,7 +82,7 @@ class ThemeManager {
   static setBackground(themeName) {
     const bgUrl = `assets/themes/${themeName}/bg.png`;
     const body = document.body;
-    
+
     body.style.backgroundImage = `url('${bgUrl}')`;
     body.style.backgroundSize = 'cover';
     body.style.backgroundPosition = 'center';
@@ -114,14 +124,18 @@ class ThemeManager {
 class GameManager {
   static async loadGameModule(gameType) {
     const modulePath = new URL(`games/${gameType}.js`, document.baseURI).href;
-    
+    // Cache-busting on the module import too, same reasoning as the config
+    // fetch above — this is the actual game logic, it must never come from
+    // a stale cached copy.
+    const bustedPath = `${modulePath}${modulePath.includes('?') ? '&' : '?'}_cb=${Date.now()}`;
+
     try {
-      const module = await import(modulePath);
-      
+      const module = await import(bustedPath);
+
       if (typeof module.startGame !== 'function') {
         throw new Error(`Game module '${gameType}' missing startGame function`);
       }
-      
+
       return module;
     } catch (error) {
       if (error.message.includes('Failed to resolve module')) {
@@ -149,7 +163,7 @@ class UIManager {
   static showError(message, details = null) {
     const container = document.getElementById('game-container');
     const detailsHtml = details ? `<details><summary>Technical Details</summary><pre>${details}</pre></details>` : '';
-    
+
     container.innerHTML = `
       <div class="loader-message error">
         <h3>🎮 Oops! Something went wrong</h3>
@@ -197,33 +211,33 @@ class GameLoader {
   static async initialize() {
     try {
       UIManager.showLoading('Loading configuration...');
-      
+
       // Step 1: Load and validate configuration
       const config = await ConfigManager.fetchConfigFromUrlOrName();
       ConfigManager.validateConfig(config);
-      
+
       UIManager.showLoading('Applying theme...');
-      
+
       // Step 2: Apply theme
       await ThemeManager.applyTheme(config.theme);
-      
+
       UIManager.showLoading('Loading game module...');
-      
+
       // Step 3: Load game module
       const gameModule = await GameManager.loadGameModule(config.gameType);
-      
+
       UIManager.showLoading('Initializing game...');
-      
+
       // Step 4: Initialize game
       const container = document.getElementById('game-container');
       GameManager.initializeGame(gameModule, config, container);
-      
+
     } catch (error) {
       console.error('Game loader error:', error);
-      
+
       // Provide user-friendly error messages based on error type
       let userMessage = 'Failed to load game. Please try again.';
-      
+
       if (error instanceof ConfigError) {
         userMessage = 'Game configuration error. Please check the game settings.';
       } else if (error.message.includes('not found')) {
@@ -231,7 +245,7 @@ class GameLoader {
       } else if (error.message.includes('network')) {
         userMessage = 'Network error. Please check your connection and try again.';
       }
-      
+
       UIManager.showError(userMessage, error.message);
     }
   }

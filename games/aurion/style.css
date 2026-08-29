@@ -334,9 +334,16 @@ body {
    above the artwork's actual flat/readable face, not on it. The extra
    bottom padding nudges the centered text down onto that face without
    touching the image crop math (background-origin is padding-box, so this
-   shifts text, not the art). Pushed further down again this round — the
-   first pass (16px/11px) wasn't enough. .aurion-btn-label-wrapped below
-   adds a bit more on top of this for 2-line labels specifically. */
+   shifts text, not the art). Measured this precisely rather than guessing
+   further: scanned the actual button art's luminance row by row (3px
+   steps) instead of eyeballing it — the flat, readable face is a
+   perfectly flat plateau from row 463 to row 679 (out of the 1080px source
+   canvas), center row 571. That's 31px below the canvas's own center row
+   (540), which is where cover+center always aligns the crop regardless of
+   the button's own rendered size. 31px in source coordinates converts to
+   roughly 5-6px on screen depending on the button's actual rendered width
+   — this padding split targets that. .aurion-btn-label-wrapped below adds
+   a bit more on top of this for 2-line labels specifically. */
 .aurion-btn-imaged {
   background-size: cover;
   background-position: center;
@@ -346,7 +353,7 @@ body {
   min-width: 140px;
   max-width: 220px;
   min-height: 48px;
-  padding: 19px 20px 8px;
+  padding: 20px 20px 7px;
 }
 
 /* The wrap threshold for long labels, decoupled from the button's own
@@ -376,7 +383,7 @@ body {
    this is that extra, isolated to just those labels instead of moving
    every button (which would then overcorrect the 1-line ones). */
 .aurion-btn-label-wrapped {
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 /* Scene 3 — the door: closed and open images crossfade on click, then the

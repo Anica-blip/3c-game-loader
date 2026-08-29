@@ -11,11 +11,14 @@
   --aurion-neon-purple-fill: rgba(140, 90, 220, 0.16);
   --aurion-neon-purple-glow: rgba(192, 125, 244, 0.4);
   --aurion-neon-purple-glow-soft: rgba(192, 125, 244, 0.22);
-  /* Selected/lit/opened state accent — neon yellow, used as a glow instead
-     of a flat fill so highlighting reads as light, not a solid color block */
-  --aurion-neon-yellow: #fff176;
-  --aurion-neon-yellow-glow: rgba(255, 241, 118, 0.6);
-  --aurion-neon-yellow-glow-soft: rgba(255, 224, 130, 0.3);
+  /* Selected/lit/opened/filled state accent — a brighter version of the
+     same neon purple, not a hue change. The gold/yellow highlight tried
+     earlier read as brown once layered over the dark purple cards, so
+     every "this is active/selected/done" state now uses this instead —
+     one accent color for the whole game, just varying in intensity. */
+  --aurion-neon-purple-bright: #e6cbff;
+  --aurion-neon-purple-glow-bright: rgba(230, 203, 255, 0.65);
+  --aurion-neon-purple-glow-bright-soft: rgba(230, 203, 255, 0.35);
 }
 
 body {
@@ -272,7 +275,8 @@ body {
 
 .aurion-btn {
   font-family: 'Poppins';
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 700;
   text-align: center;
   padding: 12px 24px;
   border-radius: 999px;
@@ -394,8 +398,8 @@ body {
 }
 
 .aurion-word-counter-star.filled {
-  color: var(--aurion-neon-yellow);
-  text-shadow: 0 0 8px var(--aurion-neon-yellow-glow), 0 0 16px var(--aurion-neon-yellow-glow-soft);
+  color: var(--aurion-neon-purple-bright);
+  text-shadow: 0 0 8px var(--aurion-neon-purple-glow-bright), 0 0 16px var(--aurion-neon-purple-glow-bright-soft);
 }
 
 .aurion-word-grid {
@@ -431,15 +435,16 @@ body {
   box-shadow: 0 0 12px var(--aurion-neon-purple-glow);
 }
 
-/* Selected state reads as a glow, not a flat fill — a translucent warm
-   gradient plus a neon-yellow border/glow, matching the star counter and
-   the sorting/reveal "lit" state so the highlight language is consistent
-   everywhere in the game */
+/* Selected state reads as a glow, not a flat fill — the gold/yellow
+   version of this read as brown once layered over the dark purple card,
+   so it's now a brighter version of the same neon purple used everywhere
+   else instead of a different hue, matching the star counter and the
+   sorting/reveal "lit"/"opened" states */
 .aurion-word-card.picked {
-  background: linear-gradient(135deg, rgba(255, 241, 118, 0.22), rgba(255, 202, 40, 0.16));
-  border-color: var(--aurion-neon-yellow);
-  color: #fff9e0;
-  box-shadow: 0 0 10px var(--aurion-neon-yellow-glow), 0 0 22px var(--aurion-neon-yellow-glow-soft);
+  background: linear-gradient(135deg, rgba(230, 203, 255, 0.32), rgba(192, 125, 244, 0.2));
+  border-color: var(--aurion-neon-purple-bright);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--aurion-neon-purple-glow-bright), 0 0 22px var(--aurion-neon-purple-glow-bright-soft);
 }
 
 /* Final list card — dark-blue glass, back to its original footprint
@@ -528,25 +533,28 @@ body {
 }
 
 /* No border at all, not even the box-shadow ring the previous pass used —
-   just a diffuse glow, nothing with a hard edge. The category artwork
-   itself fills the tile completely edge to edge (background-size: cover,
-   no padding), so there's nothing between the image and the glow around it. */
+   just a diffuse glow, nothing with a hard edge. No background-color fill
+   either now — that translucent purple fallback was showing through as a
+   border-like halo wherever the category artwork itself doesn't fully
+   reach the tile's edge, which is exactly the "dark purple border" look
+   that needed to go; background-size: cover means the image itself still
+   fills the tile completely on its own. Full opacity always — dimming is
+   a Scene 8 (reveal) concept only, Scene 6 shows every container clearly
+   from the start since nothing's been sorted into any of them yet. */
 .aurion-sort-tile {
   position: relative;
   aspect-ratio: 3 / 4;
   border-radius: 10px;
   background-size: cover;
   background-position: center;
-  background-color: var(--aurion-neon-purple-fill);
   border: none;
   box-shadow: 0 0 16px var(--aurion-neon-purple-glow-soft);
-  opacity: 0.55;
-  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+  opacity: 1;
+  transition: box-shadow 0.3s ease;
 }
 
 .aurion-sort-tile.lit {
-  opacity: 1;
-  box-shadow: 0 0 24px var(--aurion-neon-yellow-glow), 0 0 44px var(--aurion-neon-yellow-glow-soft);
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright), 0 0 44px var(--aurion-neon-purple-glow-bright-soft);
 }
 
 .aurion-sort-count {
@@ -566,16 +574,19 @@ body {
   justify-content: center;
 }
 
-/* The one-word-at-a-time card — floats above the board's top edge (bottom:
-   100% relative to .aurion-sort-stage), never inside the grid's own layout
-   flow, so the grid never resizes because of it. Closes between words. */
+/* The one-word-at-a-time card — pinned to the bottom of the screen, in the
+   space the button row would normally occupy (it's hidden the entire time
+   this mechanic is active, so that area is genuinely free real estate)
+   rather than floating over the grid. Fixed to the viewport, same anchoring
+   approach as the exit icon, so it holds position regardless of scroll or
+   content height. Closes between words, never sits in the grid's own
+   layout flow, so the grid never resizes because of it either way. */
 .aurion-drag-card {
   display: none;
-  position: absolute;
-  bottom: 100%;
+  position: fixed;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  margin-bottom: 12px;
   z-index: 15;
   flex-direction: column;
   align-items: center;
@@ -670,8 +681,11 @@ body {
 }
 
 /* Scene 8 — reveal: only chosen categories flash and open, others stay dim.
-   Uses the exact same .aurion-sort-stage + .aurion-sort-board as Scene 6,
-   so the two scenes' grids are identical in size and position. */
+   Uses the exact same .aurion-sort-stage + .aurion-sort-board as Scene 6
+   (both now fully opaque by default via .aurion-sort-tile), so the two
+   scenes' grids are identical in size, position and base look. Dimming is
+   scoped to Scene 8 only, and only to categories with zero words in them —
+   a chosen/flashing/opened tile is always at full opacity, never dimmed. */
 .aurion-reveal-tile {
   cursor: pointer;
 }
@@ -683,18 +697,19 @@ body {
 }
 
 .aurion-reveal-tile.flashing {
+  opacity: 1;
   animation: reveal-flash 1.4s ease-in-out infinite;
 }
 
 .aurion-reveal-tile.opened {
   opacity: 1;
-  box-shadow: 0 0 24px var(--aurion-neon-yellow-glow);
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
   animation: none;
 }
 
 @keyframes reveal-flash {
   0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
-  50% { box-shadow: 0 0 26px var(--aurion-neon-yellow-glow); }
+  50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
 }
 
 /* Reveal message card — same floating-above-the-grid treatment as the

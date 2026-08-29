@@ -104,7 +104,7 @@
       "soundEffect": "",
       "background": { "type": "image", "url": "" },
       "options": [],
-      "overlayImage": { "url": "goal-01.wordtabs.png", "position": "center" },
+      "overlayImage": { "url": "", "position": "center" },
       "titleText": "The Goal Collector List",
       "descText": "Which 5 Would You Take With You?",
       "buttons": [

@@ -242,12 +242,13 @@ body {
   margin: 6px 0 20px;
 }
 
-/* Optional — only renders when a scene sets "subtitleText" in its JSON
-   (no admin panel field for this yet, Chef adds it directly in the JSON
-   for now). Sits between the title and the description, styled distinctly
-   from the body paragraph below it — bold, gold accent like the title,
-   smaller — so it reads as its own line rather than blending into the
-   description text it used to be the first line of. */
+/* Optional — only renders when a scene sets "subtitleText" (editable from
+   the admin panel's own Subtitle field now, same as title/description).
+   These are just the defaults; font/color/size/bold can be overridden per
+   scene. Sits between the title and the description, styled distinctly
+   from the body paragraph below it by default — bold, gold accent like
+   the title, smaller — so it reads as its own line rather than blending
+   into the description text it used to be the first line of. */
 .aurion-scene-subtitle {
   font-family: 'Poppins';
   color: var(--aurion-gold);

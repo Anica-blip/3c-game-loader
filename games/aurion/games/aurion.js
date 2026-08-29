@@ -227,6 +227,12 @@ export function startGame(config, container) {
 
     const wrap = document.createElement('div');
     wrap.className = 'aurion-scene-wrap';
+    if (!scene.mechanic || scene.mechanic === 'none') {
+      wrap.classList.add('aurion-no-mechanic');
+    }
+    if (scene.mechanic === 'sorting' || scene.mechanic === 'reveal-cards' || scene.mechanic === 'word-picker') {
+      wrap.classList.add('aurion-has-side-panel');
+    }
 
     if (scene.overlayImage && scene.overlayImage.url) {
       const img = document.createElement('img');

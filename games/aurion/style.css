@@ -4,6 +4,18 @@
   --aurion-dark: #1a0f2e;
   --aurion-gold: #f0b429;
   --aurion-text: #ffffff;
+  /* Sampled directly from Chef's reference grid image (the light-purple glass
+     bars) so the neon accent used across the word grid, sorting tiles and
+     reveal tiles is the exact color from that reference, not a guess. */
+  --aurion-neon-purple: #c07df4;
+  --aurion-neon-purple-fill: rgba(140, 90, 220, 0.16);
+  --aurion-neon-purple-glow: rgba(192, 125, 244, 0.4);
+  --aurion-neon-purple-glow-soft: rgba(192, 125, 244, 0.22);
+  /* Selected/lit/opened state accent — neon yellow, used as a glow instead
+     of a flat fill so highlighting reads as light, not a solid color block */
+  --aurion-neon-yellow: #fff176;
+  --aurion-neon-yellow-glow: rgba(255, 241, 118, 0.6);
+  --aurion-neon-yellow-glow-soft: rgba(255, 224, 130, 0.3);
 }
 
 body {
@@ -191,6 +203,13 @@ body {
   margin-bottom: 16px;
 }
 
+/* Landing and consent only — smaller than the shared default above, which
+   stays as-is for every other overlay-image scene (the finale included) */
+.aurion-intro-scene .aurion-overlay-img {
+  max-width: 170px;
+  width: 45%;
+}
+
 .aurion-overlay-center { align-self: center; }
 .aurion-overlay-top { align-self: flex-start; margin-top: -10vh; }
 .aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
@@ -267,10 +286,19 @@ body {
   transform: translateY(-2px);
 }
 
+/* Buttons using a real image graphic (goal.01.button.png etc.): background-size
+   must be `cover`, never `100% 100%` — 100%/100% stretches the art to fit
+   whatever box the text wrapping produces, which is what was turning the
+   button into a distorted bar. border-radius is reset to 0 here because the
+   PNG already has whatever shape/corners were designed into it — the base
+   .aurion-btn rule's 999px pill radius was clipping that art on top of the
+   stretch. */
 .aurion-btn-imaged {
-  background-size: 100% 100%;
+  background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   background-color: transparent;
+  border-radius: 0;
   min-width: 140px;
   min-height: 48px;
   padding: 14px 20px;
@@ -284,6 +312,11 @@ body {
   max-width: 280px;
   aspect-ratio: 3 / 4;
   margin: 0 auto;
+  /* The stage box itself is already centered (margin: 0 auto); this nudges
+     the door artwork right because the source PNGs have more empty framing
+     on their right side, so the drawn door reads left-of-center otherwise.
+     Single value to retune if it needs more or less shift after a look. */
+  transform: translateX(5%);
   cursor: pointer;
 }
 
@@ -322,14 +355,34 @@ body {
 }
 
 /* Scene 5 — word picker: grid on wide screens, one scrollable column on
-   narrow ones, same underlying 30 buttons either way */
+   narrow ones, same underlying 30 buttons either way. The counter + grid
+   are wrapped together so the star counter sits in its own row above the
+   grid, left-aligned to the grid's own edge, instead of floating beside it. */
+.aurion-word-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 640px;
+}
+
 .aurion-word-counter {
-  font-family: 'Poppins';
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--aurion-gold);
-  margin-bottom: 10px;
-  text-align: center;
+  display: flex;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.aurion-word-counter-star {
+  font-size: 17px;
+  line-height: 1;
+  color: var(--aurion-neon-purple-glow-soft);
+  text-shadow: 0 0 6px var(--aurion-neon-purple-glow-soft);
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.aurion-word-counter-star.filled {
+  color: var(--aurion-neon-yellow);
+  text-shadow: 0 0 8px var(--aurion-neon-yellow-glow), 0 0 16px var(--aurion-neon-yellow-glow-soft);
 }
 
 .aurion-word-grid {
@@ -346,8 +399,9 @@ body {
 }
 
 .aurion-word-card {
-  background: rgba(120, 80, 200, 0.18);
-  border: 1px solid rgba(240, 180, 41, 0.5);
+  background: var(--aurion-neon-purple-fill);
+  border: 1px solid var(--aurion-neon-purple);
+  box-shadow: 0 0 8px var(--aurion-neon-purple-glow-soft);
   border-radius: 6px;
   color: var(--aurion-text);
   font-family: 'Poppins';
@@ -357,26 +411,41 @@ body {
   cursor: pointer;
   text-align: center;
   line-height: 1.25;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
+.aurion-word-card:hover {
+  box-shadow: 0 0 12px var(--aurion-neon-purple-glow);
+}
+
+/* Selected state reads as a glow, not a flat fill — a translucent warm
+   gradient plus a neon-yellow border/glow, matching the star counter and
+   the sorting/reveal "lit" state so the highlight language is consistent
+   everywhere in the game */
 .aurion-word-card.picked {
-  background: var(--aurion-gold);
-  color: var(--aurion-dark);
-  border-color: var(--aurion-gold);
+  background: linear-gradient(135deg, rgba(255, 241, 118, 0.22), rgba(255, 202, 40, 0.16));
+  border-color: var(--aurion-neon-yellow);
+  color: #fff9e0;
+  box-shadow: 0 0 10px var(--aurion-neon-yellow-glow), 0 0 22px var(--aurion-neon-yellow-glow-soft);
 }
 
+/* Final list card — small, dark-blue glass (same language as the reveal
+   popup), sits on the grid's right edge and is allowed to overlap it
+   slightly rather than take up its own full row */
 .aurion-word-popup {
   display: none;
   position: fixed;
   top: 50%;
   right: 16px;
   transform: translateY(-50%);
-  width: 220px;
-  max-width: 80vw;
-  background: var(--aurion-dark);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
-  padding: 20px;
+  width: 190px;
+  max-width: 70vw;
+  background: rgba(20, 40, 90, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 12px;
+  padding: 16px;
   box-sizing: border-box;
   z-index: 20;
   text-align: center;
@@ -424,71 +493,81 @@ body {
   width: 100%;
 }
 
+/* Category grid — deliberately about half the previous footprint, so the
+   8 tiles read as compact game pieces rather than dominating the scene */
 .aurion-sort-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 8px;
   flex: 1;
-  min-width: 280px;
-  max-width: 520px;
+  min-width: 200px;
+  max-width: 300px;
 }
 
 @media (max-width: 700px) {
   .aurion-sort-board {
     grid-template-columns: repeat(2, 1fr);
+    max-width: 220px;
   }
 }
 
+/* No literal border on the tile itself — the category artwork should run
+   edge to edge with nothing separating it from the frame. The "border" is
+   a box-shadow ring drawn outside the box instead, so it never cuts into
+   the image, plus a soft glow beyond that. Idle state uses the same neon
+   purple as the word grid for a consistent look across scenes 5/6/7/8. */
 .aurion-sort-tile {
   position: relative;
   aspect-ratio: 3 / 4;
   border-radius: 10px;
   background-size: cover;
   background-position: center;
-  background-color: rgba(255, 255, 255, 0.06);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  opacity: 0.5;
-  transition: opacity 0.3s ease, border-color 0.3s ease;
+  background-color: var(--aurion-neon-purple-fill);
+  border: none;
+  box-shadow: 0 0 0 1px var(--aurion-neon-purple-glow), 0 0 10px var(--aurion-neon-purple-glow-soft);
+  opacity: 0.55;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
 }
 
 .aurion-sort-tile.lit {
   opacity: 1;
-  border-color: var(--aurion-gold);
-  box-shadow: 0 0 14px rgba(240, 180, 41, 0.5);
+  box-shadow: 0 0 0 1px var(--aurion-neon-yellow), 0 0 14px var(--aurion-neon-yellow-glow), 0 0 26px var(--aurion-neon-yellow-glow-soft);
 }
 
 .aurion-sort-count {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 3px;
+  right: 3px;
   background: var(--aurion-gold);
   color: var(--aurion-dark);
   font-family: 'Poppins';
   font-weight: 700;
-  font-size: 11px;
-  width: 18px;
-  height: 18px;
+  font-size: 9px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Tray sized to sit alongside the now-smaller category grid rather than
+   dwarf it — chips stay no larger than a category tile */
 .aurion-sort-tray {
-  width: 160px;
+  width: 130px;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 12px;
+  padding: 10px;
   text-align: center;
 }
 
 .aurion-sort-tray-title {
   font-family: 'Luckiest Guy';
   color: var(--aurion-gold);
-  font-size: 15px;
-  margin: 0 0 8px;
+  font-size: 13px;
+  margin: 0 0 6px;
 }
 
 .aurion-sort-chip-list {
@@ -504,9 +583,9 @@ body {
   color: var(--aurion-text);
   font-family: 'Poppins';
   font-weight: 700;
-  font-size: 12px;
-  padding: 8px 10px;
-  border-radius: 8px;
+  font-size: 10px;
+  padding: 6px 8px;
+  border-radius: 7px;
   cursor: grab;
   user-select: none;
   touch-action: none;
@@ -570,15 +649,16 @@ body {
   width: 100%;
 }
 
+/* No literal border here either — inherits .aurion-sort-tile's box-shadow
+   ring/glow for its resting look, these three states only change that glow */
 .aurion-reveal-tile {
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
 }
 
 .aurion-reveal-tile.dim {
-  opacity: 0.25;
+  opacity: 0.2;
   cursor: default;
+  box-shadow: 0 0 0 1px var(--aurion-neon-purple-glow-soft);
 }
 
 .aurion-reveal-tile.flashing {
@@ -587,25 +667,27 @@ body {
 
 .aurion-reveal-tile.opened {
   opacity: 1;
-  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 1px var(--aurion-neon-yellow), 0 0 16px var(--aurion-neon-yellow-glow);
   animation: none;
 }
 
 @keyframes reveal-flash {
-  0%, 100% { opacity: 0.6; box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-  50% { opacity: 1; box-shadow: 0 0 16px rgba(255, 255, 255, 0.7); }
+  0%, 100% { box-shadow: 0 0 0 1px var(--aurion-neon-purple-glow), 0 0 6px var(--aurion-neon-purple-glow-soft); }
+  50% { box-shadow: 0 0 0 1px var(--aurion-neon-yellow), 0 0 20px var(--aurion-neon-yellow-glow); }
 }
 
+/* Reveal message card — shrunk to roughly half its previous footprint,
+   dark-blue glass like the word-picker's final list card */
 .aurion-reveal-popup {
   display: none;
   width: 100%;
-  max-width: 300px;
-  background: rgba(20, 40, 90, 0.1);
+  max-width: 220px;
+  background: rgba(20, 40, 90, 0.16);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(120, 170, 255, 0.4);
-  border-radius: 12px;
-  padding: 16px 18px;
+  border-radius: 10px;
+  padding: 12px 14px;
   box-sizing: border-box;
   text-align: center;
 }
@@ -617,7 +699,7 @@ body {
 .aurion-reveal-popup h2 {
   font-family: 'Luckiest Guy';
   color: #ffbd59;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   margin: 0 0 4px;
 }
@@ -625,18 +707,18 @@ body {
 .aurion-reveal-subtitle {
   font-family: 'Poppins';
   color: #ffbd59;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
 }
 
 .aurion-reveal-body {
   font-family: 'Poppins';
   color: #ffffff;
   font-weight: 700;
-  font-size: 13px;
-  line-height: 1.5;
-  margin: 0 0 16px;
+  font-size: 11px;
+  line-height: 1.45;
+  margin: 0 0 12px;
 }
 
 .aurion-credits-text {

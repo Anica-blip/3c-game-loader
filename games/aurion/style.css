@@ -187,22 +187,34 @@ body {
   min-height: calc(100dvh - 80px);
 }
 
-/* Scenes with no mechanic (plain title/description moments) read better
-   centered as one block rather than pinned to the top with dead space
-   below, which is what the top/middle/bottom split looks like when the
-   middle has nothing in it */
-.aurion-scene-wrap.aurion-no-mechanic {
-  justify-content: center;
-  min-height: auto;
-}
-
+/* No-mechanic scenes (plain title/description moments) no longer force
+   everything into one tight, vertically-centered block — that rule wasn't
+   something Chef asked for, and it's what was pulling the title,
+   description and button together with the button riding up right under
+   the text instead of settling at the bottom like every other scene. Only
+   the mechanic slot itself is still hidden (there's nothing to show); the
+   wrap keeps its normal full-height sizing and default top alignment, and
+   the button row keeps the base .aurion-button-row rule below
+   (margin-top: auto), which is what actually anchors it to the bottom
+   with real breathing room instead of hugging the text. */
 .aurion-scene-wrap.aurion-no-mechanic .aurion-mechanic-slot {
   display: none;
 }
 
-.aurion-scene-wrap.aurion-no-mechanic .aurion-button-row {
-  margin-top: 28px;
-  padding-top: 0;
+/* The text block (title/subtitle/description) is centered as its own
+   unit within whatever space is left above the button — flex: 1 lets it
+   claim that space, and justify-content: center positions its own
+   content in the middle of it, independent of the button row below,
+   which keeps anchoring to the bottom via its own margin-top: auto. Only
+   applies to no-mechanic scenes; a scene with a mechanic already lays
+   its content out around the mechanic slot and isn't touched by this. */
+.aurion-scene-wrap.aurion-no-mechanic .aurion-scene-textblock {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .aurion-overlay-img {
@@ -228,6 +240,20 @@ body {
   color: var(--aurion-gold);
   font-size: 28px;
   margin: 6px 0 20px;
+}
+
+/* Optional — only renders when a scene sets "subtitleText" in its JSON
+   (no admin panel field for this yet, Chef adds it directly in the JSON
+   for now). Sits between the title and the description, styled distinctly
+   from the body paragraph below it — bold, gold accent like the title,
+   smaller — so it reads as its own line rather than blending into the
+   description text it used to be the first line of. */
+.aurion-scene-subtitle {
+  font-family: 'Poppins';
+  color: var(--aurion-gold);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 14px;
 }
 
 .aurion-scene-desc {

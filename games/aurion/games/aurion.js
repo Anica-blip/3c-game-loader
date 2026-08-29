@@ -157,16 +157,55 @@ export function startGame(config, container) {
     wrap.className = 'aurion-screen aurion-loading';
 
     const hourglass = document.createElement('div');
-    hourglass.className = 'loading-hourglass';
-    const sandDot = document.createElement('div');
-    sandDot.className = 'sand-dot';
-    hourglass.appendChild(sandDot);
+    hourglass.className = 'aurion-hourglass-illustration';
+    hourglass.innerHTML = `
+      <svg width="100%" height="100%" viewBox="0 0 380 260" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="aurionGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3b2a5e"/>
+            <stop offset="100%" stop-color="#1a0f2e"/>
+          </linearGradient>
+          <linearGradient id="aurionSandGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffe9b3"/>
+            <stop offset="100%" stop-color="#f0b429"/>
+          </linearGradient>
+        </defs>
+        <circle cx="70" cy="40" r="2" fill="#ffe9b3" opacity="0.8">
+          <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="300" cy="60" r="2.5" fill="#ffe9b3" opacity="0.6">
+          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.1s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="320" cy="180" r="1.8" fill="#ffe9b3" opacity="0.7">
+          <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.7s" repeatCount="indefinite"/>
+        </circle>
+        <g transform="translate(190,130)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate" values="0;0;180;180;360" keyTimes="0;0.4;0.5;0.9;1" dur="6s" repeatCount="indefinite"/>
+            <path d="M -55 -85 Q -55 -95 -45 -95 L 45 -95 Q 55 -95 55 -85 Q 55 -55 15 -8 Q 8 0 15 8 Q 55 55 55 85 Q 55 95 45 95 L -45 95 Q -55 95 -55 85 Q -55 55 -15 8 Q -8 0 -15 -8 Q -55 -55 -55 -85 Z" fill="url(#aurionGlassGrad)" stroke="#f0b429" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M -47 -82 Q -47 -88 -40 -88 L 40 -88 Q 47 -88 47 -82 Q 47 -56 12 -10 Q 12 -6 -12 -10 Q -47 -56 -47 -82 Z" fill="url(#aurionSandGrad)" opacity="0.9"/>
+            <path d="M -8 40 Q -8 70 -30 82 Q -35 85 -35 88 L 35 88 Q 35 85 30 82 Q 8 70 8 40 Q 8 55 0 60 Q -8 55 -8 40 Z" fill="url(#aurionSandGrad)" opacity="0.9"/>
+            <rect x="-1.5" y="-8" width="3" height="16" fill="#ffe9b3">
+              <animate attributeName="height" values="16;4;16" dur="1.2s" repeatCount="indefinite"/>
+            </rect>
+          </g>
+        </g>
+        <circle cx="190" cy="122" r="3" fill="#ffe9b3">
+          <animate attributeName="cy" values="105;150;105" dur="1.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;1;0" dur="1.4s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    `;
+
+    const greeting = document.createElement('p');
+    greeting.className = 'aurion-loading-greeting';
+    greeting.textContent = 'Hey Champ!';
 
     const msg = document.createElement('p');
     msg.className = 'aurion-body-text';
-    msg.textContent = "Hey Champ! I'm getting everything ready for you. The first visit can take a little longer while your browser gets everything organised. Hang in there, it'll be worth the wait!";
+    msg.textContent = "I'm getting everything ready for you. The first visit can take a little longer while your browser gets everything organised. Hang in there, it'll be worth the wait!";
 
-    wrap.append(hourglass, msg);
+    wrap.append(hourglass, greeting, msg);
     content.appendChild(wrap);
   }
 

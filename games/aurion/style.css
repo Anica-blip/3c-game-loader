@@ -273,7 +273,18 @@ body {
   width: 100%;
 }
 
+/* display: inline-flex + centering here is the actual vertical-centering
+   fix — there was none before. A <button> with no flex on it lays its text
+   out like a normal block: when min-height forces the box taller than the
+   text needs, the text just sits at the top of that box instead of the
+   middle, which is exactly why every label was reading as pinned near the
+   top with empty space below it. inline-flex keeps the button sized like
+   before (not stretched to the row's full width, unlike plain flex). */
 .aurion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   font-family: 'Poppins';
   font-size: 12px;
   font-weight: 700;
@@ -309,16 +320,34 @@ body {
    button into a distorted bar. border-radius is reset to 0 here because the
    PNG already has whatever shape/corners were designed into it — the base
    .aurion-btn rule's 999px pill radius was clipping that art on top of the
-   stretch. */
+   stretch.
+   max-width dropped from 220px to 90px — checked actual rendered text
+   widths at this exact font (Poppins 700, 12px): "What's Hiding?" (92px),
+   "Take It With You" (99px) and "Another Round" (92px) all exceed 90px and
+   now wrap to 2 lines at a natural word break (no word here is wider than
+   50px, so nothing splits mid-word); every shorter label ("Guide Me",
+   "I'm Curious", "Let's Explore", "Find Some", "Got Them", "The Team",
+   "Over & Out", "Step In", "Ready", "Close") stays comfortably under 90px
+   and renders on one line, unchanged. min-width dropped to match — 140px
+   was fighting the new 90px cap.
+   padding is intentionally uneven (16px top / 11px bottom) instead of the
+   button's usual symmetric split: the pill artwork is a 3D graphic (top
+   highlight, flat face, bottom shadow rim), and background-size: cover
+   crops it centered on the box's geometric middle — which lands text a few
+   pixels above the artwork's actual flat/readable face, not on it. The
+   extra bottom padding nudges the centered text down onto that face
+   without touching the max-width/wrap logic above or the image crop math
+   (background-origin is padding-box, so this shifts text, not the art). */
 .aurion-btn-imaged {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
   border-radius: 0;
-  min-width: 140px;
+  min-width: 70px;
+  max-width: 90px;
   min-height: 48px;
-  padding: 14px 20px;
+  padding: 16px 20px 11px;
 }
 
 /* Scene 3 — the door: closed and open images crossfade on click, then the
@@ -512,23 +541,22 @@ body {
   width: 100%;
 }
 
-/* Doubled+ from the previous pass (300px max) back up past the original
-   size — "fills the screen" — since nothing needs to share width with it
-   anymore. At this max-width, 4 columns/12px gaps put each tile at roughly
-   145px wide on desktop, which is what the chip/tab sizing below assumes. */
+/* Pulled back down from 640px — Chef's call after seeing the cropped art
+   in place: the containers can go smaller. At this max-width, 4 columns/
+   12px gaps put each tile at roughly 105px wide on desktop (was ~145px). */
 .aurion-sort-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   width: 100%;
-  max-width: 640px;
-  min-width: 280px;
+  max-width: 460px;
+  min-width: 240px;
 }
 
 @media (max-width: 700px) {
   .aurion-sort-board {
     grid-template-columns: repeat(2, 1fr);
-    max-width: 320px;
+    max-width: 240px;
   }
 }
 
@@ -713,9 +741,26 @@ body {
   box-shadow: none;
 }
 
+/* Previously this just animated the tile's own box-shadow — a thin ring
+   sitting right at the tile's edge, easy to mistake for "in front of" the
+   card once the border-gap bug made that edge messy. This is a real glow
+   BEHIND the container instead: a blurred, pulsing halo on a ::before
+   pseudo-element, pushed to z-index: -1 so it always paints behind the
+   tile's own background (the card art), never over it. */
 .aurion-reveal-tile.flashing {
   opacity: 1;
-  animation: reveal-flash 1.4s ease-in-out infinite;
+  box-shadow: none;
+}
+
+.aurion-reveal-tile.flashing::before {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: inherit;
+  background: radial-gradient(circle, var(--aurion-neon-purple-glow-bright) 0%, var(--aurion-neon-purple-glow-soft) 45%, transparent 72%);
+  filter: blur(9px);
+  z-index: -1;
+  animation: reveal-flash-glow 1.4s ease-in-out infinite;
 }
 
 .aurion-reveal-tile.opened {
@@ -724,9 +769,13 @@ body {
   animation: none;
 }
 
-@keyframes reveal-flash {
-  0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
-  50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
+.aurion-reveal-tile.opened::before {
+  content: none;
+}
+
+@keyframes reveal-flash-glow {
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
 /* Reveal message card — fixed to the viewport and centered both axes, so
@@ -746,7 +795,10 @@ body {
   transform: translate(-50%, -50%);
   width: 100%;
   max-width: 220px;
-  background: rgba(20, 40, 90, 0.16);
+  /* Matched to .aurion-drag-card's glass — same background alpha (0.22,
+     was 0.16) and same blur (10px). Chef asked for this card's glass % to
+     be raised to whatever the drag card already uses. */
+  background: rgba(20, 40, 90, 0.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(120, 170, 255, 0.4);

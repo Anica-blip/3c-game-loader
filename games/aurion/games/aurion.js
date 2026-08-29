@@ -759,30 +759,20 @@ export function startGame(config, container) {
     const popup = document.createElement('div');
     popup.className = 'aurion-reveal-popup';
 
-      // The card art now lives on its own inner element (.aurion-reveal-art)
-      // instead of directly as the tile's own background-image. Reason: the
-      // flashing "back cover" needs to sit BEHIND the art reliably, and a
-      // negative z-index pseudo-element (what the previous attempt used)
-      // doesn't stay pinned behind just its own tile unless that tile
-      // establishes its own stacking context — it wasn't, so the glow was
-      // escaping upward and rendering behind unrelated ancestors instead,
-      // which is why it wasn't visible. Putting the art on a normal later
-      // DOM child (position: absolute, inset: 0, no z-index tricks) means
-      // it simply paints on top of the tile's own background by ordinary
-      // stacking rules — no negative z-index, nothing to escape. The tile's
-      // own background is the back cover: exactly the tile's footprint
-      // (inset: 0 on the art, same border-radius), never bigger than the
-      // container, never spilling into the grid's gaps.
+    // Reverted to setting the image directly as this tile's own
+    // background (same as Scene 6's sorting tiles) instead of a separate
+    // inner .aurion-reveal-art element. The split-layer "back cover"
+    // version depended on aurion.js and style.css always shipping in sync
+    // — the moment they were even briefly out of step, the tile had
+    // nowhere for the art to render and showed as a blank color block,
+    // which is exactly what happened on the live page. One background
+    // image, one file each side, nothing that can fall out of sync.
     categories.forEach(cat => {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-reveal-tile';
-
-      const art = document.createElement('div');
-      art.className = 'aurion-reveal-art';
       if (categoryImages[cat]) {
-        art.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
+        tile.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
       }
-      tile.appendChild(art);
 
       const isChosen = chosenCategories.includes(cat);
       if (!isChosen) {

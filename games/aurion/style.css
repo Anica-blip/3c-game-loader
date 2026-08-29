@@ -534,16 +534,25 @@ body {
 
 /* No border at all, not even the box-shadow ring the previous pass used —
    just a diffuse glow, nothing with a hard edge. No background-color fill
-   either now — that translucent purple fallback was showing through as a
-   border-like halo wherever the category artwork itself doesn't fully
-   reach the tile's edge, which is exactly the "dark purple border" look
-   that needed to go; background-size: cover means the image itself still
-   fills the tile completely on its own. Full opacity always — dimming is
-   a Scene 8 (reveal) concept only, Scene 6 shows every container clearly
-   from the start since nothing's been sorted into any of them yet. */
+   either — that was a symptom fix, not the cause. The actual "dark purple
+   border" was the goal-01.<CATEGORY>.png source art itself: every one of
+   the 8 files is a 1080x1080 canvas with the real card artwork sitting in
+   a 570x876 region in the middle, surrounded by fully transparent padding
+   (confirmed by inspecting the live files — identical padding on all 8).
+   background-size: cover cannot remove that; it scales the whole 1080x1080
+   canvas including the transparent margin, so the tile's own dark page
+   background showed through that margin as a border-like gap no matter
+   what the tile's own background-color was set to.
+   Fixed at the source: the 8 category images are now cropped to that exact
+   570x876 content box (no transparent padding left), so cover fills the
+   tile edge-to-edge with the card art and nothing else. aspect-ratio below
+   is set to match the art's real proportions (570:876) instead of the
+   arbitrary 3:4 that was forcing a mismatched crop. Full opacity always —
+   dimming is a Scene 8 (reveal) concept only, Scene 6 shows every container
+   clearly from the start since nothing's been sorted into any of them yet. */
 .aurion-sort-tile {
   position: relative;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 570 / 876;
   border-radius: 10px;
   background-size: cover;
   background-position: center;
@@ -683,9 +692,17 @@ body {
 /* Scene 8 — reveal: only chosen categories flash and open, others stay dim.
    Uses the exact same .aurion-sort-stage + .aurion-sort-board as Scene 6
    (both now fully opaque by default via .aurion-sort-tile), so the two
-   scenes' grids are identical in size, position and base look. Dimming is
-   scoped to Scene 8 only, and only to categories with zero words in them —
-   a chosen/flashing/opened tile is always at full opacity, never dimmed. */
+   scenes' grids are identical in size, position and base look, including
+   the cropped category art fix above — that's what removes the same dark
+   border here. Dimming is scoped to Scene 8 only, and only to categories
+   with zero words in them — a chosen/flashing/opened tile is always at
+   full opacity, never dimmed.
+   The flash is a non-inset box-shadow, which CSS always paints outside the
+   element's box — it was never literally on top of the artwork. It only
+   looked like it was sitting "in front of" the image because the flash
+   color filled that same transparent border gap the image's own padding
+   left behind. With the art now cropped edge-to-edge, the flash reads as a
+   glow strictly around/behind the card, never over it. */
 .aurion-reveal-tile {
   cursor: pointer;
 }
@@ -712,18 +729,23 @@ body {
   50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
 }
 
-/* Reveal message card — same floating-above-the-grid treatment as the
-   drag card in Scene 6 (bottom: 100% of .aurion-sort-stage), shrunk again
-   from the previous pass (card size only, not its font sizes below). */
+/* Reveal message card — fixed to the viewport and centered both axes, so
+   it always lands in the true center of the page regardless of where
+   .aurion-sort-stage/the grid happens to sit in the normal document flow.
+   The previous version anchored it with `bottom: 100%` relative to the
+   grid instead — that only centered it horizontally; vertically it just
+   sat wherever the grid started, which on this page was near the top, so
+   the card was pinned to the top edge instead of the page center. Fixed
+   positioning with top/left 50% + translate(-50%, -50%) removes that
+   dependency entirely. */
 .aurion-reveal-popup {
   display: none;
-  position: absolute;
-  bottom: 100%;
+  position: fixed;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 12px;
+  transform: translate(-50%, -50%);
   width: 100%;
-  max-width: 200px;
+  max-width: 220px;
   background: rgba(20, 40, 90, 0.16);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -732,7 +754,7 @@ body {
   padding: 10px 12px;
   box-sizing: border-box;
   text-align: center;
-  z-index: 15;
+  z-index: 25;
 }
 
 .aurion-reveal-popup.open {

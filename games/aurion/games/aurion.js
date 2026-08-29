@@ -141,8 +141,8 @@ export function startGame(config, container) {
   exitBtn.style.backgroundImage = `url('${resolveAssetUrl('goal.01-exitsymbol.png')}')`;
   exitBtn.setAttribute('aria-label', 'Exit');
   exitBtn.addEventListener('click', () => {
-    if (ambientAudio) ambientAudio.pause();
-    window.location.href = 'landing.html';
+    if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
+    renderScene(2);
   });
 
   renderLoading();
@@ -266,7 +266,7 @@ export function startGame(config, container) {
 
     const wrap = document.createElement('div');
     wrap.className = 'aurion-scene-wrap';
-    if (!scene.mechanic || scene.mechanic === 'none') {
+    if ((!scene.mechanic || scene.mechanic === 'none') && !scene.video) {
       wrap.classList.add('aurion-no-mechanic');
     }
     if (scene.mechanic === 'sorting' || scene.mechanic === 'reveal-cards' || scene.mechanic === 'word-picker') {

@@ -429,6 +429,14 @@ function styledButtonGroup(obj, sectionLabel) {
   drawer.appendChild(selectField('Font', obj.font || 'Poppins', BODY_FONTS, v => { obj.font = v; }));
   drawer.appendChild(selectField('Text color', obj.color || '#ffffff', BUTTON_TEXT_COLORS, v => { obj.color = v; }));
   drawer.appendChild(sliderField('Size (px)', obj.size ?? 16, 12, 28, v => { obj.size = v; }));
+  // Fine-tune only — most buttons never need this touched. The button
+  // graphic is a 3D pill (top highlight, flat face, bottom shadow rim),
+  // and the code already nudges every button's text down by default to
+  // sit on that flat face. Occasionally one label (especially a 2-line
+  // wrapped one) still needs its own small correction — positive moves
+  // the text down, negative moves it up. Read by aurion.js as
+  // btn.textNudge; leave at 0 unless a specific button looks off.
+  drawer.appendChild(sliderField('Text vertical nudge (px, fine-tune only)', obj.textNudge ?? 0, -15, 15, v => { obj.textNudge = v; }));
 
   styleBtn.addEventListener('click', () => drawer.classList.add('open'));
 

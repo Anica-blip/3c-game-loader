@@ -94,6 +94,26 @@ function resolveAssetUrl(url) {
   return 'assets/' + url;
 }
 
+// Checks each .aurion-btn-label already in the live DOM and flags the
+// ones actually rendering on 2 lines with .aurion-btn-label-wrapped, so
+// style.css can nudge just those a little further down (a 2-line label
+// needs a bit more than the base padding offset already gives every
+// button). Uses a Range over the label's text rather than the label
+// element's own getClientRects() — a block-level span always reports a
+// single rect for itself no matter how many lines its text wraps to; the
+// Range approach reports one rect per actual visual line, which is what
+// actually needs checking here. Must run after the label is attached to
+// the document (real layout, not a guess from character count), so this
+// is called right after the button row is appended to the live scene.
+function markWrappedButtonLabels(row) {
+  row.querySelectorAll('.aurion-btn-label').forEach((label) => {
+    const range = document.createRange();
+    range.selectNodeContents(label);
+    const lineCount = range.getClientRects().length;
+    label.classList.toggle('aurion-btn-label-wrapped', lineCount > 1);
+  });
+}
+
 // Every still image any scene could show gets warmed up here, while the
 // hourglass loading screen is up, so nothing pops in late once the player
 // is actually moving through scenes. This was previously missing every
@@ -399,6 +419,17 @@ export function startGame(config, container) {
       const label = document.createElement('span');
       label.className = 'aurion-btn-label';
       label.textContent = btn.text || 'Continue';
+      // Optional per-button fine-tune, set in the scene's JSON config
+      // (e.g. goals.01.json) as "textNudge": -3 — a number of pixels,
+      // positive pushes the label down, negative pulls it up. Only needed
+      // when one specific button's text still doesn't land right after
+      // the automatic wrapped-label nudge below; it's an inline style, so
+      // it always wins over that automatic class regardless of which
+      // shows up in the CSS first. Leave it off (most buttons) to use the
+      // automatic behavior untouched.
+      if (typeof btn.textNudge === 'number') {
+        label.style.marginTop = btn.textNudge + 'px';
+      }
       b.appendChild(label);
       if (btn.font) b.style.fontFamily = `'${btn.font}', Poppins`;
       if (btn.color) b.style.color = btn.color;
@@ -426,6 +457,7 @@ export function startGame(config, container) {
     wrap.appendChild(buttonRow);
 
     content.appendChild(wrap);
+    markWrappedButtonLabels(buttonRow);
 
     function revealButtons() {
       buttonRow.style.visibility = 'visible';
@@ -727,12 +759,30 @@ export function startGame(config, container) {
     const popup = document.createElement('div');
     popup.className = 'aurion-reveal-popup';
 
+      // The card art now lives on its own inner element (.aurion-reveal-art)
+      // instead of directly as the tile's own background-image. Reason: the
+      // flashing "back cover" needs to sit BEHIND the art reliably, and a
+      // negative z-index pseudo-element (what the previous attempt used)
+      // doesn't stay pinned behind just its own tile unless that tile
+      // establishes its own stacking context — it wasn't, so the glow was
+      // escaping upward and rendering behind unrelated ancestors instead,
+      // which is why it wasn't visible. Putting the art on a normal later
+      // DOM child (position: absolute, inset: 0, no z-index tricks) means
+      // it simply paints on top of the tile's own background by ordinary
+      // stacking rules — no negative z-index, nothing to escape. The tile's
+      // own background is the back cover: exactly the tile's footprint
+      // (inset: 0 on the art, same border-radius), never bigger than the
+      // container, never spilling into the grid's gaps.
     categories.forEach(cat => {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-reveal-tile';
+
+      const art = document.createElement('div');
+      art.className = 'aurion-reveal-art';
       if (categoryImages[cat]) {
-        tile.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
+        art.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
       }
+      tile.appendChild(art);
 
       const isChosen = chosenCategories.includes(cat);
       if (!isChosen) {

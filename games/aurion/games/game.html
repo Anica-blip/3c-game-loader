@@ -7,19 +7,31 @@
   <title>Aurion Challenge — 3C Thread To Success</title>
   <!-- TODO: confirm exact favicon filename saved in /shared -->
   <link rel="icon" href="../../shared/favicon.png">
+  <!-- Fonts: Luckiest Guy (titles) + Poppins (body/buttons), deliberately chosen,
+       no fallback substitution wanted. This link was missing entirely before,
+       which is why the browser was silently falling back to a system font no
+       matter what was set in the admin panel — style.css only names these
+       fonts, it never loaded them. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Bungee&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Cache-busting: style.css and loader.js are referenced by a plain <link>/
+       <script> tag, so unlike the dynamically-fetched config JSON and game
+       module (which loader.js now busts automatically on every load), the
+       browser has no built-in reason to know this file changed. Bump the
+       "?v=" value below whenever style.css or loader.js is actually edited
+       and redeployed, so returning players are guaranteed to fetch the new
+       version instead of a cached copy. One value, one place. -->
+  <link rel="stylesheet" href="style.css?v=2026-08-29-1">
 </head>
 <body>
   <div id="game-container"></div>
 
   <!-- Loads the shared engine already in the repo root.
-       It reads ?configName= from this page's URL, fetches
-       config/<themeName>.json (relative to this page), then loads
-       games/aurion.js (relative to this page) and calls its
-       startGame(config, container) function. -->
-  <script type="module" src="../../loader.js"></script>
+       It reads ?configName=week-1 (or whichever theme) from this page's URL,
+       fetches config/<themeName>.json (relative to this page),
+       then loads games/aurion.js (relative to this page)
+       and calls its startGame(config, container) function. -->
+  <script type="module" src="../../loader.js?v=2026-08-29-1"></script>
 </body>
 </html>

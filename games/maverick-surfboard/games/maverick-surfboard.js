@@ -79,10 +79,41 @@ export function startGame(config, container) {
   content.className = 'maverick-content';
   container.appendChild(content);
 
+  let maverickVideoEl = null;
+  let maverickVideoStarted = false;
+
   renderLoading();
   preloadAllAssets(config).then(() => {
     renderIntro();
   });
+
+  // Starts the ending video downloading the moment the player reaches
+  // Scene 1 — deliberately not folded into the hourglass's own preload
+  // (that's for the background images the hourglass is already correctly
+  // gating on), and not left cold until the player actually reaches the
+  // message page at the very end, which is what made it visibly load in
+  // front of them on launch day. The same <video> element gets reparented
+  // into view later in renderMaverickMessage() instead of a second video
+  // with a fresh src — that way there's no dependency on hoping the CDN's
+  // cache headers cooperate; it's the same in-progress download either
+  // way. Guarded so it only ever starts once per session, including on
+  // replay.
+  function preloadMaverickVideoIfNeeded() {
+    if (maverickVideoStarted || !config.maverickVideo) return;
+    maverickVideoStarted = true;
+    maverickVideoEl = document.createElement('video');
+    maverickVideoEl.src = config.maverickVideo;
+    maverickVideoEl.preload = 'auto';
+    maverickVideoEl.muted = true;
+    maverickVideoEl.setAttribute('playsinline', '');
+    maverickVideoEl.playsInline = true;
+    // Off-screen but not display:none — some browsers deprioritize or
+    // pause loading of display:none media, so this stays technically
+    // "visible" at 1x1px and fully transparent instead.
+    maverickVideoEl.style.cssText = 'position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;';
+    container.appendChild(maverickVideoEl);
+    maverickVideoEl.load();
+  }
 
   function setupBackground(layer, background) {
     layer.classList.remove('maverick-bg-ready');
@@ -245,6 +276,8 @@ export function startGame(config, container) {
       return;
     }
 
+    if (decisionIndex === 0) preloadMaverickVideoIfNeeded();
+
     const decision = config.decisions[decisionIndex];
     const motionFn = MOTION_PRESETS[decision.motion] || MOTION_PRESETS['glide-bob'];
     const verticalPercent = typeof decision.verticalPosition === 'number' ? decision.verticalPosition : 40;
@@ -347,9 +380,17 @@ export function startGame(config, container) {
     const wrap = document.createElement('div');
     wrap.className = 'maverick-msg-wrap';
 
-    const video = document.createElement('video');
+    // Reuses the same <video> that started downloading back at Scene 1
+    // instead of creating a fresh one with a cold src — that call is a
+    // no-op if it already ran, and a safe fallback (creates it right here
+    // as before) on the off chance the player somehow reached this point
+    // without ever passing through renderDecisionStage.
+    preloadMaverickVideoIfNeeded();
+    const video = maverickVideoEl;
     video.className = 'maverick-msg-video';
-    video.src = config.maverickVideo;
+    video.style.cssText = '';
+    video.currentTime = 0;
+    video.muted = false;
     video.autoplay = true;
     video.setAttribute('playsinline', '');
     video.playsInline = true;

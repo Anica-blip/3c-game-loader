@@ -53,7 +53,7 @@
         "label": "maverick-onboard",
         "url": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/scene%201/scene%201%20-%20maverick-onboard.png"
       },
-      "duration": 3
+      "duration": 12
     },
     {
       "id": 2,
@@ -195,25 +195,25 @@
     {
       "minScore": 5,
       "maxScore": 8,
-      "title": "🧘 Steady Hands",
+      "title": "\ud83e\uddd8 Steady Hands",
       "message": "Honestly buddy, I could use whatever calm you're carrying."
     },
     {
       "minScore": 9,
       "maxScore": 12,
-      "title": "👀 The Patient One",
+      "title": "\ud83d\udc40 The Patient One",
       "message": "Buddy, you could really be a good influence on me."
     },
     {
       "minScore": 13,
       "maxScore": 16,
-      "title": "🏄 Reads The Water",
+      "title": "\ud83c\udfc4 Reads The Water",
       "message": "You read that water like you were born on it, buddy."
     },
     {
       "minScore": 17,
       "maxScore": 20,
-      "title": "🌊 My Kind Of Trouble",
+      "title": "\ud83c\udf0a My Kind Of Trouble",
       "message": "Buddy, we're grabbing a beer, you're exactly my kind."
     }
   ]

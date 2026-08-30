@@ -325,6 +325,26 @@ body {
   background: rgba(240, 180, 41, 0.15);
 }
 
+/* "The Team" (was a plain underlined text link — .maverick-btn-link,
+   still defined above but no longer used) — same pill shape, border and
+   sizing as .maverick-off-btn so the two sit as a matched pair in the
+   bottom row, same as Aurion's finale buttons pair together. */
+.maverick-team-btn {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--maverick-gold);
+  border-radius: 999px;
+  color: var(--maverick-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.maverick-team-btn:hover {
+  background: rgba(240, 180, 41, 0.15);
+}
+
 /* Maverick message page, video with no container, hidden toolbar */
 .maverick-msg-wrap {
   position: relative;

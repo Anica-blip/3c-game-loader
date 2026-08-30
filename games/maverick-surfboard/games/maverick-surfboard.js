@@ -17,55 +17,48 @@ function preloadImageList(urls) {
   })));
 }
 
-// Two tiers, not one. The old single preloadAssets() swept every background
-// and character image across all 5 decisions plus intro/finale (11+ mostly
-// external, full-size photo backgrounds) into one Promise.all racing an
-// 8-second timeout. On a real connection that sweep can easily outrun 8
-// seconds, the timeout wins the race, and the game proceeds into scenes
-// whose images are still mid-download — which is exactly the "loads top to
-// bottom, dark screen" symptom reported. It also never included introImage
-// or finaleImage at all, so those two were guaranteed to load cold on
-// first use regardless of timing.
+// Was two tiers — a "critical" set (landing + intro + decision 1 only)
+// gated the hourglass, while decisions 2-5's backgrounds loaded
+// fire-and-forget in the background with nothing waiting on them. That
+// was built to keep the initial wait short, but it meant scenes 2-5 had
+// no actual guarantee of being ready by the time the player reached them
+// — on a real connection, four more full-size external photo backgrounds
+// don't reliably finish downloading during just decision 1's few-second
+// animation. When they didn't, the browser painted whatever bytes of that
+// background image had arrived so far, which is the "loads top to
+// bottom, dark screen" symptom that cost Maverick its launch day.
 //
-// Critical tier: only what's seen before the player makes a single choice
-// — the landing background, the intro artwork, and decision 1's own
-// background + character image. Small enough to actually finish, so the
-// hourglass is tied to real work, not a race it can lose.
-function preloadCriticalAssets(config) {
+// Chef's call: better to make the player wait once, fully, behind the
+// hourglass, than to have any scene start before its own background is
+// actually ready. So this is back to one tier — every image the game can
+// possibly show (landing, intro, all 5 decisions' backgrounds and
+// character images, finale) is loaded before the intro screen ever
+// appears. Nothing about a scene's assets is left to load "live" once
+// gameplay has started.
+function preloadAllAssets(config) {
   const urls = [];
   if (config.background && config.background.url && config.background.type !== 'video') {
     urls.push(config.background.url);
   }
   if (config.introImage) urls.push(config.introImage);
-
-  const first = (config.decisions || [])[0];
-  if (first) {
-    if (first.background && first.background.url && first.background.type !== 'video') urls.push(first.background.url);
-    if (first.image && first.image.url) urls.push(first.image.url);
-  }
-  (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
-
-  const timeout = new Promise(resolve => setTimeout(resolve, 15000));
-  return Promise.race([preloadImageList(urls), timeout]);
-}
-
-// Everything else — decisions 2 onward, plus the finale image. Kicked off
-// at the exact same moment as the critical tier, but nothing waits on it.
-// By the time the player has read the intro and sat through decision 1's
-// several-second animation, this has almost always finished quietly in the
-// background, so later scenes' backgrounds are already cached rather than
-// streaming in live when their scene arrives. This is the "first image
-// loads first while the others work their way in" behavior asked for.
-function preloadRemainingAssets(config) {
-  const urls = [];
   if (config.finaleImage) urls.push(config.finaleImage);
 
-  (config.decisions || []).slice(1).forEach(d => {
+  (config.decisions || []).forEach(d => {
     if (d.background && d.background.url && d.background.type !== 'video') urls.push(d.background.url);
     if (d.image && d.image.url) urls.push(d.image.url);
   });
+  (config.characterImages || []).forEach(img => { if (img.url) urls.push(img.url); });
 
-  return preloadImageList(urls);
+  // Safety net only, not the expected path. There are 13 unique images
+  // here, 9 of them external ~1MB photo-quality graphics — call it
+  // roughly 9-10MB total. On WiFi/4G that's a few seconds; the timeout
+  // exists so a genuinely broken connection or a dead link doesn't strand
+  // the player on the hourglass forever, not to cut a slow-but-working
+  // load short and let a scene start half-loaded again. 45s gives real
+  // room for a slow mobile connection to actually finish before this
+  // becomes the thing that ends the wait instead of the images doing it.
+  const timeout = new Promise(resolve => setTimeout(resolve, 45000));
+  return Promise.race([preloadImageList(urls), timeout]);
 }
 
 export function startGame(config, container) {
@@ -87,8 +80,7 @@ export function startGame(config, container) {
   container.appendChild(content);
 
   renderLoading();
-  preloadRemainingAssets(config); // fire-and-forget, runs alongside the wait below
-  preloadCriticalAssets(config).then(() => {
+  preloadAllAssets(config).then(() => {
     renderIntro();
   });
 

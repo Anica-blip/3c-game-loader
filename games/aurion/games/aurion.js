@@ -331,12 +331,26 @@ export function startGame(config, container) {
       wrap.classList.add('aurion-intro-scene');
     }
 
+    // Landing and consent have no title/description of their own — their
+    // overlay image is the only thing on the page above the button, so it
+    // gets parked here and appended into the textblock below instead of
+    // straight onto wrap. That reuses the same flex:1 + justify-content:
+    // center block that already centers subtitle/desc on other no-mechanic
+    // scenes, which centers the image between the top and the button
+    // instead of it sitting pinned near the top. Every other overlay-image
+    // scene (finale included) keeps its current top-anchored placement,
+    // untouched.
+    let introOverlayImg = null;
     if (scene.overlayImage && scene.overlayImage.url) {
       const img = document.createElement('img');
       img.src = resolveAssetUrl(scene.overlayImage.url);
       img.alt = '';
       img.className = 'aurion-overlay-img aurion-overlay-' + (scene.overlayImage.position || 'center');
-      wrap.appendChild(img);
+      if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page') {
+        introOverlayImg = img;
+      } else {
+        wrap.appendChild(img);
+      }
     }
 
     // Title stays exactly where it always has — pinned at the top,
@@ -359,6 +373,9 @@ export function startGame(config, container) {
     const textBlock = document.createElement('div');
     textBlock.className = 'aurion-scene-textblock';
     wrap.appendChild(textBlock);
+    if (introOverlayImg) {
+      textBlock.appendChild(introOverlayImg);
+    }
 
     // Optional — only present when a scene sets "subtitleText". Renders
     // as its own styled line above the description; font/color/size/bold
@@ -736,18 +753,6 @@ export function startGame(config, container) {
     stage.append(board, dragCard);
     slot.appendChild(stage);
     showNextChip();
-
-    // Landing narration for this scene — plays once, 1 second after the
-    // player arrives (per Chef's spec: "after 1 sec aurion speaks"). It's
-    // independent of the sorting itself: the tiles are already interactive
-    // while it plays, nothing blocks on it, and the forward button's own
-    // timing is untouched — it still only appears once all 5 words are
-    // sorted, via onComplete above.
-    if (scene.soundEffect) {
-      setTimeout(() => {
-        new Audio(scene.soundEffect).play().catch(() => {});
-      }, 1000);
-    }
   }
 
   function buildSpinWheelMechanic(slot, scene, onComplete) {
@@ -778,6 +783,18 @@ export function startGame(config, container) {
 
     stage.append(pointer, wheel);
     slot.appendChild(stage);
+
+    // Landing narration for this scene — plays once, 1 second after the
+    // player arrives (moved here from Scene 6 per Chef's call: it reads
+    // better once the wheel is in front of them). Independent of the spin
+    // itself: the wheel is already clickable while it plays, nothing blocks
+    // on it, and the forward button's own timing is untouched — it still
+    // only appears once the spin animation finishes, via onComplete above.
+    if (scene.soundEffect) {
+      setTimeout(() => {
+        new Audio(scene.soundEffect).play().catch(() => {});
+      }, 1000);
+    }
   }
 
   function buildRevealMechanic(slot, scene, onComplete) {

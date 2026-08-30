@@ -22,12 +22,24 @@
       "verticalPosition": 0,
       "soundEffect": "",
       "options": [],
-      "background": { "type": "image", "url": "" },
-      "image": { "label": "aurion landing", "url": "" },
-      "overlayImage": { "url": "goal-01.landing.png", "position": "center" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "image": {
+        "label": "aurion landing",
+        "url": ""
+      },
+      "overlayImage": {
+        "url": "goal-01.landing.png",
+        "position": "center"
+      },
       "duration": 2,
       "buttons": [
-        { "text": "Ready", "image": "goal.01.button.png" }
+        {
+          "text": "Ready",
+          "image": "goal.01.button.png"
+        }
       ],
       "adminLabel": "landing page"
     },
@@ -36,17 +48,29 @@
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",
-      "image": { "label": "aurion concent", "url": "" },
+      "image": {
+        "label": "aurion concent",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "goal.01-consent-image.png", "position": "center" },
+      "overlayImage": {
+        "url": "goal.01-consent-image.png",
+        "position": "center"
+      },
       "titleText": "",
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Step In" }
+        {
+          "image": "goal.01.button.png",
+          "text": "Step In"
+        }
       ],
       "adminLabel": "consent page"
     },
@@ -58,17 +82,29 @@
         "revealImage": "goal-01.stickynote.png"
       },
       "situation": "",
-      "image": { "label": "closed door", "url": "goal-01.closeddoor.png" },
+      "image": {
+        "label": "closed door",
+        "url": "goal-01.closeddoor.png"
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "Open The Door",
       "buttons": [
-        { "image": "goal.01.button.png", "text": "What's Hiding?" }
+        {
+          "image": "goal.01.button.png",
+          "text": "What's Hiding?"
+        }
       ],
       "adminLabel": "let's begin"
     },
@@ -77,18 +113,30 @@
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/04%20Intro%20Page%20-%20goal.01.mp3",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "Welcome To Setting Your Goals",
       "descText": "Empty Your Thoughts\n\nInclude Everything\n\nBig things. Small things. Serious things.\nRidiculous things. Things you've been\nputting off. Things you'd love to try.\nThings you keep saying \"one day\" about.",
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Let's Explore" }
+        {
+          "image": "goal.01.button.png",
+          "text": "Let's Explore"
+        }
       ],
       "adminLabel": "introduction page"
     },
@@ -97,18 +145,31 @@
       "mechanic": "word-picker",
       "mechanicData": {},
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "The Goal Collector List",
       "descText": "Which 5 Would You Take With You?",
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Found Some", "size": 12 }
+        {
+          "image": "goal.01.button.png",
+          "text": "Found Some",
+          "size": 12
+        }
       ],
       "adminLabel": "scene 1"
     },
@@ -128,18 +189,31 @@
         }
       },
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/06%20List%20page%20-%20goal.01.mp3",
-      "background": { "type": "image", "url": "" },
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "The Sorting Room",
       "descText": "Place Them In Their Spot",
       "buttons": [
-        { "text": "Got Them", "image": "goal.01.button.png", "size": 12 }
+        {
+          "text": "Got Them",
+          "image": "goal.01.button.png",
+          "size": 12
+        }
       ],
       "adminLabel": "scene 2"
     },
@@ -150,18 +224,31 @@
         "wheelImage": "goal-01.spinwheel.png"
       },
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
-      "soundEffect": "",
-      "background": { "type": "image", "url": "" },
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/06%20List%20page%20-%20goal.01.mp3",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "The Sorting Reveal",
       "descText": "Press The 3C Diamond",
       "buttons": [
-        { "text": "I'm Curious", "image": "goal.01.button.png", "size": 12 }
+        {
+          "text": "I'm Curious",
+          "image": "goal.01.button.png",
+          "size": 12
+        }
       ],
       "adminLabel": "scene 3"
     },
@@ -181,18 +268,31 @@
         }
       },
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/08%20Reveal%20page%20-%20%20goal.01.mp3",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "The Reveal Area",
       "descText": "See What You're Aiming For",
       "buttons": [
-        { "text": "Got It", "image": "goal.01.button.png", "size": 12 }
+        {
+          "text": "Got It",
+          "image": "goal.01.button.png",
+          "size": 12
+        }
       ],
       "adminLabel": "scene 4"
     },
@@ -201,17 +301,30 @@
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "", "position": "center" },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "We're Done Here",
       "buttons": [
-        { "text": "Take It With You", "image": "goal.01.button.png", "size": 12 }
+        {
+          "text": "Take It With You",
+          "image": "goal.01.button.png",
+          "size": 12
+        }
       ],
       "adminLabel": "send-off page",
       "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
@@ -221,18 +334,41 @@
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",
-      "image": { "label": "", "url": "" },
+      "image": {
+        "label": "",
+        "url": ""
+      },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
       "soundEffect": "",
-      "background": { "type": "image", "url": "" },
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "overlayImage": { "url": "goal-01.finale.png", "position": "center" },
+      "overlayImage": {
+        "url": "goal-01.finale.png",
+        "position": "center"
+      },
       "buttons": [
-        { "image": "goal.01.button.png", "text": "Another Round", "color": "#000000", "size": 12, "textNudge": -3 },
-        { "image": "goal.01.button.png", "text": "The Team", "size": 12 },
-        { "image": "goal.01.button.png", "text": "Over & Out", "size": 12 }
+        {
+          "image": "goal.01.button.png",
+          "text": "Another Round",
+          "color": "#000000",
+          "size": 12,
+          "textNudge": -3
+        },
+        {
+          "image": "goal.01.button.png",
+          "text": "The Team",
+          "size": 12
+        },
+        {
+          "image": "goal.01.button.png",
+          "text": "Over & Out",
+          "size": 12
+        }
       ],
       "adminLabel": "final page"
     }

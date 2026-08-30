@@ -417,8 +417,8 @@ export function startGame(config, container) {
     bottomRow.className = 'maverick-bottom-row';
 
     const creditsBtn = document.createElement('button');
-    creditsBtn.className = 'maverick-btn-link';
-    creditsBtn.textContent = 'Credits';
+    creditsBtn.className = 'maverick-team-btn';
+    creditsBtn.textContent = 'The Team';
     creditsBtn.addEventListener('click', renderCredits);
 
     const offBtn = document.createElement('button');

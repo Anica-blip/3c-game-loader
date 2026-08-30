@@ -18,7 +18,7 @@ const WORD_BANK = [
   { word: 'Start a business', category: 'WORK' },
   { word: 'Read more', category: 'YOU' },
   { word: 'More adventure', category: 'LIFE' },
-  { word: 'Be kinder', category: 'GIVE' },
+  { word: 'Be kinder', category: 'PEOPLE' },
   { word: 'Improve home', category: 'HOME' },
   { word: 'Support a cause', category: 'GIVE' },
   { word: 'Sleep better', category: 'BODY' },

@@ -353,22 +353,23 @@ export function startGame(config, container) {
       wrap.classList.add('aurion-mobile-hero-image');
     }
 
-    // Landing and consent have no title/description of their own — their
-    // overlay image is the only thing on the page above the button, so it
-    // gets parked here and appended into the textblock below instead of
-    // straight onto wrap. That reuses the same flex:1 + justify-content:
+    // Landing, consent and finale have no title/description of their own —
+    // their overlay image is the only thing on the page above the button,
+    // so it gets parked here and appended into the textblock below instead
+    // of straight onto wrap. That reuses the same flex:1 + justify-content:
     // center block that already centers subtitle/desc on other no-mechanic
     // scenes, which centers the image between the top and the button
     // instead of it sitting pinned near the top. Every other overlay-image
-    // scene (finale included) keeps its current top-anchored placement,
-    // untouched.
+    // scene keeps its current top-anchored placement, untouched. Note this
+    // applies at every screen width, not just mobile — same as the
+    // landing/consent version of this already did.
     let introOverlayImg = null;
     if (scene.overlayImage && scene.overlayImage.url) {
       const img = document.createElement('img');
       img.src = resolveAssetUrl(scene.overlayImage.url);
       img.alt = '';
       img.className = 'aurion-overlay-img aurion-overlay-' + (scene.overlayImage.position || 'center');
-      if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page') {
+      if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page' || scene.adminLabel === 'final page') {
         introOverlayImg = img;
       } else {
         wrap.appendChild(img);
@@ -879,24 +880,31 @@ export function startGame(config, container) {
         body.className = 'aurion-reveal-body';
         body.textContent = msg.body;
 
+        // Whether THIS card is the last one, decided the moment it's opened
+        // (not later) — that's what openedCount reaching the total actually
+        // means. The trigger itself, though, waits for the close click
+        // below: per Chef's spec, the voice line starts only once the
+        // player has actually read and closed the last card's message, not
+        // the instant they open it.
+        let isLastCard = false;
+        if (!tile.classList.contains('opened')) {
+          tile.classList.remove('flashing');
+          tile.classList.add('opened');
+          openedCount += 1;
+          isLastCard = openedCount === chosenCategories.length;
+        }
+
         const closeBtn = document.createElement('button');
         closeBtn.className = 'aurion-btn';
         closeBtn.textContent = 'Close';
         closeBtn.addEventListener('click', () => {
           popup.classList.remove('open');
-        });
-
-        popup.append(title, subtitle, body, closeBtn);
-
-        if (!tile.classList.contains('opened')) {
-          tile.classList.remove('flashing');
-          tile.classList.add('opened');
-          openedCount += 1;
-          if (openedCount === chosenCategories.length) {
-            // Per Chef's spec: all 5 revealed, THEN aurion speaks, THEN the
-            // forward button shows once the voice line ends. Falls straight
-            // through to onComplete if this scene has no soundEffect set,
-            // so a future themed game without narration still works as before.
+          if (isLastCard) {
+            // Voice starts only now that the last card's message has been
+            // read and closed; forward button waits for it to end. Falls
+            // straight through to onComplete if this scene has no
+            // soundEffect set, so a future themed game without narration
+            // still works as before.
             if (scene.soundEffect) {
               const voice = new Audio(scene.soundEffect);
               voice.addEventListener('ended', onComplete);
@@ -905,7 +913,9 @@ export function startGame(config, container) {
               onComplete();
             }
           }
-        }
+        });
+
+        popup.append(title, subtitle, body, closeBtn);
       });
 
       board.appendChild(tile);

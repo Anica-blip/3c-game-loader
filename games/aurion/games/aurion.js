@@ -736,6 +736,18 @@ export function startGame(config, container) {
     stage.append(board, dragCard);
     slot.appendChild(stage);
     showNextChip();
+
+    // Landing narration for this scene — plays once, 1 second after the
+    // player arrives (per Chef's spec: "after 1 sec aurion speaks"). It's
+    // independent of the sorting itself: the tiles are already interactive
+    // while it plays, nothing blocks on it, and the forward button's own
+    // timing is untouched — it still only appears once all 5 words are
+    // sorted, via onComplete above.
+    if (scene.soundEffect) {
+      setTimeout(() => {
+        new Audio(scene.soundEffect).play().catch(() => {});
+      }, 1000);
+    }
   }
 
   function buildSpinWheelMechanic(slot, scene, onComplete) {
@@ -842,7 +854,17 @@ export function startGame(config, container) {
           tile.classList.add('opened');
           openedCount += 1;
           if (openedCount === chosenCategories.length) {
-            onComplete();
+            // Per Chef's spec: all 5 revealed, THEN aurion speaks, THEN the
+            // forward button shows once the voice line ends. Falls straight
+            // through to onComplete if this scene has no soundEffect set,
+            // so a future themed game without narration still works as before.
+            if (scene.soundEffect) {
+              const voice = new Audio(scene.soundEffect);
+              voice.addEventListener('ended', onComplete);
+              voice.play().catch(onComplete);
+            } else {
+              onComplete();
+            }
           }
         }
       });

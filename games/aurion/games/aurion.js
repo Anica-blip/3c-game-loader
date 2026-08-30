@@ -196,6 +196,18 @@ export function startGame(config, container) {
     window.close();
   });
 
+  // Standard credit watermark — created once here (not per-scene) so it
+  // never gets torn down/rebuilt on scene changes, just shown or hidden.
+  // Chef's standing rule: this exact line, applied to whichever page(s)
+  // she names each time — this first use is the consent page only, so it
+  // stays hidden by default and renderScene() below is what reveals it
+  // specifically when adminLabel === 'consent page'.
+  const watermark = document.createElement('div');
+  watermark.className = 'aurion-watermark';
+  watermark.textContent = 'Designed and Built with ❤️ by Claude (Anthropic) × Chef Anica · 3C Thread To Success™ Cooking Lab  🧪👨‍🍳';
+  watermark.style.display = 'none';
+  container.appendChild(watermark);
+
   renderLoading();
   preloadAssets(config).then(() => {
     startAmbient();
@@ -312,6 +324,10 @@ export function startGame(config, container) {
     exitBtn.style.display = isLastScene ? 'none' : 'flex';
     if (!container.contains(exitBtn)) container.appendChild(exitBtn);
 
+    // Consent page only, per Chef's instruction — every other scene keeps
+    // it hidden.
+    watermark.style.display = scene.adminLabel === 'consent page' ? 'block' : 'none';
+
     setBackground(scene.background);
     content.innerHTML = '';
 
@@ -329,6 +345,12 @@ export function startGame(config, container) {
     // shrink the finale scene, which uses the same class.
     if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page') {
       wrap.classList.add('aurion-intro-scene');
+    }
+    // Landing, consent and finale all get this hook so their overlay image
+    // can be sized together on mobile — desktop is untouched (this class
+    // has no effect outside the mobile media query in style.css).
+    if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page' || scene.adminLabel === 'final page') {
+      wrap.classList.add('aurion-mobile-hero-image');
     }
 
     // Landing and consent have no title/description of their own — their

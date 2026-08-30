@@ -149,6 +149,26 @@ body {
   box-sizing: border-box;
 }
 
+/* Standard credit watermark — pinned to the very bottom edge of the
+   viewport, tiny and low-opacity so it never competes with real page
+   content, non-interactive so it can never intercept a tap. */
+.aurion-watermark {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  z-index: 5;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  padding: 0 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
 .aurion-exit-btn {
   position: fixed;
   bottom: 16px;
@@ -229,6 +249,19 @@ body {
 .aurion-intro-scene .aurion-overlay-img {
   max-width: 170px;
   width: 45%;
+}
+
+/* Mobile only — landing, consent and finale all get the same larger size
+   here, sharing one value instead of each scene's own desktop sizing
+   above. Finale has no title/description competing for space (same as
+   landing/consent), so it's sized the same as them here rather than the
+   bigger default .aurion-overlay-img rule it uses on desktop. Desktop
+   sizing for all three is untouched — this only applies under 480px. */
+@media (max-width: 480px) {
+  .aurion-mobile-hero-image .aurion-overlay-img {
+    max-width: 300px;
+    width: 82%;
+  }
 }
 
 .aurion-overlay-center { align-self: center; }
@@ -616,10 +649,32 @@ body {
   min-width: 240px;
 }
 
+/* Mobile: 8 tiles as 2 / 3 / 3 instead of a plain 2-per-row stack, so the
+   whole board fits without the player needing to scroll to see every
+   category — the whole point of this layout per Chef. A 6-column grid
+   with every tile spanning 2 columns gives 3 equal tiles per row; the
+   first two tiles are placed explicitly in columns 2-4 and 4-6 so they
+   sit centered as their own shorter row, leaving column 1 and column 6
+   empty as matching side margins. Tiles 3-8 then auto-place into rows 2
+   and 3, 3 per row, in the same category order as before — nothing about
+   which tile holds which category changes, only the layout. */
 @media (max-width: 700px) {
   .aurion-sort-board {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 240px;
+    grid-template-columns: repeat(6, 1fr);
+    max-width: 260px;
+    gap: 8px;
+  }
+
+  .aurion-sort-tile {
+    grid-column: span 2;
+  }
+
+  .aurion-sort-tile:nth-child(1) {
+    grid-column: 2 / span 2;
+  }
+
+  .aurion-sort-tile:nth-child(2) {
+    grid-column: 4 / span 2;
   }
 }
 

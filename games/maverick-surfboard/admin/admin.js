@@ -164,10 +164,11 @@ function numberField(labelText, value, onChange) {
   return fieldWrap(labelText, input);
 }
 
-function textareaField(labelText, value, onChange, large) {
+function textareaField(labelText, value, onChange, large, placeholder) {
   const textarea = document.createElement('textarea');
   textarea.className = large ? 'admin-textarea admin-textarea-large' : 'admin-textarea';
   textarea.value = value || '';
+  if (placeholder) textarea.placeholder = placeholder;
   textarea.addEventListener('input', () => onChange(textarea.value));
   return fieldWrap(labelText, textarea);
 }
@@ -279,7 +280,8 @@ function renderGlobal() {
     'Credits text (shown on its own screen after the result)',
     state.credits,
     v => { state.credits = v; },
-    true
+    true,
+    'Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nMaverick hero image, [tool]\nBackground images, [tool]\n\nVoice\n[tool], voiceover\n[tool], lip sync\n\nMusic\n[tool], [track name]\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica'
   ));
   globalRoot.appendChild(creditsSection);
 }

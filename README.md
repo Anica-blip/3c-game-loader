@@ -2,6 +2,8 @@
 
 > ⚖️ This repository is protected under a binding [Legal Disclaimer](./LEGAL_DISCLAIMER.md) that governs all use, cloning, and forking from the date of inception. Please read before use.
 
+> 🦆 Character names, artwork, and creative assets introduced through this loader are declared in [CHARACTER_DECLARATIONS.md](./CHARACTER_DECLARATIONS.md).
+
 The **3C Game Loader** is a modular, mobile-first game framework designed for the 3C Thread to Success™ brand.  
 
 It allows you to load and play different interactive mini-games (card flip, memory match, daily reveal) simply by swapping JSON config files and theme assets.

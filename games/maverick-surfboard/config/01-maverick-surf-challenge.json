@@ -11,7 +11,7 @@
   },
   "ambientSound": "https://games.3c-public-library.org/interactive%20games/maverick%20duck/game.01/01%20maverick-music-long.wav",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nCharacter artwork\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, Maverick Duck voice\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nMaverick hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Maverick Surfboard Duck lip sync\n\nMusic\nElevenLabs, Golden Sands\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
   "characterImages": [
     {
       "id": "surf",

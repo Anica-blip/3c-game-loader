@@ -598,11 +598,25 @@ export function startGame(config, container) {
       counterStars.push(star);
     }
 
+    // Lets a player change their mind after all 5 slots are filled, without
+    // adding any on-card "x" that would clutter the word-card artwork —
+    // double-click is the whole interaction, called out in this one hint
+    // line instead.
+    const hint = document.createElement('div');
+    hint.className = 'aurion-word-hint';
+    hint.textContent = 'Double-click a word to remove it from your list';
+
     const grid = document.createElement('div');
     grid.className = 'aurion-word-grid';
 
     const popup = document.createElement('div');
     popup.className = 'aurion-word-popup';
+
+    function updateCounterStars() {
+      counterStars.forEach((star, i) => {
+        star.classList.toggle('filled', i < picked.length);
+      });
+    }
 
     WORD_BANK.forEach(entry => {
       const card = document.createElement('button');
@@ -614,12 +628,24 @@ export function startGame(config, container) {
 
         card.classList.add('picked');
         picked.push(entry);
-        counterStars[picked.length - 1].classList.add('filled');
+        updateCounterStars();
 
         if (picked.length === MAX_PICKS) {
           selectedWords = picked.slice();
           showSummary();
         }
+      });
+      card.addEventListener('dblclick', () => {
+        if (!card.classList.contains('picked')) return;
+
+        card.classList.remove('picked');
+        const idx = picked.findIndex(e => e.word === entry.word);
+        if (idx !== -1) picked.splice(idx, 1);
+        updateCounterStars();
+        // Selection is no longer complete — close the summary popup (if it
+        // was open) so the player can pick a replacement; it reopens once
+        // 5 are picked again.
+        popup.classList.remove('open');
       });
       grid.appendChild(card);
     });
@@ -658,7 +684,7 @@ export function startGame(config, container) {
       popup.append(title, stars, list, closeBtn);
     }
 
-    pickerWrap.append(counter, grid);
+    pickerWrap.append(counter, hint, grid);
     slot.append(pickerWrap, popup);
   }
 

@@ -355,7 +355,7 @@
         {
           "image": "goal.01.button.png",
           "text": "Another Round",
-          "color": "#000000",
+          "color": "#ffffff",
           "size": 12,
           "textNudge": -3
         },

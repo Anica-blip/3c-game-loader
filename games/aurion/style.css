@@ -174,8 +174,8 @@ body {
   bottom: 16px;
   right: 16px;
   z-index: 10;
-  width: 34px;
-  height: 34px;
+  width: 24px;
+  height: 24px;
   border-radius: 0;
   background-color: transparent;
   background-size: contain;
@@ -237,6 +237,7 @@ body {
   justify-content: center;
 }
 
+
 .aurion-overlay-img {
   max-width: 260px;
   width: 60%;
@@ -294,6 +295,7 @@ body {
   font-family: 'Poppins';
   color: var(--aurion-text);
   font-size: 16px;
+  font-weight: 700;
   line-height: 1.5;
   margin: 0 0 18px;
   white-space: pre-wrap;
@@ -353,7 +355,7 @@ body {
   border-radius: 999px;
   border: none;
   background: rgba(255, 255, 255, 0.1);
-  color: var(--aurion-text);
+  color: #3b2855;
   cursor: pointer;
   transition: transform 0.15s ease;
   /* Width is capped and never grows past this — long labels wrap to a

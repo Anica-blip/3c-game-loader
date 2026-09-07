@@ -1,4 +1,4 @@
-<!-- Repo path: games/aurion/game.html -->
+<!-- Repo path: games/aurion/core/game.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aurion Challenge — 3C Thread To Success</title>
   <!-- TODO: confirm exact favicon filename saved in /shared -->
-  <link rel="icon" href="../../shared/favicon.png">
+  <link rel="icon" href="../../../shared/favicon.png">
   <!-- Fonts: Luckiest Guy (titles) + Poppins (body/buttons), deliberately chosen,
        no fallback substitution wanted. This link was missing entirely before,
        which is why the browser was silently falling back to a system font no
@@ -22,16 +22,19 @@
        "?v=" value below whenever style.css or loader.js is actually edited
        and redeployed, so returning players are guaranteed to fetch the new
        version instead of a cached copy. One value, one place. -->
-  <link rel="stylesheet" href="style.css?v=2026-09-07-1">
+  <link rel="stylesheet" href="style.css?v=2026-09-07-2">
 </head>
 <body>
   <div id="game-container"></div>
 
-  <!-- Loads the shared engine already in the repo root.
-       It reads ?configName=week-1 (or whichever theme) from this page's URL,
-       fetches config/<themeName>.json (relative to this page),
-       then loads games/aurion.js (relative to this page)
-       and calls its startGame(config, container) function. -->
-  <script type="module" src="../../loader.js?v=2026-09-07-1"></script>
+  <!-- Loads the shared root loader (repo root — this one file stays shared
+       across every game, it's generic dispatch logic, not game-specific).
+       It reads ?configName=core-01 (or whichever Core Values entry) from
+       this page's URL, fetches config/<themeName>.json (relative to THIS
+       page, i.e. games/aurion/core/config/), then loads games/aurion.js
+       (relative to this page, i.e. games/aurion/core/games/aurion.js —
+       this game's own cloned copy of the engine, separate from the goals
+       series' copy) and calls its startGame(config, container) function. -->
+  <script type="module" src="../../../loader.js?v=2026-09-07-1"></script>
 </body>
 </html>

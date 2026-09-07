@@ -1,4 +1,4 @@
-// Repo path: games/aurion/games/aurion.js
+// Repo path: games/aurion/core/games/aurion.js
 
 // This game's word bank for Scene 5 — 30 words, each tagged with its
 // hidden category. The player never sees the category, only the word.
@@ -88,7 +88,14 @@ const CATEGORY_MESSAGES = {
 // address, treat it as a repo-relative path automatically.
 function resolveAssetUrl(url) {
   if (!url) return url;
-  if (/^https?:\/\//i.test(url) || url.startsWith('assets/') || url.startsWith('/')) {
+  // A bare filename ("core-01.consent.png") is assumed to live in THIS
+  // game's own assets/ folder (games/aurion/core/assets/) and gets that
+  // prefix added automatically. Anything that already contains a "/" — a
+  // full URL, an absolute path, or a relative path like
+  // "../assets/goal-01.landing.png" reaching back into the shared Aurion
+  // default assets one level up — is already a real path relative to this
+  // game's own game.html and is used exactly as given, no prefix added.
+  if (/^https?:\/\//i.test(url) || url.startsWith('/') || url.includes('/')) {
     return url;
   }
   return 'assets/' + url;
@@ -122,10 +129,9 @@ function markWrappedButtonLabels(row) {
 // every button graphic) — those were only ever fetched the first time their
 // scene actually rendered, which is exactly the kind of lag Scenes 3, 6, 7
 // and 8 (the heaviest ones) would have shown.
-function preloadAssets(config, preloadedVideos) {
+function preloadAssets(config) {
   const urls = new Set();
   const add = (url) => { if (url) urls.add(resolveAssetUrl(url)); };
-  const videoUrls = new Set();
 
   if (config.background && config.background.url && config.background.type !== 'video') {
     add(config.background.url);
@@ -134,7 +140,6 @@ function preloadAssets(config, preloadedVideos) {
     if (d.background && d.background.url && d.background.type !== 'video') add(d.background.url);
     if (d.image && d.image.url) add(d.image.url);
     if (d.overlayImage && d.overlayImage.url) add(d.overlayImage.url);
-    if (d.video) videoUrls.add(d.video);
 
     (d.buttons || []).forEach(btn => { if (btn.image) add(btn.image); });
 
@@ -152,8 +157,12 @@ function preloadAssets(config, preloadedVideos) {
   });
   (config.characterImages || []).forEach(img => { if (img.url) add(img.url); });
 
-  // Used on every scene but the last, not tied to any one decision
-  add('goal.01-exitsymbol.png');
+  // Used on every scene but the last, not tied to any one decision. Shared
+  // UI icon, reused from the goals series' default assets rather than
+  // duplicated into this series' own assets folder — one level up from
+  // this game's own assets/ (games/aurion/assets/ instead of
+  // games/aurion/core/assets/).
+  add('../assets/goal.01-exitsymbol.png');
 
   const loadPromises = Array.from(urls).map(url => new Promise(resolve => {
     const img = new Image();
@@ -162,38 +171,8 @@ function preloadAssets(config, preloadedVideos) {
     img.src = url;
   }));
 
-  // A scene's own "video" field (a real watch-it video, distinct from a
-  // looping background video) was never part of this preload at all —
-  // it only ever started downloading the moment its own scene rendered,
-  // same cold-start symptom Maverick's ending video had at launch. Fixed
-  // the same way that was: build the REAL <video> element now, off-
-  // screen, and hand it back via preloadedVideos so renderScene() can
-  // reparent this exact element later instead of creating a second one
-  // with a fresh src — avoids depending on the CDN's cache headers
-  // cooperating, since it's the literal same in-progress download either
-  // way.
-  const videoPromises = Array.from(videoUrls).map(url => new Promise(resolve => {
-    const video = document.createElement('video');
-    video.preload = 'auto';
-    video.setAttribute('playsinline', '');
-    video.style.position = 'fixed';
-    video.style.left = '-9999px';
-    video.style.top = '0';
-    video.style.opacity = '0';
-    video.addEventListener('canplaythrough', resolve, { once: true });
-    video.addEventListener('error', resolve, { once: true });
-    video.src = url;
-    document.body.appendChild(video);
-    if (preloadedVideos) preloadedVideos.set(url, video);
-  }));
-
-  // Raised from 8s once a video is actually in the mix — a video file is
-  // far heavier than a background PNG, and 8s was never going to be
-  // enough for one to finish buffering, which would let the timeout win
-  // the race and defeat the point of preloading it. 45s matches the
-  // ceiling already proven out on Maverick's own full-preload pattern.
-  const timeout = new Promise(resolve => setTimeout(resolve, videoUrls.size ? 45000 : 8000));
-  return Promise.race([Promise.all([...loadPromises, ...videoPromises]), timeout]);
+  const timeout = new Promise(resolve => setTimeout(resolve, 8000));
+  return Promise.race([Promise.all(loadPromises), timeout]);
 }
 
 export function startGame(config, container) {
@@ -201,7 +180,6 @@ export function startGame(config, container) {
   let ambientAudio = null;
   let selectedWords = []; // the 5 words chosen in Scene 5, carried forward to Scene 6
   let categoryCounts = {}; // filled in once Scene 6's sorting is complete, used by Scene 8
-  const preloadedVideos = new Map(); // scene.video url -> the real preloaded <video> element, reused (not recreated) when that scene renders
 
   container.classList.add('aurion-game');
   container.innerHTML = '';
@@ -221,7 +199,7 @@ export function startGame(config, container) {
   // the game, since exit means leaving, not navigating.
   const exitBtn = document.createElement('button');
   exitBtn.className = 'aurion-exit-btn';
-  exitBtn.style.backgroundImage = `url('${resolveAssetUrl('goal.01-exitsymbol.png')}')`;
+  exitBtn.style.backgroundImage = `url('${resolveAssetUrl('../assets/goal.01-exitsymbol.png')}')`;
   exitBtn.setAttribute('aria-label', 'Exit');
   exitBtn.addEventListener('click', () => {
     if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
@@ -242,7 +220,7 @@ export function startGame(config, container) {
   container.appendChild(watermark);
 
   renderLoading();
-  preloadAssets(config, preloadedVideos).then(() => {
+  preloadAssets(config).then(() => {
     startAmbient();
     renderScene(0);
   });
@@ -487,22 +465,9 @@ export function startGame(config, container) {
     }
 
     if (scene.video) {
-      // Reuse the exact element preloadAssets() already started downloading
-      // (see preloadedVideos above) rather than creating a fresh one with
-      // the same src — the whole point of preloading it. Falls back to a
-      // brand-new element only if for some reason it wasn't preloaded
-      // (e.g. this scene's video URL changed after preload already ran).
-      let video = preloadedVideos.get(scene.video);
-      if (video) {
-        video.style.position = '';
-        video.style.left = '';
-        video.style.top = '';
-        video.style.opacity = '';
-      } else {
-        video = document.createElement('video');
-        video.src = scene.video;
-      }
+      const video = document.createElement('video');
       video.className = 'aurion-scene-video';
+      video.src = scene.video;
       video.autoplay = true;
       video.setAttribute('playsinline', '');
       video.playsInline = true;

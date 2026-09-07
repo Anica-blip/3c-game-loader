@@ -188,7 +188,8 @@
       "buttons": [
         { "image": "../assets/goal.01.button.png", "text": "Take It With You" }
       ],
-      "adminLabel": "we're done page — generic send-off, same wording/plain layout as goal-01's own scene 9, no video"
+      "adminLabel": "we're done page — generic send-off, same wording/plain layout as goal-01's own scene 9, same video",
+      "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
     },
     {
       "id": 10,

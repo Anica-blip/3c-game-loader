@@ -210,7 +210,7 @@
         { "image": "../assets/goal.01.button.png", "text": "The Team", "size": 12 },
         { "image": "../assets/goal.01.button.png", "text": "Over & Out", "size": 12 }
       ],
-      "adminLabel": "finale"
+      "adminLabel": "final page"
     }
   ]
 }

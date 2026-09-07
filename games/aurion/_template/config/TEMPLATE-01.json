@@ -1,0 +1,216 @@
+{
+  "gameType": "aurion",
+  "theme": "starlight",
+  "title": "REPLACE — Series Title Challenge",
+  "introImage": "../assets/aurion-intro.png",
+  "finaleImage": "../assets/aurion-finale.png",
+  "background": {
+    "type": "image",
+    "url": "../assets/aurion-goals-background.png"
+  },
+  "ambientSound": "",
+  "ambientVolume": 3,
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "characterImages": [],
+  "decisions": [
+    {
+      "id": 1,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "motion": "",
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "options": [],
+      "background": { "type": "image", "url": "" },
+      "image": { "label": "aurion landing", "url": "" },
+      "overlayImage": { "url": "../assets/goal-01.landing.png", "position": "center" },
+      "duration": 2,
+      "buttons": [
+        { "text": "Ready", "image": "../assets/goal.01.button.png" }
+      ],
+      "adminLabel": "landing page"
+    },
+    {
+      "id": 2,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "aurion consent", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "REPLACE-consent-image.png", "position": "center" },
+      "titleText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "Step In" }
+      ],
+      "adminLabel": "consent page"
+    },
+    {
+      "id": 3,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "" }
+      ],
+      "adminLabel": "TBD — scene 1, mechanic not yet decided"
+    },
+    {
+      "id": 4,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "" }
+      ],
+      "adminLabel": "TBD — scene 2, mechanic not yet decided"
+    },
+    {
+      "id": 5,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "" }
+      ],
+      "adminLabel": "TBD — scene 3, mechanic not yet decided"
+    },
+    {
+      "id": 6,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "" }
+      ],
+      "adminLabel": "TBD — scene 4, mechanic not yet decided"
+    },
+    {
+      "id": 7,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "" }
+      ],
+      "adminLabel": "TBD — scene 5, mechanic not yet decided"
+    },
+    {
+      "id": 8,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "" }
+      ],
+      "adminLabel": "TBD — scene 6, mechanic not yet decided"
+    },
+    {
+      "id": 9,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "", "position": "center" },
+      "titleText": "We're Done Here",
+      "descText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "Take It With You" }
+      ],
+      "adminLabel": "we're done page — generic send-off, same wording/plain layout as goal-01's own scene 9, same video",
+      "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
+    },
+    {
+      "id": 10,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": { "label": "", "url": "" },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": { "type": "image", "url": "" },
+      "options": [],
+      "overlayImage": { "url": "../assets/goal-01.finale.png", "position": "center" },
+      "titleText": "",
+      "buttons": [
+        { "image": "../assets/goal.01.button.png", "text": "Another Round", "color": "#ffffff", "size": 12, "textNudge": -3 },
+        { "image": "../assets/goal.01.button.png", "text": "The Team", "size": 12 },
+        { "image": "../assets/goal.01.button.png", "text": "Over & Out", "size": 12 }
+      ],
+      "adminLabel": "final page"
+    }
+  ]
+}

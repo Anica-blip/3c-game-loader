@@ -2,9 +2,21 @@
 
 const REPO_OWNER = 'Anica-blip';
 const REPO_NAME = '3c-game-loader';
-const CONFIG_DIR = 'games/aurion/config';
 const PAT_STORAGE_KEY = 'gameAdminPAT';
 const DEFAULT_THEME = 'aurion';
+
+// Every game folder the admin knows how to read/write. Each Aurion series
+// now lives in its own fully cloned folder (its own game.html/style.css/
+// aurion.js, per Chef's call to keep series from mixing) with its own
+// config/ subfolder — so the admin needs to know which folder it's
+// pointed at, not just one hardcoded path. Add one entry here whenever a
+// new series folder is created in the repo; nothing else about this file
+// needs to change to pick it up.
+const GAME_FOLDERS = [
+  { key: 'goals', label: 'Aurion — Goals series', configDir: 'games/aurion/config' },
+  { key: 'core', label: 'Aurion — Core Values series', configDir: 'games/aurion/core/config' }
+];
+let currentConfigDir = GAME_FOLDERS[0].configDir;
 
 const MOTION_OPTIONS = [
   { value: '', label: 'Choose a motion' },
@@ -65,6 +77,7 @@ const sceneTabs = document.getElementById('scene-tabs');
 const activeLeft = document.getElementById('active-scene-left');
 const activeRight = document.getElementById('active-scene-right');
 const resultsRoot = document.getElementById('results-root');
+const folderSelect = document.getElementById('folder-select');
 const themeSelect = document.getElementById('theme-select');
 const newThemeBtn = document.getElementById('new-theme-btn');
 
@@ -177,7 +190,7 @@ function renderMechanicFields(decision) {
 // ---- GitHub API ----
 
 async function listThemes() {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_DIR}`;
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${currentConfigDir}`;
   const res = await fetch(url, { headers: apiHeaders(), cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`GitHub error ${res.status}: could not list themes`);
@@ -189,7 +202,7 @@ async function listThemes() {
 }
 
 async function fetchThemeConfig(themeName) {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_DIR}/${themeName}.json`;
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${currentConfigDir}/${themeName}.json`;
   const res = await fetch(url, { headers: apiHeaders(), cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`GitHub error ${res.status}: could not read "${themeName}"`);
@@ -200,7 +213,7 @@ async function fetchThemeConfig(themeName) {
 }
 
 async function writeThemeConfig(themeName, isNewFile) {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_DIR}/${themeName}.json`;
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${currentConfigDir}/${themeName}.json`;
   const body = {
     message: isNewFile
       ? `Create new theme "${themeName}" via admin panel`
@@ -876,6 +889,36 @@ async function loadTheme(themeName) {
   }
 }
 
+function populateFolderSelect() {
+  folderSelect.innerHTML = '';
+  GAME_FOLDERS.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f.key;
+    opt.textContent = f.label;
+    folderSelect.appendChild(opt);
+  });
+  const current = GAME_FOLDERS.find(f => f.configDir === currentConfigDir) || GAME_FOLDERS[0];
+  folderSelect.value = current.key;
+}
+
+folderSelect.addEventListener('change', async () => {
+  const chosen = GAME_FOLDERS.find(f => f.key === folderSelect.value);
+  if (!chosen) return;
+  currentConfigDir = chosen.configDir;
+  editorStatus.textContent = `Switched to "${chosen.label}" — loading...`;
+  try {
+    const themes = await refreshThemeList();
+    const startTheme = themes.includes(DEFAULT_THEME) ? DEFAULT_THEME : themes[0];
+    if (startTheme) {
+      await loadTheme(startTheme);
+    } else {
+      editorStatus.textContent = `"${chosen.label}" has no themes yet — use "New theme" to start one.`;
+    }
+  } catch (err) {
+    editorStatus.textContent = err.message;
+  }
+});
+
 themeSelect.addEventListener('change', () => {
   loadTheme(themeSelect.value);
 });
@@ -909,6 +952,7 @@ connectBtn.addEventListener('click', async () => {
   localStorage.setItem(PAT_STORAGE_KEY, pat);
   connectStatus.textContent = 'Connecting...';
   try {
+    populateFolderSelect();
     const themes = await refreshThemeList();
     connectPanel.style.display = 'none';
     editorPanel.style.display = 'block';
@@ -977,7 +1021,7 @@ exportBtn.addEventListener('click', () => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  saveStatus.textContent = `Downloaded ${filename}. Add it to games/aurion/config/ in the repo.`;
+  saveStatus.textContent = `Downloaded ${filename}. Add it to ${currentConfigDir}/ in the repo.`;
 });
 
 // On load, if a token is already saved, skip straight to the theme list
@@ -987,6 +1031,7 @@ exportBtn.addEventListener('click', () => {
     connectPanel.style.display = 'none';
     editorPanel.style.display = 'block';
     try {
+      populateFolderSelect();
       const themes = await refreshThemeList();
       const startTheme = themes.includes(DEFAULT_THEME) ? DEFAULT_THEME : themes[0];
       if (startTheme) await loadTheme(startTheme);

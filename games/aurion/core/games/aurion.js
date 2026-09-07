@@ -129,9 +129,10 @@ function markWrappedButtonLabels(row) {
 // every button graphic) — those were only ever fetched the first time their
 // scene actually rendered, which is exactly the kind of lag Scenes 3, 6, 7
 // and 8 (the heaviest ones) would have shown.
-function preloadAssets(config) {
+function preloadAssets(config, preloadedVideos) {
   const urls = new Set();
   const add = (url) => { if (url) urls.add(resolveAssetUrl(url)); };
+  const videoUrls = new Set();
 
   if (config.background && config.background.url && config.background.type !== 'video') {
     add(config.background.url);
@@ -140,6 +141,7 @@ function preloadAssets(config) {
     if (d.background && d.background.url && d.background.type !== 'video') add(d.background.url);
     if (d.image && d.image.url) add(d.image.url);
     if (d.overlayImage && d.overlayImage.url) add(d.overlayImage.url);
+    if (d.video) videoUrls.add(d.video);
 
     (d.buttons || []).forEach(btn => { if (btn.image) add(btn.image); });
 
@@ -171,13 +173,46 @@ function preloadAssets(config) {
     img.src = url;
   }));
 
-  const timeout = new Promise(resolve => setTimeout(resolve, 8000));
-  return Promise.race([Promise.all(loadPromises), timeout]);
+  // A scene's own "video" field (a real watch-it video, distinct from a
+  // looping background video) was never part of this preload at all —
+  // it only ever started downloading the moment its own scene rendered,
+  // same cold-start symptom Maverick's ending video had at launch. Fixed
+  // the same way that was: build the REAL <video> element now, off-
+  // screen, and hand it back via preloadedVideos so renderScene() can
+  // reparent this exact element later instead of creating a second one
+  // with a fresh src — avoids depending on the CDN's cache headers
+  // cooperating, since it's the literal same in-progress download either
+  // way. Cloned in from the goals engine even though core-01.json has no
+  // video field yet — the capability travels with the clone, not just
+  // whatever the current config happens to use.
+  const videoPromises = Array.from(videoUrls).map(url => new Promise(resolve => {
+    const video = document.createElement('video');
+    video.preload = 'auto';
+    video.setAttribute('playsinline', '');
+    video.style.position = 'fixed';
+    video.style.left = '-9999px';
+    video.style.top = '0';
+    video.style.opacity = '0';
+    video.addEventListener('canplaythrough', resolve, { once: true });
+    video.addEventListener('error', resolve, { once: true });
+    video.src = url;
+    document.body.appendChild(video);
+    if (preloadedVideos) preloadedVideos.set(url, video);
+  }));
+
+  // Raised from 8s once a video is actually in the mix — a video file is
+  // far heavier than a background PNG, and 8s was never going to be
+  // enough for one to finish buffering, which would let the timeout win
+  // the race and defeat the point of preloading it. 45s matches the
+  // ceiling already proven out on Maverick's own full-preload pattern.
+  const timeout = new Promise(resolve => setTimeout(resolve, videoUrls.size ? 45000 : 8000));
+  return Promise.race([Promise.all([...loadPromises, ...videoPromises]), timeout]);
 }
 
 export function startGame(config, container) {
   let sceneIndex = 0;
   let ambientAudio = null;
+  const preloadedVideos = new Map(); // scene.video url -> the real preloaded <video> element, reused (not recreated) when that scene renders
   let selectedWords = []; // the 5 words chosen in Scene 5, carried forward to Scene 6
   let categoryCounts = {}; // filled in once Scene 6's sorting is complete, used by Scene 8
 
@@ -220,7 +255,7 @@ export function startGame(config, container) {
   container.appendChild(watermark);
 
   renderLoading();
-  preloadAssets(config).then(() => {
+  preloadAssets(config, preloadedVideos).then(() => {
     startAmbient();
     renderScene(0);
   });
@@ -465,9 +500,22 @@ export function startGame(config, container) {
     }
 
     if (scene.video) {
-      const video = document.createElement('video');
+      // Reuse the exact element preloadAssets() already started downloading
+      // (see preloadedVideos above) rather than creating a fresh one with
+      // the same src — the whole point of preloading it. Falls back to a
+      // brand-new element only if for some reason it wasn't preloaded
+      // (e.g. this scene's video URL changed after preload already ran).
+      let video = preloadedVideos.get(scene.video);
+      if (video) {
+        video.style.position = '';
+        video.style.left = '';
+        video.style.top = '';
+        video.style.opacity = '';
+      } else {
+        video = document.createElement('video');
+        video.src = scene.video;
+      }
       video.className = 'aurion-scene-video';
-      video.src = scene.video;
       video.autoplay = true;
       video.setAttribute('playsinline', '');
       video.playsInline = true;

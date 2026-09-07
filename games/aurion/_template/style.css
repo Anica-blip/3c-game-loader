@@ -1,0 +1,987 @@
+/* Repo path: games/aurion/style.css */
+
+:root {
+  --aurion-dark: #1a0f2e;
+  --aurion-gold: #f0b429;
+  --aurion-text: #ffffff;
+  /* Sampled directly from Chef's reference grid image (the light-purple glass
+     bars) so the neon accent used across the word grid, sorting tiles and
+     reveal tiles is the exact color from that reference, not a guess. */
+  --aurion-neon-purple: #c07df4;
+  --aurion-neon-purple-fill: rgba(140, 90, 220, 0.16);
+  --aurion-neon-purple-glow: rgba(192, 125, 244, 0.4);
+  --aurion-neon-purple-glow-soft: rgba(192, 125, 244, 0.22);
+  /* Selected/lit/opened/filled state accent — a brighter version of the
+     same neon purple, not a hue change. The gold/yellow highlight tried
+     earlier read as brown once layered over the dark purple cards, so
+     every "this is active/selected/done" state now uses this instead —
+     one accent color for the whole game, just varying in intensity. */
+  --aurion-neon-purple-bright: #e6cbff;
+  --aurion-neon-purple-glow-bright: rgba(230, 203, 255, 0.65);
+  --aurion-neon-purple-glow-bright-soft: rgba(230, 203, 255, 0.35);
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins';
+  background-color: var(--aurion-dark);
+  color: var(--aurion-text);
+}
+
+.aurion-page-card {
+  background: rgba(20, 20, 26, 0.72);
+  border: 2px solid var(--aurion-gold);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.aurion-page-card h1 {
+  font-family: 'Luckiest Guy';
+  font-size: 1.4rem;
+  margin: 8px 0;
+  color: var(--aurion-gold);
+}
+
+.aurion-page-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.aurion-page-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.aurion-page-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.aurion-page-btn-primary {
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .aurion-page-card {
+    padding: 18px;
+  }
+}
+/* Loading screen — small illustrated hourglass, the words matter more than
+   the animation, so it stays modest in size */
+.aurion-screen.aurion-loading {
+  text-align: center;
+}
+
+.aurion-hourglass-illustration {
+  width: 50px;
+  margin: 0 auto 16px;
+}
+
+.aurion-hourglass-illustration svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-loading-greeting {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 20px;
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.aurion-loading .aurion-body-text {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* ---- In-game engine styles (aurion.js) ---- */
+
+#game-container.aurion-game {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.aurion-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.aurion-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aurion-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+/* Standard credit watermark — pinned to the very bottom edge of the
+   viewport, tiny and low-opacity so it never competes with real page
+   content, non-interactive so it can never intercept a tap. */
+.aurion-watermark {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  z-index: 5;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  padding: 0 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aurion-exit-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.aurion-exit-btn:hover {
+  opacity: 1;
+}
+
+/* Desktop can go as small as the icon stays legible (18px) since it's
+   pointer-precise. Mobile keeps a slightly larger tap target — 18px is
+   too small to reliably hit with a finger — so it's bumped up here only. */
+@media (max-width: 480px) {
+  .aurion-exit-btn {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.aurion-scene-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* Widened from 480px so long descriptions (e.g. the Scene 4 intro
+     paragraph) get a standard, comfortable reading measure — not so tight
+     lines wrap constantly, not so wide it stops reading like a centered
+     block. 560px sits in the normal ~60-70 character line-length range at
+     this font size, same on mobile and desktop since it's a max-width, not
+     a fixed width. */
+  max-width: 560px;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+}
+
+/* No-mechanic scenes (plain title/description moments) no longer force
+   everything into one tight, vertically-centered block — that rule wasn't
+   something Chef asked for, and it's what was pulling the title,
+   description and button together with the button riding up right under
+   the text instead of settling at the bottom like every other scene. Only
+   the mechanic slot itself is still hidden (there's nothing to show); the
+   wrap keeps its normal full-height sizing and default top alignment, and
+   the button row keeps the base .aurion-button-row rule below
+   (margin-top: auto), which is what actually anchors it to the bottom
+   with real breathing room instead of hugging the text. */
+.aurion-scene-wrap.aurion-no-mechanic .aurion-mechanic-slot {
+  display: none;
+}
+
+/* The text block (title/subtitle/description) is centered as its own
+   unit within whatever space is left above the button — flex: 1 lets it
+   claim that space, and justify-content: center positions its own
+   content in the middle of it, independent of the button row below,
+   which keeps anchoring to the bottom via its own margin-top: auto. Only
+   applies to no-mechanic scenes; a scene with a mechanic already lays
+   its content out around the mechanic slot and isn't touched by this. */
+.aurion-scene-wrap.aurion-no-mechanic .aurion-scene-textblock {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.aurion-overlay-img {
+  max-width: 260px;
+  width: 60%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+/* Landing and consent only — smaller than the shared default above, which
+   stays as-is for every other overlay-image scene (the finale included) */
+.aurion-intro-scene .aurion-overlay-img {
+  max-width: 170px;
+  width: 45%;
+}
+
+/* Mobile only — landing, consent and finale all get the same larger size
+   here, sharing one value instead of each scene's own desktop sizing
+   above. Finale has no title/description competing for space (same as
+   landing/consent), so it's sized the same as them here rather than the
+   bigger default .aurion-overlay-img rule it uses on desktop. Desktop
+   sizing for all three is untouched — this only applies under 480px. */
+@media (max-width: 480px) {
+  .aurion-mobile-hero-image .aurion-overlay-img {
+    max-width: 300px;
+    width: 82%;
+  }
+}
+
+.aurion-overlay-center { align-self: center; }
+.aurion-overlay-top { align-self: flex-start; margin-top: -10vh; }
+.aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
+
+.aurion-scene-title {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 28px;
+  margin: 6px 0 20px;
+}
+
+/* Optional — only renders when a scene sets "subtitleText" (editable from
+   the admin panel's own Subtitle field now, same as title/description).
+   These are just the defaults; font/color/size/bold can be overridden per
+   scene. Sits between the title and the description, styled distinctly
+   from the body paragraph below it by default — bold, gold accent like
+   the title, smaller — so it reads as its own line rather than blending
+   into the description text it used to be the first line of. */
+.aurion-scene-subtitle {
+  font-family: 'Poppins';
+  color: var(--aurion-gold);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.aurion-scene-desc {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  white-space: pre-wrap;
+}
+
+.aurion-mechanic-slot {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-video {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 16px;
+  display: block;
+  background: transparent;
+  margin: 0 auto;
+}
+
+.aurion-scene-video::-webkit-media-controls,
+.aurion-scene-video::-webkit-media-controls-enclosure,
+.aurion-scene-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.aurion-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  width: 100%;
+}
+
+/* display: inline-flex + centering here is the actual vertical-centering
+   fix — there was none before. A <button> with no flex on it lays its text
+   out like a normal block: when min-height forces the box taller than the
+   text needs, the text just sits at the top of that box instead of the
+   middle, which is exactly why every label was reading as pinned near the
+   top with empty space below it. inline-flex keeps the button sized like
+   before (not stretched to the row's full width, unlike plain flex). */
+.aurion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: 'Poppins';
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--aurion-text);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  /* Width is capped and never grows past this — long labels wrap to a
+     second line instead of stretching the button wider. Height stays auto
+     so a wrapped 2-line label isn't clipped; there's no way to guarantee a
+     bigger, wrapped label costs literally zero extra height without either
+     shrinking the font back down or cutting text off, and neither of those
+     is what was asked for. */
+  max-width: 220px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+  height: auto;
+}
+
+.aurion-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Buttons using a real image graphic (goal.01.button.png etc.): background-size
+   must be `cover`, never `100% 100%` — 100%/100% stretches the art to fit
+   whatever box the text wrapping produces, which is what was turning the
+   button into a distorted bar. border-radius is reset to 0 here because the
+   PNG already has whatever shape/corners were designed into it — the base
+   .aurion-btn rule's 999px pill radius was clipping that art on top of the
+   stretch.
+   min/max-width reverted back to 140px/220px (this button's own size, the
+   pill graphic's real footprint) — the previous pass shrank these to 70/90
+   to force long labels to wrap, but that shrank the whole button image
+   along with the text, since background-size: cover scales to whatever
+   box it's given. The wrap threshold now lives on .aurion-btn-label below
+   instead, so the button itself stays full size and only the text wraps.
+   padding is intentionally uneven (top heavier than bottom) instead of the
+   button's usual symmetric split: the pill artwork is a 3D graphic (top
+   highlight, flat face, bottom shadow rim), and background-size: cover
+   crops it centered on the box's geometric middle — which lands text a bit
+   above the artwork's actual flat/readable face, not on it. The extra
+   bottom padding nudges the centered text down onto that face without
+   touching the image crop math (background-origin is padding-box, so this
+   shifts text, not the art). Measured this precisely rather than guessing
+   further: scanned the actual button art's luminance row by row (3px
+   steps) instead of eyeballing it — the flat, readable face is a
+   perfectly flat plateau from row 463 to row 679 (out of the 1080px source
+   canvas), center row 571. That's 31px below the canvas's own center row
+   (540), which is where cover+center always aligns the crop regardless of
+   the button's own rendered size. 31px in source coordinates converts to
+   roughly 5-6px on screen depending on the button's actual rendered width
+   — this padding split targets that. .aurion-btn-label-wrapped below adds
+   a bit more on top of this for 2-line labels specifically. */
+.aurion-btn-imaged {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border-radius: 0;
+  min-width: 140px;
+  max-width: 220px;
+  min-height: 48px;
+  padding: 20px 20px 7px;
+  color: #3b2855;
+}
+
+/* The wrap threshold for long labels, decoupled from the button's own
+   size above. aurion.js now wraps each imaged button's text in a
+   <span class="aurion-btn-label"> instead of setting it as a raw text
+   node — max-width here controls when text wraps to a second line
+   without shrinking the pill graphic it sits on. 90px was checked against
+   actual rendered widths at Poppins 700/12px: "What's Hiding?" (92px),
+   "Take It With You" (99px) and "Another Round" (92px) exceed it and wrap
+   at a natural word break (longest single word is 50px, nothing splits
+   mid-word); every shorter label stays on one line. line-height tightened
+   to 1.05 for the wrapped case — 1.3 (the base button's line-height) read
+   as too loose once a label is two lines tall in a fixed-height pill. */
+.aurion-btn-label {
+  display: block;
+  max-width: 90px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.05;
+}
+
+/* aurion.js measures each label after it's actually laid out (checking the
+   real rendered line count, not guessing from character count) and adds
+   this class only when a label truly wrapped to 2 lines. Two-line labels
+   need a bit more downward push than the padding above already gives —
+   this is that extra, isolated to just those labels instead of moving
+   every button (which would then overcorrect the 1-line ones). */
+.aurion-btn-label-wrapped {
+  margin-top: 0;
+}
+
+/* Scene 3 — the door: closed and open images crossfade on click, then the
+   reveal image (e.g. the sticky note) fades in on top a moment later */
+.aurion-door-stage {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  /* The stage box itself is already centered (margin: 0 auto); this nudges
+     the door artwork right because the source PNGs have more empty framing
+     on their right side, so the drawn door reads left-of-center otherwise.
+     Single value to retune if it needs more or less shift after a look. */
+  transform: translateX(5%);
+  cursor: pointer;
+}
+
+.aurion-door-img,
+.aurion-door-reveal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.aurion-door-closed {
+  opacity: 1;
+  z-index: 1;
+}
+
+.aurion-door-open {
+  z-index: 2;
+}
+
+.aurion-door-reveal {
+  z-index: 3;
+  transition-delay: 0.5s;
+}
+
+.aurion-door-stage.opened .aurion-door-closed {
+  opacity: 0;
+}
+
+.aurion-door-stage.opened .aurion-door-open,
+.aurion-door-stage.opened .aurion-door-reveal {
+  opacity: 1;
+}
+
+/* Scene 5 — word picker: grid on wide screens, one scrollable column on
+   narrow ones, same underlying 30 buttons either way. The counter + grid
+   are wrapped together so the star counter sits in its own row above the
+   grid, left-aligned to the grid's own edge, instead of floating beside it. */
+.aurion-word-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 640px;
+}
+
+.aurion-word-counter {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.aurion-word-counter-star {
+  font-size: 17px;
+  line-height: 1;
+  color: var(--aurion-neon-purple-glow-soft);
+  text-shadow: 0 0 6px var(--aurion-neon-purple-glow-soft);
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.aurion-word-counter-star.filled {
+  color: var(--aurion-neon-purple-bright);
+  text-shadow: 0 0 8px var(--aurion-neon-purple-glow-bright), 0 0 16px var(--aurion-neon-purple-glow-bright-soft);
+}
+
+.aurion-word-hint {
+  font-family: 'Poppins';
+  font-size: 12px;
+  color: var(--aurion-text);
+  opacity: 0.65;
+  margin: 0 0 10px;
+}
+
+.aurion-word-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .aurion-word-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.aurion-word-card {
+  background: var(--aurion-neon-purple-fill);
+  border: 1px solid var(--aurion-neon-purple);
+  box-shadow: 0 0 8px var(--aurion-neon-purple-glow-soft);
+  border-radius: 6px;
+  color: var(--aurion-text);
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 11px;
+  padding: 6px 4px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.25;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.aurion-word-card:hover {
+  box-shadow: 0 0 12px var(--aurion-neon-purple-glow);
+}
+
+/* Selected state reads as a glow, not a flat fill — the gold/yellow
+   version of this read as brown once layered over the dark purple card,
+   so it's now a brighter version of the same neon purple used everywhere
+   else instead of a different hue, matching the star counter and the
+   sorting/reveal "lit"/"opened" states */
+.aurion-word-card.picked {
+  background: linear-gradient(135deg, rgba(230, 203, 255, 0.32), rgba(192, 125, 244, 0.2));
+  border-color: var(--aurion-neon-purple-bright);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--aurion-neon-purple-glow-bright), 0 0 22px var(--aurion-neon-purple-glow-bright-soft);
+}
+
+/* Final list card — dark-blue glass, back to its original footprint
+   (220px / 20px padding) after a round where it got shrunk too far */
+.aurion-word-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 220px;
+  max-width: 70vw;
+  background: rgba(20, 40, 90, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 20;
+  text-align: center;
+}
+
+.aurion-word-popup.open {
+  display: block;
+}
+
+.aurion-word-popup h2 {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.aurion-word-stars {
+  color: var(--aurion-gold);
+  font-size: 18px;
+  letter-spacing: 4px;
+  margin-bottom: 12px;
+}
+
+.aurion-word-summary-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  font-size: 14px; /* was 13px — the "slightly bigger" bump requested */
+  line-height: 1.7;
+}
+
+/* Scenes 6 and 8 — the category grid is the fixed point of both scenes:
+   same size, same position, always fully visible, never resized or pushed
+   aside by anything else on screen. The word-queue card (Scene 6) and the
+   reveal message card (Scene 8) both float ABOVE it as an absolutely
+   positioned overlay instead of sitting beside it as a flex sibling — that
+   old side-by-side layout was what forced the grid to shrink to make room.
+   .aurion-sort-stage is the positioning anchor both cards overlay against. */
+.aurion-scene-wrap.aurion-has-side-panel {
+  max-width: 720px;
+}
+
+.aurion-sort-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Pulled back down from 640px — Chef's call after seeing the cropped art
+   in place: the containers can go smaller. At this max-width, 4 columns/
+   12px gaps put each tile at roughly 105px wide on desktop (was ~145px). */
+.aurion-sort-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 460px;
+  min-width: 240px;
+}
+
+/* Mobile: 8 tiles as 2 / 3 / 3 instead of a plain 2-per-row stack, so the
+   whole board fits without the player needing to scroll to see every
+   category — the whole point of this layout per Chef. A 6-column grid
+   with every tile spanning 2 columns gives 3 equal tiles per row; the
+   first two tiles are placed explicitly in columns 2-4 and 4-6 so they
+   sit centered as their own shorter row, leaving column 1 and column 6
+   empty as matching side margins. Tiles 3-8 then auto-place into rows 2
+   and 3, 3 per row, in the same category order as before — nothing about
+   which tile holds which category changes, only the layout. */
+@media (max-width: 700px) {
+  .aurion-sort-board {
+    grid-template-columns: repeat(6, 1fr);
+    max-width: 260px;
+    gap: 8px;
+  }
+
+  .aurion-sort-tile {
+    grid-column: span 2;
+  }
+
+  .aurion-sort-tile:nth-child(1) {
+    grid-column: 2 / span 2;
+  }
+
+  .aurion-sort-tile:nth-child(2) {
+    grid-column: 4 / span 2;
+  }
+}
+
+/* No border at all, not even the box-shadow ring the previous pass used —
+   just a diffuse glow, nothing with a hard edge. No background-color fill
+   either — that was a symptom fix, not the cause. The actual "dark purple
+   border" was the goal-01.<CATEGORY>.png source art itself: every one of
+   the 8 files is a 1080x1080 canvas with the real card artwork sitting in
+   a 570x876 region in the middle, surrounded by fully transparent padding
+   (confirmed by inspecting the live files — identical padding on all 8).
+   background-size: cover cannot remove that; it scales the whole 1080x1080
+   canvas including the transparent margin, so the tile's own dark page
+   background showed through that margin as a border-like gap no matter
+   what the tile's own background-color was set to.
+   Fixed at the source: the 8 category images are now cropped to that exact
+   570x876 content box (no transparent padding left), so cover fills the
+   tile edge-to-edge with the card art and nothing else. aspect-ratio below
+   is set to match the art's real proportions (570:876) instead of the
+   arbitrary 3:4 that was forcing a mismatched crop. Full opacity always —
+   dimming is a Scene 8 (reveal) concept only, Scene 6 shows every container
+   clearly from the start since nothing's been sorted into any of them yet.
+   background-color restored (checked the actual pixel data in the live
+   goal-01.*.png files to be sure this time): every card's own fill is only
+   ~40% opaque by design, not a solid color — it's meant to be tinted by
+   whatever sits behind it. Removing the tile's background-color earlier
+   didn't just fix the border gap, it also left that 40%-opaque fill with
+   nothing reliable behind it, so it composited against whatever happened
+   to be there (the starfield scene background) instead of a consistent
+   color — that's why it was reading pale/washed out instead of the rich
+   purple it's meant to be. This is safe now because the border-gap issue
+   was actually caused by the old TRANSPARENT PADDING around the art (fixed
+   above by cropping), not by having a background-color at all — so
+   restoring it here doesn't bring that bug back. Solid (not translucent)
+   on purpose, so the result is the same regardless of what's behind the
+   tile on any given scene. */
+.aurion-sort-tile {
+  position: relative;
+  aspect-ratio: 570 / 876;
+  border-radius: 10px;
+  background-color: var(--aurion-dark);
+  background-size: cover;
+  background-position: center;
+  border: none;
+  box-shadow: 0 0 16px var(--aurion-neon-purple-glow-soft);
+  opacity: 1;
+  transition: box-shadow 0.3s ease;
+}
+
+.aurion-sort-tile.lit {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright), 0 0 44px var(--aurion-neon-purple-glow-bright-soft);
+}
+
+.aurion-sort-count {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 11px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The one-word-at-a-time card — pinned to the bottom of the screen, in the
+   space the button row would normally occupy (it's hidden the entire time
+   this mechanic is active, so that area is genuinely free real estate)
+   rather than floating over the grid. Fixed to the viewport, same anchoring
+   approach as the exit icon, so it holds position regardless of scroll or
+   content height. Closes between words, never sits in the grid's own
+   layout flow, so the grid never resizes because of it either way. */
+.aurion-drag-card {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 40, 90, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+}
+
+.aurion-drag-card.open {
+  display: flex;
+}
+
+.aurion-drag-card-label {
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* The draggable word tab itself. Capped narrower than a category tile
+   (~145px at the board's normal desktop width above) so it can never read
+   as wider than what it's being dragged onto — long words wrap to a second
+   line instead of shrinking the font, per Chef's rule: font size is never
+   the thing that gives here, only the card/tab's own footprint is. */
+.aurion-sort-chip {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--aurion-text);
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  max-width: 130px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
+  transition: transform 0.25s ease;
+}
+
+.aurion-sort-chip.dragging {
+  transition: none;
+  z-index: 30;
+  cursor: grabbing;
+  position: relative;
+}
+
+/* Scene 8 — spin wheel, decorative, tap the wheel itself to spin */
+.aurion-wheel-stage {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  max-width: 75vw;
+  max-height: 75vw;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.aurion-wheel-pointer {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 18px solid var(--aurion-gold);
+  z-index: 2;
+  filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
+}
+
+.aurion-wheel {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background-size: cover;
+  background-position: center;
+  transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
+}
+
+/* Scene 8 — reveal: only chosen categories flash and open, others stay dim.
+   Uses the exact same .aurion-sort-stage + .aurion-sort-board as Scene 6
+   (both now fully opaque by default via .aurion-sort-tile), so the two
+   scenes' grids are identical in size, position and base look, including
+   the cropped category art fix above — that's what removes the same dark
+   border here. Dimming is scoped to Scene 8 only, and only to categories
+   with zero words in them — a chosen/flashing/opened tile is always at
+   full opacity, never dimmed.
+   Reverted the "back cover" layer (a separate .aurion-reveal-art element
+   behind the tile's own background) — it risked exactly the kind of
+   mismatch that broke the live page: if this CSS ships even slightly out
+   of step with the aurion.js version that creates .aurion-reveal-art, the
+   card art has nowhere correct to render and the tile shows as a blank
+   color, which is what showed up. Back to the simplest version that was
+   already confirmed working end to end: the tile keeps its own
+   background-image directly (set by aurion.js exactly like Scene 6 does),
+   and the flash is a plain box-shadow ring — non-inset, so CSS always
+   paints it outside the box, never over the artwork inside it. Only one
+   moving part, nothing that depends on two files staying in exact sync. */
+.aurion-reveal-tile {
+  cursor: pointer;
+}
+
+.aurion-reveal-tile.dim {
+  opacity: 0.2;
+  cursor: default;
+  box-shadow: none;
+}
+
+.aurion-reveal-tile.flashing {
+  opacity: 1;
+  animation: reveal-flash 1.4s ease-in-out infinite;
+}
+
+.aurion-reveal-tile.opened {
+  opacity: 1;
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  animation: none;
+}
+
+@keyframes reveal-flash {
+  0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
+  50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
+}
+
+/* Reveal message card — fixed to the viewport and centered both axes, so
+   it always lands in the true center of the page regardless of where
+   .aurion-sort-stage/the grid happens to sit in the normal document flow.
+   The previous version anchored it with `bottom: 100%` relative to the
+   grid instead — that only centered it horizontally; vertically it just
+   sat wherever the grid started, which on this page was near the top, so
+   the card was pinned to the top edge instead of the page center. Fixed
+   positioning with top/left 50% + translate(-50%, -50%) removes that
+   dependency entirely. */
+.aurion-reveal-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 220px;
+  /* Matched to .aurion-drag-card's glass — same background alpha (0.22,
+     was 0.16) and same blur (10px). Chef asked for this card's glass % to
+     be raised to whatever the drag card already uses. */
+  background: rgba(20, 40, 90, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 25;
+}
+
+.aurion-reveal-popup.open {
+  display: block;
+}
+
+.aurion-reveal-popup h2 {
+  font-family: 'Luckiest Guy';
+  color: #ffbd59;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.aurion-reveal-subtitle {
+  font-family: 'Poppins';
+  color: #ffbd59;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.aurion-reveal-body {
+  font-family: 'Poppins';
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+.aurion-credits-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-wrap;
+  margin: 12px 0 20px;
+  color: var(--aurion-text);
+  opacity: 0.9;
+}

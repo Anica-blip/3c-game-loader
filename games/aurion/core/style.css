@@ -217,6 +217,17 @@ body {
   min-height: calc(100dvh - 80px);
 }
 
+/* Desktop gets more horizontal room than the 560px reading-measure cap
+   above — that cap was tuned for description paragraphs, but on an
+   actual desktop viewport it was also squeezing longer titles (e.g.
+   "Where Will Your Journey Take You?") onto two lines with plenty of
+   empty space on either side. Mobile is untouched. */
+@media (min-width: 700px) {
+  .aurion-scene-wrap {
+    max-width: 720px;
+  }
+}
+
 /* No-mechanic scenes (plain title/description moments) no longer force
    everything into one tight, vertically-centered block — that rule wasn't
    something Chef asked for, and it's what was pulling the title,
@@ -321,7 +332,7 @@ body {
    into the description text it used to be the first line of. */
 .aurion-scene-subtitle {
   font-family: 'Poppins';
-  color: var(--aurion-gold);
+  color: var(--aurion-text);
   font-size: 18px;
   font-weight: 700;
   margin: 0 0 14px;
@@ -1217,11 +1228,24 @@ body {
    line should read like her subtitle text, not a separate caption style. */
 .aurion-maze-hint {
   font-family: 'Poppins';
-  color: var(--aurion-gold);
+  color: var(--aurion-text);
   font-size: 18px;
   font-weight: 700;
   text-align: center;
   margin: 0 0 26px;
+}
+
+/* Small secondary note below the maze explaining the double-click reset
+   — deliberately smaller/dimmer than the main subtitle above so it reads
+   as a footnote, not a second instruction competing with it. */
+.aurion-maze-reset-hint {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  opacity: 0.6;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  margin: 14px 0 0;
 }
 
 .aurion-maze-svg {
@@ -1307,6 +1331,12 @@ body {
   max-width: 460px;
 }
 
+@media (min-width: 700px) {
+  .aurion-companion-board {
+    max-width: 580px;
+  }
+}
+
 /* Same fix as the gear/pirate tiles above — the parrot art (checked
    against the actual repo files) sits on a square canvas too, and the
    base .aurion-sort-tile portrait aspect + cover was cropping their feet
@@ -1378,6 +1408,12 @@ body {
   max-width: 460px;
 }
 
+@media (min-width: 700px) {
+  .aurion-envelope-board {
+    max-width: 580px;
+  }
+}
+
 /* Same square-canvas fix as gear/pirate/companion above — the envelope
    art is a wide letterboxed shape on a square canvas, cropped top/bottom
    by the old portrait+cover combo. */
@@ -1387,6 +1423,14 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+/* While the reveal card is open, the whole board fades back regardless
+   of which tile opened it — a middle tile's own art was showing through
+   the popup's glass and fighting with the message text underneath it. */
+.aurion-envelope-board.dimmed .aurion-envelope-tile {
+  opacity: 0.1;
 }
 
 .aurion-credits-text {

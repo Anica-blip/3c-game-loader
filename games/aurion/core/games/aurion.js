@@ -82,6 +82,106 @@ const CATEGORY_MESSAGES = {
   }
 };
 
+// The four Core Values this challenge tracks a running score for, built up
+// across the gear scene, the maze scene, and the companion scene, then
+// revealed as one envelope in the final scene (whichever value scored
+// highest). Text is Chef's own, from the production notes.
+const CORE_VALUE_MESSAGES = {
+  Courage: {
+    title: '🟠 COURAGE',
+    subtitle: 'One of your guiding values',
+    body: "Your choices suggest that courage may be one of the values that guides you. You seem willing to move forward even when the path isn't completely clear. For you, courage may not mean having no fear. It may mean being willing to act despite it."
+  },
+  Independence: {
+    title: '🟡 INDEPENDENCE',
+    subtitle: 'One of your guiding values',
+    body: "Your choices suggest that independence may be important to you. You seem to value making your own way and trusting your own judgement. Independence may mean having the freedom to choose your direction rather than simply following the path already laid out."
+  },
+  Connection: {
+    title: '🔵 CONNECTION',
+    subtitle: 'One of your guiding values',
+    body: "Your choices suggest that connection may be one of the values that matters to you. Your choices show that the people around you can matter when deciding how you move forward. Connection may mean support, loyalty, belonging or knowing that the journey doesn't always have to be travelled alone."
+  },
+  Integrity: {
+    title: '🟢 INTEGRITY',
+    subtitle: 'One of your guiding values',
+    body: "Your choices suggest that integrity may be an important value in the way you approach things. You seem to pay attention to what feels right for you, rather than simply choosing what looks easiest or most appealing. Integrity can mean making choices that stay true to what you believe, even when nobody else is watching."
+  }
+};
+
+// Scene 6's maze — hand-generated (not from an image asset), a true
+// "perfect maze" (exactly one route between any two cells, no loops) on a
+// 7x7 grid, walls drawn in the same purple Chef's own reference maze used.
+// Four entrances sit on four different edges, each already linked (in code
+// only, never shown visually) to one Core Value, ordered by how long that
+// entrance's actual route to the center is — Chef's instruction was to let
+// difficulty do the sorting instead of a visible color/label giving it
+// away. Connection is the shortest route in (9 moves), then Integrity
+// (19), then Independence (23), then Courage is the longest and hardest
+// (25) — courage getting the hardest road felt right. Scoring locks in the
+// moment the player's dot first crosses from an entrance cell into the
+// maze — not which attempt eventually reaches the center, per Chef's
+// "first entry, not other attempts" instruction.
+const MAZE_GRID_SIZE = 7;
+const MAZE_CENTER = [3, 3];
+const MAZE_ENTRANCES = {
+  Connection: { cell: [3, 6], edgeDir: 'E' },
+  Integrity: { cell: [3, 0], edgeDir: 'W' },
+  Independence: { cell: [6, 3], edgeDir: 'S' },
+  Courage: { cell: [0, 3], edgeDir: 'N' }
+};
+const MAZE_CELL_OPEN = {
+  '0,0': ["S"],
+  '0,1': ["S", "E"],
+  '0,2': ["S", "E", "W"],
+  '0,3': ["E", "W"],
+  '0,4': ["S", "W"],
+  '0,5': ["S", "E"],
+  '0,6': ["S", "W"],
+  '1,0': ["N", "S", "E"],
+  '1,1': ["N", "W"],
+  '1,2': ["N", "S"],
+  '1,3': ["S"],
+  '1,4': ["N", "S"],
+  '1,5': ["N", "S"],
+  '1,6': ["N", "S"],
+  '2,0': ["N", "E"],
+  '2,1': ["W"],
+  '2,2': ["N", "S"],
+  '2,3': ["N", "E"],
+  '2,4': ["N", "W"],
+  '2,5': ["N", "S"],
+  '2,6': ["N", "S"],
+  '3,0': ["S", "E"],
+  '3,1': ["E", "W"],
+  '3,2': ["N", "W"],
+  '3,3': ["E"],
+  '3,4': ["E", "W"],
+  '3,5': ["N", "W"],
+  '3,6': ["N", "S"],
+  '4,0': ["N", "S", "E"],
+  '4,1': ["E", "W"],
+  '4,2': ["S", "E", "W"],
+  '4,3': ["W"],
+  '4,4': ["S", "E"],
+  '4,5': ["E", "W"],
+  '4,6': ["N", "W"],
+  '5,0': ["N", "S"],
+  '5,1': ["S"],
+  '5,2': ["N", "E"],
+  '5,3': ["E", "W"],
+  '5,4': ["N", "W"],
+  '5,5': ["S", "E"],
+  '5,6': ["S", "W"],
+  '6,0': ["N", "E"],
+  '6,1': ["N", "E", "W"],
+  '6,2': ["E", "W"],
+  '6,3': ["E", "W"],
+  '6,4': ["E", "W"],
+  '6,5': ["N", "W"],
+  '6,6': ["N"]
+};
+
 // Any image/background field can be given as either a full Cloudflare URL
 // or just a bare filename meant to live in this game's own assets/ folder.
 // This is what actually tells them apart — if it isn't already a full
@@ -156,6 +256,22 @@ function preloadAssets(config, preloadedVideos) {
     if (d.mechanic === 'sorting' || d.mechanic === 'reveal-cards') {
       Object.values(mechanicData.categoryImages || {}).forEach(add);
     }
+    if (d.mechanic === 'compass') {
+      add(mechanicData.image);
+    }
+    if (d.mechanic === 'gear-select') {
+      Object.values(mechanicData.gear || {}).forEach(add);
+      (mechanicData.pirates || []).forEach(add);
+    }
+    if (d.mechanic === 'companion-select') {
+      Object.values(mechanicData.parrots || {}).forEach(add);
+    }
+    if (d.mechanic === 'key-grab') {
+      add(mechanicData.image);
+    }
+    if (d.mechanic === 'envelope-reveal') {
+      Object.values(mechanicData.envelopes || {}).forEach(add);
+    }
   });
   (config.characterImages || []).forEach(img => { if (img.url) add(img.url); });
 
@@ -215,6 +331,24 @@ export function startGame(config, container) {
   const preloadedVideos = new Map(); // scene.video url -> the real preloaded <video> element, reused (not recreated) when that scene renders
   let selectedWords = []; // the 5 words chosen in Scene 5, carried forward to Scene 6
   let categoryCounts = {}; // filled in once Scene 6's sorting is complete, used by Scene 8
+  // Core Values challenge only: running score across the gear, maze and
+  // companion scenes, read back by the envelope-reveal scene at the end to
+  // decide which single envelope/message the player sees. addCoreValueScore
+  // is the only way anything writes to this — one place to look if a
+  // scene's scoring ever needs adjusting.
+  const coreValueScores = { Courage: 0, Independence: 0, Connection: 0, Integrity: 0 };
+  function addCoreValueScore(value, points) {
+    if (Object.prototype.hasOwnProperty.call(coreValueScores, value)) {
+      coreValueScores[value] += points;
+    }
+  }
+  function leadingCoreValue() {
+    let best = null;
+    Object.keys(coreValueScores).forEach(key => {
+      if (best === null || coreValueScores[key] > coreValueScores[best]) best = key;
+    });
+    return best;
+  }
 
   container.classList.add('aurion-game');
   container.innerHTML = '';
@@ -314,7 +448,11 @@ export function startGame(config, container) {
     msg.className = 'aurion-body-text';
     msg.textContent = "I'm getting everything ready for you. The first visit can take a little longer while your browser gets everything organised. Hang in there, it'll be worth the wait!";
 
-    wrap.append(hourglass, greeting, msg);
+    const earphones = document.createElement('p');
+    earphones.className = 'aurion-body-text';
+    earphones.textContent = "🎧 Grab your earphones, I'll be joining you on the journey.";
+
+    wrap.append(hourglass, greeting, msg, earphones);
     content.appendChild(wrap);
   }
 
@@ -382,7 +520,9 @@ export function startGame(config, container) {
     if ((!scene.mechanic || scene.mechanic === 'none') && !scene.video) {
       wrap.classList.add('aurion-no-mechanic');
     }
-    if (scene.mechanic === 'sorting' || scene.mechanic === 'reveal-cards' || scene.mechanic === 'word-picker') {
+    if (scene.mechanic === 'sorting' || scene.mechanic === 'reveal-cards' || scene.mechanic === 'word-picker'
+        || scene.mechanic === 'gear-select' || scene.mechanic === 'companion-select'
+        || scene.mechanic === 'envelope-reveal' || scene.mechanic === 'maze') {
       wrap.classList.add('aurion-has-side-panel');
     }
     // Landing and consent are the only two scenes whose overlay image should
@@ -409,8 +549,20 @@ export function startGame(config, container) {
     // scene keeps its current top-anchored placement, untouched. Note this
     // applies at every screen width, not just mobile — same as the
     // landing/consent version of this already did.
+    // "layout": "image-left" (currently just Scene 4, The Map And Your
+    // Compass) puts the overlay image in its own invisible container on
+    // the left and the title/description in their own left-aligned
+    // invisible container on the right, the pair centered together as one
+    // unit in the middle of the page — a different arrangement of the
+    // exact same fields every other scene already uses, not a new content
+    // type.
+    const isImageLeftLayout = scene.layout === 'image-left' && scene.overlayImage && scene.overlayImage.url;
+    if (isImageLeftLayout) {
+      wrap.classList.add('aurion-image-left-layout');
+    }
+
     let introOverlayImg = null;
-    if (scene.overlayImage && scene.overlayImage.url) {
+    if (!isImageLeftLayout && scene.overlayImage && scene.overlayImage.url) {
       const img = document.createElement('img');
       img.src = resolveAssetUrl(scene.overlayImage.url);
       img.alt = '';
@@ -427,8 +579,11 @@ export function startGame(config, container) {
     // below. Only the subtitle + description move as their own centered
     // unit within the space between the title and the button (which
     // keeps anchoring to the bottom via .aurion-button-row's own
-    // margin-top: auto, untouched by any of this).
-    if (scene.titleText) {
+    // margin-top: auto, untouched by any of this). Image-left layout is
+    // the one exception — its title moves into the right-hand text column
+    // below instead, so it stays with its own description rather than
+    // pinned above the whole row.
+    if (scene.titleText && !isImageLeftLayout) {
       const title = document.createElement('h1');
       title.className = 'aurion-scene-title';
       title.textContent = scene.titleText;
@@ -441,9 +596,36 @@ export function startGame(config, container) {
     // slot) isn't affected by this at all.
     const textBlock = document.createElement('div');
     textBlock.className = 'aurion-scene-textblock';
-    wrap.appendChild(textBlock);
-    if (introOverlayImg) {
-      textBlock.appendChild(introOverlayImg);
+
+    if (isImageLeftLayout) {
+      const row = document.createElement('div');
+      row.className = 'aurion-image-text-row';
+
+      const imgCol = document.createElement('div');
+      imgCol.className = 'aurion-image-text-row-image';
+      const rowImg = document.createElement('img');
+      rowImg.src = resolveAssetUrl(scene.overlayImage.url);
+      rowImg.alt = '';
+      imgCol.appendChild(rowImg);
+
+      const textCol = document.createElement('div');
+      textCol.className = 'aurion-image-text-row-text';
+      if (scene.titleText) {
+        const title = document.createElement('h1');
+        title.className = 'aurion-scene-title';
+        title.textContent = scene.titleText;
+        applyStyledText(title, scene, 'title');
+        textCol.appendChild(title);
+      }
+      textCol.appendChild(textBlock);
+
+      row.append(imgCol, textCol);
+      wrap.appendChild(row);
+    } else {
+      wrap.appendChild(textBlock);
+      if (introOverlayImg) {
+        textBlock.appendChild(introOverlayImg);
+      }
     }
 
     // Optional — only present when a scene sets "subtitleText". Renders
@@ -497,6 +679,36 @@ export function startGame(config, container) {
     if (scene.mechanic === 'reveal-cards') {
       mechanicGatesButton = true;
       buildRevealMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'compass') {
+      mechanicGatesButton = true;
+      buildCompassMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'gear-select') {
+      mechanicGatesButton = true;
+      buildGearMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'maze') {
+      mechanicGatesButton = true;
+      buildMazeMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'companion-select') {
+      mechanicGatesButton = true;
+      buildCompanionMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'key-grab') {
+      mechanicGatesButton = true;
+      buildKeyMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'envelope-reveal') {
+      mechanicGatesButton = true;
+      buildEnvelopeMechanic(mechanicSlot, scene, revealButtons);
     }
 
     if (scene.video) {
@@ -997,6 +1209,423 @@ export function startGame(config, container) {
             } else {
               onComplete();
             }
+          }
+        });
+
+        popup.append(title, subtitle, body, closeBtn);
+      });
+
+      board.appendChild(tile);
+    });
+
+    stage.append(board, popup);
+    slot.appendChild(stage);
+  }
+
+  // Scene 3 ("Where Will Your Journey Take You?") — the compass image
+  // itself is the whole interaction: drag it and it turns, real rotation
+  // following the pointer, not a canned animation. Not scored — this
+  // scene is atmosphere, the choices that actually score start at the
+  // gear scene. Button appears once the player has actually turned it at
+  // least once (pointerdown + a real movement), same "do something, then
+  // the button shows up" pattern every other mechanic uses.
+  function buildCompassMechanic(slot, scene, onComplete) {
+    const stage = document.createElement('div');
+    stage.className = 'aurion-compass-stage';
+
+    const img = document.createElement('img');
+    img.className = 'aurion-compass-dial';
+    img.src = resolveAssetUrl((scene.mechanicData && scene.mechanicData.image) || '');
+    img.alt = '';
+    img.draggable = false;
+
+    let rotation = 0;
+    let dragging = false;
+    let lastX = 0;
+    let engaged = false;
+
+    img.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      img.setPointerCapture(e.pointerId);
+      img.classList.add('grabbing');
+      lastX = e.clientX;
+    });
+    img.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      rotation += dx * 0.7;
+      img.style.transform = `rotate(${rotation}deg)`;
+      if (!engaged && Math.abs(dx) > 1) engaged = true;
+    });
+    img.addEventListener('pointerup', () => {
+      dragging = false;
+      img.classList.remove('grabbing');
+      if (engaged) onComplete();
+    });
+
+    stage.appendChild(img);
+    slot.appendChild(stage);
+  }
+
+  // Scene 5 ("Choose Your Gear") — top row is the real choice (thermos,
+  // backpack, poles, binoculars), bottom row is the pirates, decorative
+  // only per Chef's note ("just addition for effect"), never clickable.
+  // Reuses the exact .aurion-sort-board/.aurion-sort-tile grid Scene 6/8
+  // already use — same 4-column grid naturally gives two rows of four.
+  // Picking a gear item scores its Core Value and reveals the button
+  // immediately, same "one click, done" pattern as the door mechanic.
+  function buildGearMechanic(slot, scene, onComplete) {
+    const gear = (scene.mechanicData && scene.mechanicData.gear) || {};
+    const pirates = (scene.mechanicData && scene.mechanicData.pirates) || [];
+    let chosen = false;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sort-stage';
+    const board = document.createElement('div');
+    board.className = 'aurion-sort-board';
+
+    Object.entries(gear).forEach(([value, imageUrl]) => {
+      const tile = document.createElement('button');
+      tile.className = 'aurion-sort-tile aurion-gear-tile';
+      if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
+      tile.addEventListener('click', () => {
+        if (chosen) return;
+        chosen = true;
+        tile.classList.add('opened');
+        board.querySelectorAll('.aurion-gear-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
+        addCoreValueScore(value, 2);
+        onComplete();
+      });
+      board.appendChild(tile);
+    });
+
+    pirates.forEach(imageUrl => {
+      const tile = document.createElement('div');
+      tile.className = 'aurion-sort-tile aurion-pirate-tile dim';
+      if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
+      board.appendChild(tile);
+    });
+
+    stage.appendChild(board);
+    slot.appendChild(stage);
+  }
+
+  // Scene 6 ("Follow The Map") — a hand-built maze (see MAZE_CELL_OPEN
+  // etc. near the top of this file), drawn fresh every time rather than
+  // from an image, so a real draggable dot can be collision-checked
+  // against its walls. Four unlabeled entrance rings sit just outside the
+  // four gaps in the border. The player picks the dot up from its tray
+  // below the maze and drags it toward whichever entrance they choose —
+  // first one they actually enter through locks in that entrance's Core
+  // Value (2 points, same weight as gear and companion), regardless of
+  // how many tries it then takes to actually reach the centre. Once
+  // inside, the dot can only move into an adjacent cell if this maze's
+  // own wall data says that edge is open — that's the real "collision".
+  function buildMazeMechanic(slot, scene, onComplete) {
+    const CELL = 46;
+    const N = MAZE_GRID_SIZE;
+    const SIZE = CELL * N;
+    const PAD = 34;
+    const view = `-${PAD} -${PAD} ${SIZE + PAD * 2} ${SIZE + PAD * 2}`;
+
+    function cellCenter(r, c) { return { x: c * CELL + CELL / 2, y: r * CELL + CELL / 2 }; }
+    function entrancePos(entry) {
+      const [r, c] = entry.cell;
+      const center = cellCenter(r, c);
+      const off = CELL * 0.62;
+      if (entry.edgeDir === 'N') return { x: center.x, y: -off };
+      if (entry.edgeDir === 'S') return { x: center.x, y: SIZE + off };
+      if (entry.edgeDir === 'W') return { x: -off, y: center.y };
+      return { x: SIZE + off, y: center.y };
+    }
+
+    // Wall segments: every non-open side of every cell, minus the one
+    // boundary segment that is deliberately an entrance gap.
+    const segments = [];
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const open = MAZE_CELL_OPEN[`${r},${c}`] || [];
+        const isBoundaryEntrance = (dir) => Object.values(MAZE_ENTRANCES)
+          .some(en => en.cell[0] === r && en.cell[1] === c && en.edgeDir === dir);
+        if (!open.includes('N') && !(r === 0 && isBoundaryEntrance('N'))) {
+          segments.push([c * CELL, r * CELL, (c + 1) * CELL, r * CELL]);
+        }
+        if (!open.includes('W') && !(c === 0 && isBoundaryEntrance('W'))) {
+          segments.push([c * CELL, r * CELL, c * CELL, (r + 1) * CELL]);
+        }
+        if (r === N - 1 && !open.includes('S') && !isBoundaryEntrance('S')) {
+          segments.push([c * CELL, (r + 1) * CELL, (c + 1) * CELL, (r + 1) * CELL]);
+        }
+        if (c === N - 1 && !open.includes('E') && !isBoundaryEntrance('E')) {
+          segments.push([(c + 1) * CELL, r * CELL, (c + 1) * CELL, (r + 1) * CELL]);
+        }
+      }
+    }
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-maze-stage';
+
+    const hint = document.createElement('p');
+    hint.className = 'aurion-maze-hint';
+    hint.textContent = 'Drag the dot into the maze — pick your way in.';
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', view);
+    svg.setAttribute('class', 'aurion-maze-svg');
+
+    segments.forEach(([x1, y1, x2, y2]) => {
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+      line.setAttribute('class', 'aurion-maze-wall');
+      svg.appendChild(line);
+    });
+
+    const exitCenter = cellCenter(MAZE_CENTER[0], MAZE_CENTER[1]);
+    const exitGlow = document.createElementNS(svgNS, 'circle');
+    exitGlow.setAttribute('cx', exitCenter.x);
+    exitGlow.setAttribute('cy', exitCenter.y);
+    exitGlow.setAttribute('r', CELL * 0.3);
+    exitGlow.setAttribute('class', 'aurion-maze-exit');
+    svg.appendChild(exitGlow);
+
+    const entranceEls = [];
+    Object.entries(MAZE_ENTRANCES).forEach(([value, entry]) => {
+      const pos = entrancePos(entry);
+      const ring = document.createElementNS(svgNS, 'circle');
+      ring.setAttribute('cx', pos.x);
+      ring.setAttribute('cy', pos.y);
+      ring.setAttribute('r', CELL * 0.32);
+      ring.setAttribute('class', 'aurion-maze-entrance-ring');
+      svg.appendChild(ring);
+      entranceEls.push({ value, entry, pos });
+    });
+
+    const dotStart = { x: SIZE / 2, y: SIZE + PAD * 1.6 };
+    const dot = document.createElementNS(svgNS, 'circle');
+    dot.setAttribute('cx', dotStart.x);
+    dot.setAttribute('cy', dotStart.y);
+    dot.setAttribute('r', CELL * 0.22);
+    dot.setAttribute('class', 'aurion-maze-dot');
+    svg.appendChild(dot);
+
+    let insideMaze = false;
+    let currentCell = null;
+    let dragging = false;
+    let solved = false;
+
+    function svgPoint(clientX, clientY) {
+      const rect = svg.getBoundingClientRect();
+      const scaleX = (SIZE + PAD * 2) / rect.width;
+      const scaleY = (SIZE + PAD * 2) / rect.height;
+      return {
+        x: (clientX - rect.left) * scaleX - PAD,
+        y: (clientY - rect.top) * scaleY - PAD
+      };
+    }
+
+    dot.addEventListener('pointerdown', (e) => {
+      if (solved) return;
+      dragging = true;
+      dot.setPointerCapture(e.pointerId);
+    });
+
+    dot.addEventListener('pointermove', (e) => {
+      if (!dragging || solved) return;
+      const p = svgPoint(e.clientX, e.clientY);
+
+      if (!insideMaze) {
+        dot.setAttribute('cx', p.x);
+        dot.setAttribute('cy', p.y);
+        // Committing to an entrance: close enough to its ring AND the
+        // maze's own boundary (moving inward, not just hovering nearby).
+        for (const cand of entranceEls) {
+          const dx = p.x - cand.pos.x, dy = p.y - cand.pos.y;
+          if (Math.sqrt(dx * dx + dy * dy) < CELL * 0.5) {
+            insideMaze = true;
+            currentCell = cand.entry.cell.slice();
+            addCoreValueScore(cand.value, 2);
+            const c = cellCenter(currentCell[0], currentCell[1]);
+            dot.setAttribute('cx', c.x);
+            dot.setAttribute('cy', c.y);
+            break;
+          }
+        }
+        return;
+      }
+
+      // Inside the maze: only ever snap to an orthogonally adjacent cell,
+      // and only if this maze's own data says that side is open. Anything
+      // else is ignored — the dot simply doesn't follow, which reads as
+      // hitting a wall.
+      const targetCol = Math.round((p.x - CELL / 2) / CELL);
+      const targetRow = Math.round((p.y - CELL / 2) / CELL);
+      const [cr, cc] = currentCell;
+      const dr = targetRow - cr, dc = targetCol - cc;
+      let dir = null;
+      if (dr === -1 && dc === 0) dir = 'N';
+      else if (dr === 1 && dc === 0) dir = 'S';
+      else if (dr === 0 && dc === -1) dir = 'W';
+      else if (dr === 0 && dc === 1) dir = 'E';
+      if (!dir) return;
+
+      const open = MAZE_CELL_OPEN[`${cr},${cc}`] || [];
+      if (!open.includes(dir)) return;
+
+      currentCell = [targetRow, targetCol];
+      const c = cellCenter(targetRow, targetCol);
+      dot.setAttribute('cx', c.x);
+      dot.setAttribute('cy', c.y);
+
+      if (targetRow === MAZE_CENTER[0] && targetCol === MAZE_CENTER[1]) {
+        solved = true;
+        dot.classList.add('solved');
+        onComplete();
+      }
+    });
+
+    dot.addEventListener('pointerup', () => { dragging = false; });
+
+    stage.append(hint, svg);
+    slot.appendChild(stage);
+  }
+
+  // Scene 7 ("Choose Your Companion") — single row of four parrots, same
+  // grid/tile classes as the gear scene. One click picks and scores;
+  // per Chef's note the button only appears once the voice line for this
+  // scene has played through and finished, not the instant the pick is
+  // made.
+  function buildCompanionMechanic(slot, scene, onComplete) {
+    const parrots = (scene.mechanicData && scene.mechanicData.parrots) || {};
+    let chosen = false;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sort-stage';
+    const board = document.createElement('div');
+    board.className = 'aurion-sort-board aurion-companion-board';
+
+    Object.entries(parrots).forEach(([value, imageUrl]) => {
+      const tile = document.createElement('button');
+      tile.className = 'aurion-sort-tile aurion-companion-tile';
+      if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
+      tile.addEventListener('click', () => {
+        if (chosen) return;
+        chosen = true;
+        tile.classList.add('opened');
+        board.querySelectorAll('.aurion-companion-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
+        addCoreValueScore(value, 2);
+
+        if (scene.soundEffect) {
+          const voice = new Audio(scene.soundEffect);
+          voice.addEventListener('ended', onComplete);
+          voice.play().catch(onComplete);
+        } else {
+          onComplete();
+        }
+      });
+      board.appendChild(tile);
+    });
+
+    stage.appendChild(board);
+    slot.appendChild(stage);
+  }
+
+  // Scene 8 ("Grab The Key") — click the key, it glows then vanishes
+  // (scale + fade + float up), not scored. Button waits for this scene's
+  // voice line to finish, same as the companion scene.
+  function buildKeyMechanic(slot, scene, onComplete) {
+    const stage = document.createElement('div');
+    stage.className = 'aurion-key-stage';
+
+    const img = document.createElement('img');
+    img.className = 'aurion-key-img';
+    img.src = resolveAssetUrl((scene.mechanicData && scene.mechanicData.image) || '');
+    img.alt = '';
+
+    let grabbed = false;
+    img.addEventListener('click', () => {
+      if (grabbed) return;
+      grabbed = true;
+      img.classList.add('grabbed', 'vanish');
+      img.addEventListener('animationend', () => {
+        if (scene.soundEffect) {
+          const voice = new Audio(scene.soundEffect);
+          voice.addEventListener('ended', onComplete);
+          voice.play().catch(onComplete);
+        } else {
+          onComplete();
+        }
+      }, { once: true });
+    });
+
+    stage.appendChild(img);
+    slot.appendChild(stage);
+  }
+
+  // Scene 9 ("Let's Check How Far You Got") — four envelopes on screen,
+  // but only the one matching whichever Core Value scored highest across
+  // the gear/maze/companion scenes is actually openable (a soft glow, no
+  // color or label difference from the other three — the reveal is
+  // supposed to come as a surprise, not be guessable from the artwork).
+  // The other three sit there as decoys. Opening it, reading the message
+  // and closing the card behaves exactly like the goals series' reveal-
+  // cards scene: the voice line only starts once the card is closed, and
+  // the button waits for that voice line to finish.
+  function buildEnvelopeMechanic(slot, scene, onComplete) {
+    const envelopes = (scene.mechanicData && scene.mechanicData.envelopes) || {};
+    const winner = leadingCoreValue();
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sort-stage';
+    const board = document.createElement('div');
+    board.className = 'aurion-sort-board aurion-envelope-board';
+    const popup = document.createElement('div');
+    popup.className = 'aurion-reveal-popup';
+
+    Object.entries(envelopes).forEach(([value, imageUrl]) => {
+      const tile = document.createElement('button');
+      tile.className = 'aurion-sort-tile aurion-reveal-tile aurion-envelope-tile';
+      if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
+
+      const isWinner = value === winner;
+      if (!isWinner) {
+        tile.classList.add('dim');
+        tile.disabled = true;
+      } else {
+        tile.classList.add('flashing');
+      }
+
+      tile.addEventListener('click', () => {
+        if (!isWinner || tile.classList.contains('opened')) return;
+        tile.classList.remove('flashing');
+        tile.classList.add('opened');
+
+        popup.innerHTML = '';
+        popup.classList.add('open');
+        const msg = CORE_VALUE_MESSAGES[value];
+
+        const title = document.createElement('h2');
+        title.textContent = msg.title;
+        const subtitle = document.createElement('p');
+        subtitle.className = 'aurion-reveal-subtitle';
+        subtitle.textContent = msg.subtitle;
+        const body = document.createElement('p');
+        body.className = 'aurion-reveal-body';
+        body.textContent = msg.body;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'aurion-btn';
+        closeBtn.textContent = 'Close';
+        closeBtn.addEventListener('click', () => {
+          popup.classList.remove('open');
+          if (scene.soundEffect) {
+            const voice = new Audio(scene.soundEffect);
+            voice.addEventListener('ended', onComplete);
+            voice.play().catch(onComplete);
+          } else {
+            onComplete();
           }
         });
 

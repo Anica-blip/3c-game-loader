@@ -1222,13 +1222,13 @@ export function startGame(config, container) {
     slot.appendChild(stage);
   }
 
-  // Scene 3 ("Where Will Your Journey Take You?") — the compass image
-  // itself is the whole interaction: drag it and it turns, real rotation
-  // following the pointer, not a canned animation. Not scored — this
-  // scene is atmosphere, the choices that actually score start at the
-  // gear scene. Button appears once the player has actually turned it at
-  // least once (pointerdown + a real movement), same "do something, then
-  // the button shows up" pattern every other mechanic uses.
+  // Scene 3 ("Where Will Your Journey Take You?") — press the compass and
+  // its dial swings left-right-left, like it's finding its bearing, then
+  // settles and the button appears. A plain click/tap, not a drag — the
+  // earlier drag-only version silently never fired onComplete() for a
+  // player who just clicked without moving the pointer, which is exactly
+  // the "nothing happens" Chef hit. Not scored — this scene is
+  // atmosphere, the choices that actually score start at the gear scene.
   function buildCompassMechanic(slot, scene, onComplete) {
     const stage = document.createElement('div');
     stage.className = 'aurion-compass-stage';
@@ -1239,30 +1239,18 @@ export function startGame(config, container) {
     img.alt = '';
     img.draggable = false;
 
-    let rotation = 0;
-    let dragging = false;
-    let lastX = 0;
-    let engaged = false;
-
-    img.addEventListener('pointerdown', (e) => {
-      dragging = true;
-      img.setPointerCapture(e.pointerId);
-      img.classList.add('grabbing');
-      lastX = e.clientX;
+    let done = false;
+    img.addEventListener('click', () => {
+      if (done) return;
+      done = true;
+      img.classList.add('swinging');
     });
-    img.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
-      rotation += dx * 0.7;
-      img.style.transform = `rotate(${rotation}deg)`;
-      if (!engaged && Math.abs(dx) > 1) engaged = true;
-    });
-    img.addEventListener('pointerup', () => {
-      dragging = false;
-      img.classList.remove('grabbing');
-      if (engaged) onComplete();
-    });
+    img.addEventListener('animationend', () => {
+      if (!done) return;
+      img.classList.remove('swinging');
+      img.classList.add('settled');
+      onComplete();
+    }, { once: true });
 
     stage.appendChild(img);
     slot.appendChild(stage);

@@ -1059,62 +1059,91 @@ body {
   100% { transform: rotate(0deg); }
 }
 
-/* Scene 4 ("The Map And Your Compass") — image-left / text-right row.
-   Both sides are invisible containers per Chef's note (no border, no
-   fill) with the text column left-aligned, overriding the centered
-   text-align every other scene's .aurion-scene-textblock uses. Stacks
-   to image-on-top/text-below under the same 480px breakpoint the rest
-   of this file already uses for mobile. */
+/* Scene 4 ("The Map And Your Compass") — image-left / text-right pair.
+   Title is untouched — it stays pinned at the top of the page exactly
+   like every other scene's title, appended straight to wrap, never part
+   of this block. Two nested boxes handle the rest:
+   .aurion-image-text-row is the outer one — it grows to fill the space
+   between the title and the button (same idea as the no-mechanic
+   centering rule elsewhere in this file) and centers its contents in
+   the middle of that space both ways, which is what puts the whole
+   image+text pair in the middle of the page, not just the text.
+   .aurion-image-text-pair is the inner one — sized only to what the
+   text actually needs (not stretched to fill the outer box), holding
+   the image and text side by side. Both are invisible containers per
+   Chef's note (no border, no fill); the text column is left-aligned,
+   overriding the centered text-align every other scene's
+   .aurion-scene-textblock uses. align-items on the pair is left at its
+   flexbox default (stretch), which is what makes the image match the
+   text column's own height instead of being sized off on its own —
+   the image just fills whatever height the text naturally takes. */
 .aurion-image-left-layout .aurion-image-text-row {
   display: flex;
+  flex: 1;
+  width: 100%;
   align-items: center;
+  justify-content: center;
+}
+
+.aurion-image-text-pair {
+  display: flex;
   gap: 20px;
   width: 100%;
   max-width: 520px;
-  margin: 0 auto;
 }
 
-.aurion-image-left-layout .aurion-image-text-row-image {
+.aurion-image-text-row-image {
   flex: 0 0 auto;
-  width: 40%;
-  max-width: 200px;
+  width: 38%;
+  max-width: 190px;
+  display: flex;
 }
 
-.aurion-image-left-layout .aurion-image-text-row-image img {
+.aurion-image-text-row-image img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
 }
 
-.aurion-image-left-layout .aurion-image-text-row-text {
+.aurion-image-text-row-text {
   flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   text-align: left;
 }
 
-.aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-title,
-.aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-subtitle,
-.aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-desc {
+.aurion-image-text-row-text .aurion-scene-title,
+.aurion-image-text-row-text .aurion-scene-subtitle,
+.aurion-image-text-row-text .aurion-scene-desc {
   text-align: left;
 }
 
 @media (max-width: 480px) {
-  .aurion-image-left-layout .aurion-image-text-row {
+  .aurion-image-text-pair {
     flex-direction: column;
+    align-items: center;
     gap: 12px;
   }
 
-  .aurion-image-left-layout .aurion-image-text-row-image {
+  .aurion-image-text-row-image {
     width: 60%;
     max-width: 160px;
+    height: auto;
   }
 
-  .aurion-image-left-layout .aurion-image-text-row-text {
+  .aurion-image-text-row-image img {
+    height: auto;
+  }
+
+  .aurion-image-text-row-text {
     text-align: center;
   }
 
-  .aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-title,
-  .aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-subtitle,
-  .aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-desc {
+  .aurion-image-text-row-text .aurion-scene-title,
+  .aurion-image-text-row-text .aurion-scene-subtitle,
+  .aurion-image-text-row-text .aurion-scene-desc {
     text-align: center;
   }
 }
@@ -1123,7 +1152,27 @@ body {
    bottom row (pirates) is .dim + non-interactive from the moment it's
    rendered (aurion.js never attaches a click handler to them either).
    Picking a gear tile dims the other three exactly like a reveal tile
-   does, so the two "pick one of four" scenes feel consistent. */
+   does, so the two "pick one of four" scenes feel consistent.
+   The gear/pirate art (checked against the actual repo files) is a mix
+   of portrait (thermos, backpack, poles) and landscape (binoculars)
+   content on a square canvas — not the tall 570:876 card art the base
+   .aurion-sort-tile aspect-ratio/cover combo was built for, which is
+   what was cropping the binoculars especially badly. Scoped to just
+   this board: a smaller, closer-to-square tile with background-size:
+   contain, so every image sits fully inside its container with no
+   cropping regardless of its own orientation. */
+.aurion-gear-board {
+  max-width: 380px;
+}
+
+.aurion-gear-tile,
+.aurion-pirate-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .aurion-gear-tile {
   cursor: pointer;
   transition: opacity 0.3s ease, box-shadow 0.3s ease;
@@ -1156,35 +1205,44 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
   width: 100%;
   padding: 6px 0 4px;
 }
 
+/* Matches .aurion-scene-subtitle exactly (Poppins, bold, same size/color)
+   instead of its own smaller dimmed-down style, per Chef's note that this
+   line should read like her subtitle text, not a separate caption style. */
 .aurion-maze-hint {
   font-family: 'Poppins';
-  font-size: 11px;
+  color: var(--aurion-gold);
+  font-size: 18px;
   font-weight: 700;
-  color: var(--aurion-text);
-  opacity: 0.75;
   text-align: center;
-  margin: 0;
+  margin: 0 0 26px;
 }
 
 .aurion-maze-svg {
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   height: auto;
   touch-action: none;
+  overflow: visible;
 }
 
 .aurion-maze-wall {
   stroke: var(--aurion-neon-purple);
-  stroke-width: 3;
+  stroke-width: 2.6;
   stroke-linecap: round;
   filter: drop-shadow(0 0 3px var(--aurion-neon-purple-glow-soft));
 }
 
+/* The goal marker at the maze's centre — not draggable, not the dot the
+   player moves. Purely visual, tells them where they're headed. Default
+   is a plain glowing circle; once a scene sets mechanicData.goalImage
+   (the 3C diamond) it renders as that image instead, via the
+   aurion-maze-exit-image variant below — box-shadow (used by
+   reveal-flash elsewhere) doesn't apply to SVG shapes/images, so the
+   image gets its own filter-based pulse instead. */
 .aurion-maze-exit {
   fill: var(--aurion-gold);
   opacity: 0.85;
@@ -1192,13 +1250,36 @@ body {
   animation: reveal-flash 1.8s ease-in-out infinite;
 }
 
+.aurion-maze-exit-image {
+  fill: none;
+  opacity: 1;
+  animation: maze-goal-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes maze-goal-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.55)); }
+  50% { filter: drop-shadow(0 0 16px rgba(240, 180, 41, 0.9)); }
+}
+
 /* All four rings identical on purpose — see note above the block. */
 .aurion-maze-entrance-ring {
   fill: none;
   stroke: var(--aurion-neon-purple-bright);
-  stroke-width: 2.5;
+  stroke-width: 2.2;
   stroke-dasharray: 4 3;
   opacity: 0.8;
+}
+
+/* Dashed "pick me up here" tray behind the dot's starting position —
+   fainter than the entrance rings so it doesn't compete visually with
+   them, but enough to mark the dot as sitting in its own holding spot
+   rather than floating in empty space below the maze. */
+.aurion-maze-tray {
+  fill: none;
+  stroke: var(--aurion-neon-purple-bright);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  opacity: 0.35;
 }
 
 .aurion-maze-dot {

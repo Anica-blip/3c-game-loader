@@ -1013,10 +1013,10 @@ body {
 
 /* Scene 3 ("Where Will Your Journey Take You?") — the compass image
    sits centered, full opacity, with a soft ambient glow so it reads
-   as interactive before it's even touched. Rotation itself is applied
-   inline via transform in aurion.js; this only handles static look +
-   cursor affordance. touch-action: none stops the browser's own pan/
-   scroll gesture from fighting the pointer-drag rotation on mobile. */
+   as interactive before it's even touched. A click/tap plays the
+   left-right-left swing keyframe below (aurion.js adds/removes the
+   .swinging class); once it settles, .settled keeps a slightly
+   brighter glow so it's obvious the dial has already been used. */
 .aurion-compass-stage {
   display: flex;
   justify-content: center;
@@ -1029,20 +1029,34 @@ body {
   width: 220px;
   max-width: 60vw;
   height: auto;
-  cursor: grab;
-  touch-action: none;
+  cursor: pointer;
   user-select: none;
   -webkit-user-drag: none;
   filter: drop-shadow(0 0 18px var(--aurion-neon-purple-glow-soft));
   transition: filter 0.3s ease;
+  transform-origin: 50% 55%;
 }
 
 .aurion-compass-dial:hover {
   filter: drop-shadow(0 0 26px var(--aurion-neon-purple-glow-bright));
 }
 
-.aurion-compass-dial.grabbing {
-  cursor: grabbing;
+.aurion-compass-dial.swinging {
+  cursor: default;
+  animation: compass-swing 1.6s ease-in-out;
+}
+
+.aurion-compass-dial.settled {
+  cursor: default;
+  filter: drop-shadow(0 0 22px var(--aurion-neon-purple-glow-bright));
+}
+
+@keyframes compass-swing {
+  0%   { transform: rotate(0deg); }
+  20%  { transform: rotate(-18deg); }
+  45%  { transform: rotate(14deg); }
+  70%  { transform: rotate(-8deg); }
+  100% { transform: rotate(0deg); }
 }
 
 /* Scene 4 ("The Map And Your Compass") — image-left / text-right row.

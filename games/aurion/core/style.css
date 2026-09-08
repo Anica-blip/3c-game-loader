@@ -247,6 +247,32 @@ body {
   justify-content: center;
 }
 
+/* Landing / consent / finale ("hero" scenes — image + buttons only, no
+   title/description) are marked with .aurion-mobile-hero-image already
+   (previously used only for the mobile image-size override above). On a
+   short/mobile viewport the rule above looks fine because there isn't much
+   spare height to expose the gap. On a real desktop-height window, the
+   textblock's flex:1 box is huge (it's the entire wrap minus the button
+   row), so centering the image *inside that box* leaves a large dead zone
+   between the image and the button row, which sits pinned to the very
+   bottom via margin-top:auto — the image reads as stuck near the top with
+   empty space below instead of centered on the page. For these hero scenes
+   only, center the image+buttons together as one group in the middle of
+   the page instead: turn off the textblock's own flex-grow/self-centering
+   and let the wrap center its children as a unit, with the button row
+   sitting close to the image (normal gap) rather than anchored to the
+   bottom. Scenes with real title/description text, or a mechanic, are
+   untouched — they keep the existing behavior. */
+.aurion-scene-wrap.aurion-mobile-hero-image {
+  justify-content: center;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-scene-textblock {
+  flex: none;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-button-row {
+  margin-top: 24px;
+}
+
 
 .aurion-overlay-img {
   max-width: 260px;
@@ -974,6 +1000,279 @@ body {
   font-size: 11px;
   line-height: 1.45;
   margin: 0 0 12px;
+}
+
+/* ===========================================================
+   Core Values challenge — new mechanics (compass / image-left
+   layout / gear select / maze / companion select / key grab /
+   envelope reveal). Everything below reuses the same glow
+   variables, .aurion-sort-stage/.aurion-sort-board grid and
+   .aurion-reveal-* popup styling already used above rather than
+   inventing a second visual language.
+   =========================================================== */
+
+/* Scene 3 ("Where Will Your Journey Take You?") — the compass image
+   sits centered, full opacity, with a soft ambient glow so it reads
+   as interactive before it's even touched. Rotation itself is applied
+   inline via transform in aurion.js; this only handles static look +
+   cursor affordance. touch-action: none stops the browser's own pan/
+   scroll gesture from fighting the pointer-drag rotation on mobile. */
+.aurion-compass-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 12px 0;
+}
+
+.aurion-compass-dial {
+  width: 220px;
+  max-width: 60vw;
+  height: auto;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 0 18px var(--aurion-neon-purple-glow-soft));
+  transition: filter 0.3s ease;
+}
+
+.aurion-compass-dial:hover {
+  filter: drop-shadow(0 0 26px var(--aurion-neon-purple-glow-bright));
+}
+
+.aurion-compass-dial.grabbing {
+  cursor: grabbing;
+}
+
+/* Scene 4 ("The Map And Your Compass") — image-left / text-right row.
+   Both sides are invisible containers per Chef's note (no border, no
+   fill) with the text column left-aligned, overriding the centered
+   text-align every other scene's .aurion-scene-textblock uses. Stacks
+   to image-on-top/text-below under the same 480px breakpoint the rest
+   of this file already uses for mobile. */
+.aurion-image-left-layout .aurion-image-text-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.aurion-image-left-layout .aurion-image-text-row-image {
+  flex: 0 0 auto;
+  width: 40%;
+  max-width: 200px;
+}
+
+.aurion-image-left-layout .aurion-image-text-row-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-image-left-layout .aurion-image-text-row-text {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-title,
+.aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-subtitle,
+.aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-desc {
+  text-align: left;
+}
+
+@media (max-width: 480px) {
+  .aurion-image-left-layout .aurion-image-text-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .aurion-image-left-layout .aurion-image-text-row-image {
+    width: 60%;
+    max-width: 160px;
+  }
+
+  .aurion-image-left-layout .aurion-image-text-row-text {
+    text-align: center;
+  }
+
+  .aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-title,
+  .aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-subtitle,
+  .aurion-image-left-layout .aurion-image-text-row-text .aurion-scene-desc {
+    text-align: center;
+  }
+}
+
+/* Scene 5 ("Choose Your Gear") — top row (gear) is the real choice,
+   bottom row (pirates) is .dim + non-interactive from the moment it's
+   rendered (aurion.js never attaches a click handler to them either).
+   Picking a gear tile dims the other three exactly like a reveal tile
+   does, so the two "pick one of four" scenes feel consistent. */
+.aurion-gear-tile {
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurion-gear-tile.opened {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+}
+
+.aurion-gear-tile.dim {
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+.aurion-pirate-tile {
+  cursor: default;
+}
+
+.aurion-pirate-tile.dim {
+  opacity: 0.55;
+}
+
+/* Scene 6 ("Follow The Map") — the hand-built maze. Walls, entrance
+   rings and the exit glow are all drawn in the same neon-purple family
+   as everything else on the page, and critically all four entrance
+   rings share IDENTICAL styling — no per-ring color or size difference
+   — so the artwork itself never gives away which entrance points to
+   which Core Value, per Chef's explicit note. */
+.aurion-maze-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 0 4px;
+}
+
+.aurion-maze-hint {
+  font-family: 'Poppins';
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--aurion-text);
+  opacity: 0.75;
+  text-align: center;
+  margin: 0;
+}
+
+.aurion-maze-svg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  touch-action: none;
+}
+
+.aurion-maze-wall {
+  stroke: var(--aurion-neon-purple);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px var(--aurion-neon-purple-glow-soft));
+}
+
+.aurion-maze-exit {
+  fill: var(--aurion-gold);
+  opacity: 0.85;
+  filter: drop-shadow(0 0 10px rgba(240, 180, 41, 0.75));
+  animation: reveal-flash 1.8s ease-in-out infinite;
+}
+
+/* All four rings identical on purpose — see note above the block. */
+.aurion-maze-entrance-ring {
+  fill: none;
+  stroke: var(--aurion-neon-purple-bright);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 3;
+  opacity: 0.8;
+}
+
+.aurion-maze-dot {
+  fill: #ffffff;
+  stroke: var(--aurion-neon-purple-bright);
+  stroke-width: 2;
+  cursor: grab;
+  filter: drop-shadow(0 0 8px var(--aurion-neon-purple-glow-bright));
+  transition: filter 0.2s ease;
+}
+
+.aurion-maze-dot.solved {
+  fill: var(--aurion-gold);
+  filter: drop-shadow(0 0 14px rgba(240, 180, 41, 0.85));
+}
+
+/* Scene 7 ("Choose Your Companion") — single row of four parrots,
+   same tile grid as gear/envelopes. Reusing .aurion-sort-board here
+   would give 4 columns already sized right; the extra class just lets
+   this row get its own tweak later without touching the gear layout. */
+.aurion-companion-board {
+  max-width: 460px;
+}
+
+.aurion-companion-tile {
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurion-companion-tile.opened {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+}
+
+.aurion-companion-tile.dim {
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+/* Scene 8 ("Grab The Key") — click, glow, then a float-up + shrink +
+   fade "vanish" so it genuinely reads as disappearing off the page
+   rather than just fading in place. */
+.aurion-key-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 16px 0;
+}
+
+.aurion-key-img {
+  width: 160px;
+  max-width: 50vw;
+  height: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 0 16px var(--aurion-neon-purple-glow-soft));
+  transition: filter 0.3s ease;
+}
+
+.aurion-key-img:hover {
+  filter: drop-shadow(0 0 24px var(--aurion-neon-purple-glow-bright));
+}
+
+.aurion-key-img.grabbed {
+  cursor: default;
+  filter: drop-shadow(0 0 28px rgba(240, 180, 41, 0.85));
+}
+
+.aurion-key-img.vanish {
+  animation: key-vanish 0.9s ease forwards;
+}
+
+@keyframes key-vanish {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(0.2); opacity: 0; }
+}
+
+/* Scene 9 ("Let's Check How Far You Got") — four envelopes, only the
+   Core Value winner is openable. Reuses .aurion-reveal-tile's dim/
+   flashing/opened states wholesale (defined above for the goals-
+   series reveal scene) so the "one glows, the rest sit dim" behaviour
+   is identical — the envelope-specific class only exists so this row
+   can get its own sizing tweak independent of that other scene. */
+.aurion-envelope-board {
+  max-width: 460px;
+}
+
+.aurion-envelope-tile {
+  cursor: pointer;
 }
 
 .aurion-credits-text {

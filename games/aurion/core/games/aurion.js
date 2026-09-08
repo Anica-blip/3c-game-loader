@@ -111,75 +111,124 @@ const CORE_VALUE_MESSAGES = {
 
 // Scene 6's maze — hand-generated (not from an image asset), a true
 // "perfect maze" (exactly one route between any two cells, no loops) on a
-// 7x7 grid, walls drawn in the same purple Chef's own reference maze used.
+// 9x9 grid, walls drawn in the same purple Chef's own reference maze used.
 // Four entrances sit on four different edges, each already linked (in code
 // only, never shown visually) to one Core Value, ordered by how long that
 // entrance's actual route to the center is — Chef's instruction was to let
 // difficulty do the sorting instead of a visible color/label giving it
-// away. Connection is the shortest route in (9 moves), then Integrity
-// (19), then Independence (23), then Courage is the longest and hardest
-// (25) — courage getting the hardest road felt right. Scoring locks in the
-// moment the player's dot first crosses from an entrance cell into the
-// maze — not which attempt eventually reaches the center, per Chef's
-// "first entry, not other attempts" instruction.
-const MAZE_GRID_SIZE = 7;
-const MAZE_CENTER = [3, 3];
+// away.
+// Regenerated bigger (was 7x7) after Chef first flagged the right-hand (E)
+// entrance as the obvious/easy default players would grab without
+// thinking. That earlier fix made E the LONGEST, hardest route instead.
+// This version is that same maze rotated 90° anti-clockwise as a whole
+// (walls, entrances and all) per Chef's follow-up request — physically,
+// that means whatever was on the right is now on top, whatever was on
+// top is now on the left, and so on (N->W, W->S, S->E, E->N).
+// IMPORTANT — flagging this rather than quietly changing it, since Chef
+// said not to redo anything else until she's checked this: a straight
+// rotation carries each entrance's actual difficulty along with it. The
+// entrance that was hardest (Courage, was E/right, 66 moves) is now the
+// one sitting at the TOP; the one that was easiest (Connection, was
+// N/top, 12 moves) is now on the LEFT. Chef's stated goal was "easiest at
+// the top, on purpose" — a plain rotation doesn't give that on its own,
+// it only moves whichever difficulty happened to be on the right up to
+// the top. If the top should be the easy one instead, that needs the
+// value-to-entrance assignment swapped (not another rotation) — flag it
+// back and it's a quick change once confirmed.
+// Scoring locks in the moment the player's dot first crosses from an
+// entrance cell into the maze — not which attempt eventually reaches the
+// center, per Chef's "first entry, not other attempts" instruction.
+const MAZE_GRID_SIZE = 9;
+const MAZE_CENTER = [4, 4];
 const MAZE_ENTRANCES = {
-  Connection: { cell: [3, 6], edgeDir: 'E' },
-  Integrity: { cell: [3, 0], edgeDir: 'W' },
-  Independence: { cell: [6, 3], edgeDir: 'S' },
-  Courage: { cell: [0, 3], edgeDir: 'N' }
+  Courage: { cell: [0, 4], edgeDir: 'N' },
+  Independence: { cell: [8, 4], edgeDir: 'S' },
+  Connection: { cell: [4, 0], edgeDir: 'W' },
+  Integrity: { cell: [4, 8], edgeDir: 'E' },
 };
+
 const MAZE_CELL_OPEN = {
-  '0,0': ["S"],
-  '0,1': ["S", "E"],
-  '0,2': ["S", "E", "W"],
-  '0,3': ["E", "W"],
-  '0,4': ["S", "W"],
-  '0,5': ["S", "E"],
-  '0,6': ["S", "W"],
-  '1,0': ["N", "S", "E"],
-  '1,1': ["N", "W"],
-  '1,2': ["N", "S"],
-  '1,3': ["S"],
-  '1,4': ["N", "S"],
-  '1,5': ["N", "S"],
-  '1,6': ["N", "S"],
-  '2,0': ["N", "E"],
-  '2,1': ["W"],
-  '2,2': ["N", "S"],
-  '2,3': ["N", "E"],
-  '2,4': ["N", "W"],
-  '2,5': ["N", "S"],
-  '2,6': ["N", "S"],
-  '3,0': ["S", "E"],
-  '3,1': ["E", "W"],
-  '3,2': ["N", "W"],
-  '3,3': ["E"],
-  '3,4': ["E", "W"],
-  '3,5': ["N", "W"],
-  '3,6': ["N", "S"],
-  '4,0': ["N", "S", "E"],
-  '4,1': ["E", "W"],
-  '4,2': ["S", "E", "W"],
-  '4,3': ["W"],
-  '4,4': ["S", "E"],
-  '4,5': ["E", "W"],
-  '4,6': ["N", "W"],
+  '0,0': ["E", "S"],
+  '0,1': ["W", "E"],
+  '0,2': ["W", "E"],
+  '0,3': ["W", "E"],
+  '0,4': ["W"],
+  '0,5': ["E", "S"],
+  '0,6': ["W", "E"],
+  '0,7': ["W", "E", "S"],
+  '0,8': ["W", "S"],
+  '1,0': ["E", "N"],
+  '1,1': ["W", "S"],
+  '1,2': ["E", "S"],
+  '1,3': ["W", "E"],
+  '1,4': ["W", "E"],
+  '1,5': ["W", "N"],
+  '1,6': ["S"],
+  '1,7': ["N", "S"],
+  '1,8': ["N"],
+  '2,0': ["E", "S"],
+  '2,1': ["W", "N"],
+  '2,2': ["E", "N"],
+  '2,3': ["W", "E"],
+  '2,4': ["W", "E"],
+  '2,5': ["W", "E"],
+  '2,6': ["W", "N", "S"],
+  '2,7': ["E", "N"],
+  '2,8': ["W", "S"],
+  '3,0': ["E", "N"],
+  '3,1': ["W", "E"],
+  '3,2': ["W", "S"],
+  '3,3': ["E", "S"],
+  '3,4': ["W", "E"],
+  '3,5': ["W", "E"],
+  '3,6': ["W", "N", "S"],
+  '3,7': ["E", "S"],
+  '3,8': ["W", "N"],
+  '4,0': ["E", "S"],
+  '4,1': ["W", "S"],
+  '4,2': ["E", "N"],
+  '4,3': ["W", "N"],
+  '4,4': ["E"],
+  '4,5': ["W", "S"],
+  '4,6': ["N", "S"],
+  '4,7': ["E", "N"],
+  '4,8': ["W", "S"],
   '5,0': ["N", "S"],
-  '5,1': ["S"],
-  '5,2': ["N", "E"],
-  '5,3': ["E", "W"],
-  '5,4': ["N", "W"],
-  '5,5': ["S", "E"],
-  '5,6': ["S", "W"],
-  '6,0': ["N", "E"],
-  '6,1': ["N", "E", "W"],
-  '6,2': ["E", "W"],
-  '6,3': ["E", "W"],
-  '6,4': ["E", "W"],
-  '6,5': ["N", "W"],
-  '6,6': ["N"]
+  '5,1': ["E", "N"],
+  '5,2': ["W", "S"],
+  '5,3': ["E", "S"],
+  '5,4': ["W", "E"],
+  '5,5': ["W", "N"],
+  '5,6': ["N"],
+  '5,7': ["E", "S"],
+  '5,8': ["W", "N", "S"],
+  '6,0': ["N", "S"],
+  '6,1': ["S"],
+  '6,2': ["N", "S"],
+  '6,3': ["N", "S"],
+  '6,4': ["E", "S"],
+  '6,5': ["W", "S"],
+  '6,6': ["E", "S"],
+  '6,7': ["W", "N"],
+  '6,8': ["N", "S"],
+  '7,0': ["N", "S"],
+  '7,1': ["N", "S"],
+  '7,2': ["E", "N"],
+  '7,3': ["W", "N"],
+  '7,4': ["N", "S"],
+  '7,5': ["E", "N"],
+  '7,6': ["W", "N"],
+  '7,7': ["E", "S"],
+  '7,8': ["W", "N"],
+  '8,0': ["E", "N"],
+  '8,1': ["W", "E", "N"],
+  '8,2': ["W", "E"],
+  '8,3': ["W", "E"],
+  '8,4': ["W", "N"],
+  '8,5': ["E"],
+  '8,6': ["W", "E"],
+  '8,7': ["W", "E", "N"],
+  '8,8': ["W"],
 };
 
 // Any image/background field can be given as either a full Cloudflare URL
@@ -258,6 +307,9 @@ function preloadAssets(config, preloadedVideos) {
     }
     if (d.mechanic === 'compass') {
       add(mechanicData.image);
+    }
+    if (d.mechanic === 'maze') {
+      add(mechanicData.goalImage);
     }
     if (d.mechanic === 'gear-select') {
       Object.values(mechanicData.gear || {}).forEach(add);
@@ -576,14 +628,13 @@ export function startGame(config, container) {
 
     // Title stays exactly where it always has — pinned at the top,
     // appended straight to the wrap, never part of the centered block
-    // below. Only the subtitle + description move as their own centered
-    // unit within the space between the title and the button (which
-    // keeps anchoring to the bottom via .aurion-button-row's own
-    // margin-top: auto, untouched by any of this). Image-left layout is
-    // the one exception — its title moves into the right-hand text column
-    // below instead, so it stays with its own description rather than
-    // pinned above the whole row.
-    if (scene.titleText && !isImageLeftLayout) {
+    // below, and never touched by the image-left layout below. Only the
+    // subtitle + description (and, for image-left, the overlay image
+    // beside them) move as their own centered unit within the space
+    // between the title and the button (which keeps anchoring to the
+    // bottom via .aurion-button-row's own margin-top: auto, untouched by
+    // any of this).
+    if (scene.titleText) {
       const title = document.createElement('h1');
       title.className = 'aurion-scene-title';
       title.textContent = scene.titleText;
@@ -598,8 +649,20 @@ export function startGame(config, container) {
     textBlock.className = 'aurion-scene-textblock';
 
     if (isImageLeftLayout) {
+      // Two nested boxes, not one, so "centered in the middle of the
+      // page" and "image sized to match the text" can both be true at
+      // once: the outer .aurion-image-text-row is the one that grows to
+      // fill the space between the title and the button and centers its
+      // contents in the middle of it (same idea as the no-mechanic
+      // centering rule already uses); the inner .aurion-image-text-pair
+      // is only as tall as the text actually needs, with the image
+      // stretched to match that exact height (CSS default cross-axis
+      // stretch) instead of being sized off on its own.
       const row = document.createElement('div');
       row.className = 'aurion-image-text-row';
+
+      const pair = document.createElement('div');
+      pair.className = 'aurion-image-text-pair';
 
       const imgCol = document.createElement('div');
       imgCol.className = 'aurion-image-text-row-image';
@@ -610,16 +673,10 @@ export function startGame(config, container) {
 
       const textCol = document.createElement('div');
       textCol.className = 'aurion-image-text-row-text';
-      if (scene.titleText) {
-        const title = document.createElement('h1');
-        title.className = 'aurion-scene-title';
-        title.textContent = scene.titleText;
-        applyStyledText(title, scene, 'title');
-        textCol.appendChild(title);
-      }
       textCol.appendChild(textBlock);
 
-      row.append(imgCol, textCol);
+      pair.append(imgCol, textCol);
+      row.appendChild(pair);
       wrap.appendChild(row);
     } else {
       wrap.appendChild(textBlock);
@@ -1271,7 +1328,7 @@ export function startGame(config, container) {
     const stage = document.createElement('div');
     stage.className = 'aurion-sort-stage';
     const board = document.createElement('div');
-    board.className = 'aurion-sort-board';
+    board.className = 'aurion-sort-board aurion-gear-board';
 
     Object.entries(gear).forEach(([value, imageUrl]) => {
       const tile = document.createElement('button');
@@ -1311,11 +1368,21 @@ export function startGame(config, container) {
   // inside, the dot can only move into an adjacent cell if this maze's
   // own wall data says that edge is open — that's the real "collision".
   function buildMazeMechanic(slot, scene, onComplete) {
-    const CELL = 46;
+    const CELL = 40;
     const N = MAZE_GRID_SIZE;
     const SIZE = CELL * N;
     const PAD = 34;
-    const view = `-${PAD} -${PAD} ${SIZE + PAD * 2} ${SIZE + PAD * 2}`;
+    // Extra room below the maze itself for the draggable dot's starting
+    // tray. The previous version placed the tray dot at SIZE + PAD*1.6,
+    // which was OUTSIDE the SVG's own viewBox (that only extended to
+    // SIZE + PAD) — the dot was being drawn, it just physically never
+    // appeared on screen, which is exactly the "static, no dot to drag"
+    // Chef ran into. Giving the bottom edge its own larger padding fixes
+    // that and gives the tray dot clear separation from the S entrance
+    // ring above it.
+    const TRAY_PAD = 70;
+    const viewHeight = SIZE + PAD + TRAY_PAD;
+    const view = `-${PAD} -${PAD} ${SIZE + PAD * 2} ${viewHeight}`;
 
     function cellCenter(r, c) { return { x: c * CELL + CELL / 2, y: r * CELL + CELL / 2 }; }
     function entrancePos(entry) {
@@ -1356,7 +1423,7 @@ export function startGame(config, container) {
 
     const hint = document.createElement('p');
     hint.className = 'aurion-maze-hint';
-    hint.textContent = 'Drag the dot into the maze — pick your way in.';
+    hint.textContent = 'Drag The Dot In The Maze To Reach The 3C Diamond';
 
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
@@ -1371,12 +1438,32 @@ export function startGame(config, container) {
       svg.appendChild(line);
     });
 
+    // The goal marker at the maze's centre. If this scene's mechanicData
+    // sets a "goalImage" (the 3C diamond, per Chef's request — reach the
+    // diamond, not an unexplained gold dot), it's drawn as that image
+    // instead of the plain glowing circle; the circle stays as the
+    // fallback so the maze still works correctly even before that asset
+    // is wired into the config.
     const exitCenter = cellCenter(MAZE_CENTER[0], MAZE_CENTER[1]);
-    const exitGlow = document.createElementNS(svgNS, 'circle');
-    exitGlow.setAttribute('cx', exitCenter.x);
-    exitGlow.setAttribute('cy', exitCenter.y);
-    exitGlow.setAttribute('r', CELL * 0.3);
-    exitGlow.setAttribute('class', 'aurion-maze-exit');
+    const goalImageUrl = scene.mechanicData && scene.mechanicData.goalImage;
+    let exitGlow;
+    if (goalImageUrl) {
+      const size = CELL * 0.9;
+      exitGlow = document.createElementNS(svgNS, 'image');
+      exitGlow.setAttributeNS('http://www.w3.org/1999/xlink', 'href', resolveAssetUrl(goalImageUrl));
+      exitGlow.setAttribute('href', resolveAssetUrl(goalImageUrl));
+      exitGlow.setAttribute('x', exitCenter.x - size / 2);
+      exitGlow.setAttribute('y', exitCenter.y - size / 2);
+      exitGlow.setAttribute('width', size);
+      exitGlow.setAttribute('height', size);
+      exitGlow.setAttribute('class', 'aurion-maze-exit aurion-maze-exit-image');
+    } else {
+      exitGlow = document.createElementNS(svgNS, 'circle');
+      exitGlow.setAttribute('cx', exitCenter.x);
+      exitGlow.setAttribute('cy', exitCenter.y);
+      exitGlow.setAttribute('r', CELL * 0.3);
+      exitGlow.setAttribute('class', 'aurion-maze-exit');
+    }
     svg.appendChild(exitGlow);
 
     const entranceEls = [];
@@ -1391,7 +1478,16 @@ export function startGame(config, container) {
       entranceEls.push({ value, entry, pos });
     });
 
-    const dotStart = { x: SIZE / 2, y: SIZE + PAD * 1.6 };
+    // A faint dashed tray marks where the dot starts, so it reads as "pick
+    // this up" rather than a stray dot sitting in empty space.
+    const dotStart = { x: SIZE / 2, y: SIZE + PAD + TRAY_PAD / 2 };
+    const tray = document.createElementNS(svgNS, 'circle');
+    tray.setAttribute('cx', dotStart.x);
+    tray.setAttribute('cy', dotStart.y);
+    tray.setAttribute('r', CELL * 0.42);
+    tray.setAttribute('class', 'aurion-maze-tray');
+    svg.appendChild(tray);
+
     const dot = document.createElementNS(svgNS, 'circle');
     dot.setAttribute('cx', dotStart.x);
     dot.setAttribute('cy', dotStart.y);
@@ -1407,7 +1503,7 @@ export function startGame(config, container) {
     function svgPoint(clientX, clientY) {
       const rect = svg.getBoundingClientRect();
       const scaleX = (SIZE + PAD * 2) / rect.width;
-      const scaleY = (SIZE + PAD * 2) / rect.height;
+      const scaleY = viewHeight / rect.height;
       return {
         x: (clientX - rect.left) * scaleX - PAD,
         y: (clientY - rect.top) * scaleY - PAD

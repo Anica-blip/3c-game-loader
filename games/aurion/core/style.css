@@ -1,4 +1,4 @@
-/* Repo path: games/aurion/style.css */
+/* Repo path: games/aurion/core/style.css */
 
 :root {
   --aurion-dark: #1a0f2e;
@@ -496,187 +496,6 @@ body {
   margin-top: 0;
 }
 
-/* Scene 3 — the door: closed and open images crossfade on click, then the
-   reveal image (e.g. the sticky note) fades in on top a moment later */
-.aurion-door-stage {
-  position: relative;
-  width: 100%;
-  max-width: 280px;
-  aspect-ratio: 3 / 4;
-  margin: 0 auto;
-  /* The stage box itself is already centered (margin: 0 auto); this nudges
-     the door artwork right because the source PNGs have more empty framing
-     on their right side, so the drawn door reads left-of-center otherwise.
-     Single value to retune if it needs more or less shift after a look. */
-  transform: translateX(5%);
-  cursor: pointer;
-}
-
-.aurion-door-img,
-.aurion-door-reveal {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.aurion-door-closed {
-  opacity: 1;
-  z-index: 1;
-}
-
-.aurion-door-open {
-  z-index: 2;
-}
-
-.aurion-door-reveal {
-  z-index: 3;
-  transition-delay: 0.5s;
-}
-
-.aurion-door-stage.opened .aurion-door-closed {
-  opacity: 0;
-}
-
-.aurion-door-stage.opened .aurion-door-open,
-.aurion-door-stage.opened .aurion-door-reveal {
-  opacity: 1;
-}
-
-/* Scene 5 — word picker: grid on wide screens, one scrollable column on
-   narrow ones, same underlying 30 buttons either way. The counter + grid
-   are wrapped together so the star counter sits in its own row above the
-   grid, left-aligned to the grid's own edge, instead of floating beside it. */
-.aurion-word-picker-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 640px;
-}
-
-.aurion-word-counter {
-  display: flex;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-
-.aurion-word-counter-star {
-  font-size: 17px;
-  line-height: 1;
-  color: var(--aurion-neon-purple-glow-soft);
-  text-shadow: 0 0 6px var(--aurion-neon-purple-glow-soft);
-  transition: color 0.25s ease, text-shadow 0.25s ease;
-}
-
-.aurion-word-counter-star.filled {
-  color: var(--aurion-neon-purple-bright);
-  text-shadow: 0 0 8px var(--aurion-neon-purple-glow-bright), 0 0 16px var(--aurion-neon-purple-glow-bright-soft);
-}
-
-.aurion-word-hint {
-  font-family: 'Poppins';
-  font-size: 12px;
-  color: var(--aurion-text);
-  opacity: 0.65;
-  margin: 0 0 10px;
-}
-
-.aurion-word-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  width: 100%;
-}
-
-@media (max-width: 480px) {
-  .aurion-word-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.aurion-word-card {
-  background: var(--aurion-neon-purple-fill);
-  border: 1px solid var(--aurion-neon-purple);
-  box-shadow: 0 0 8px var(--aurion-neon-purple-glow-soft);
-  border-radius: 6px;
-  color: var(--aurion-text);
-  font-family: 'Poppins';
-  font-weight: 700;
-  font-size: 11px;
-  padding: 6px 4px;
-  cursor: pointer;
-  text-align: center;
-  line-height: 1.25;
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-}
-
-.aurion-word-card:hover {
-  box-shadow: 0 0 12px var(--aurion-neon-purple-glow);
-}
-
-/* Selected state reads as a glow, not a flat fill — the gold/yellow
-   version of this read as brown once layered over the dark purple card,
-   so it's now a brighter version of the same neon purple used everywhere
-   else instead of a different hue, matching the star counter and the
-   sorting/reveal "lit"/"opened" states */
-.aurion-word-card.picked {
-  background: linear-gradient(135deg, rgba(230, 203, 255, 0.32), rgba(192, 125, 244, 0.2));
-  border-color: var(--aurion-neon-purple-bright);
-  color: #ffffff;
-  box-shadow: 0 0 10px var(--aurion-neon-purple-glow-bright), 0 0 22px var(--aurion-neon-purple-glow-bright-soft);
-}
-
-/* Final list card — dark-blue glass, back to its original footprint
-   (220px / 20px padding) after a round where it got shrunk too far */
-.aurion-word-popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  right: 16px;
-  transform: translateY(-50%);
-  width: 220px;
-  max-width: 70vw;
-  background: rgba(20, 40, 90, 0.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(120, 170, 255, 0.4);
-  border-radius: 12px;
-  padding: 20px;
-  box-sizing: border-box;
-  z-index: 20;
-  text-align: center;
-}
-
-.aurion-word-popup.open {
-  display: block;
-}
-
-.aurion-word-popup h2 {
-  font-family: 'Luckiest Guy';
-  color: var(--aurion-gold);
-  font-size: 18px;
-  margin: 0 0 10px;
-}
-
-.aurion-word-stars {
-  color: var(--aurion-gold);
-  font-size: 18px;
-  letter-spacing: 4px;
-  margin-bottom: 12px;
-}
-
-.aurion-word-summary-list {
-  list-style: none;
-  margin: 0 0 16px;
-  padding: 0;
-  font-size: 14px; /* was 13px — the "slightly bigger" bump requested */
-  line-height: 1.7;
-}
-
 /* Scenes 6 and 8 — the category grid is the fixed point of both scenes:
    same size, same position, always fully visible, never resized or pushed
    aside by anything else on screen. The word-queue card (Scene 6) and the
@@ -781,133 +600,6 @@ body {
   transition: box-shadow 0.3s ease;
 }
 
-.aurion-sort-tile.lit {
-  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright), 0 0 44px var(--aurion-neon-purple-glow-bright-soft);
-}
-
-.aurion-sort-count {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: var(--aurion-gold);
-  color: var(--aurion-dark);
-  font-family: 'Poppins';
-  font-weight: 700;
-  font-size: 11px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* The one-word-at-a-time card — pinned to the bottom of the screen, in the
-   space the button row would normally occupy (it's hidden the entire time
-   this mechanic is active, so that area is genuinely free real estate)
-   rather than floating over the grid. Fixed to the viewport, same anchoring
-   approach as the exit icon, so it holds position regardless of scroll or
-   content height. Closes between words, never sits in the grid's own
-   layout flow, so the grid never resizes because of it either way. */
-.aurion-drag-card {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 15;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  background: rgba(20, 40, 90, 0.22);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(120, 170, 255, 0.4);
-  border-radius: 12px;
-  padding: 10px 16px;
-  box-sizing: border-box;
-}
-
-.aurion-drag-card.open {
-  display: flex;
-}
-
-.aurion-drag-card-label {
-  font-family: 'Poppins';
-  font-weight: 700;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* The draggable word tab itself. Capped narrower than a category tile
-   (~145px at the board's normal desktop width above) so it can never read
-   as wider than what it's being dragged onto — long words wrap to a second
-   line instead of shrinking the font, per Chef's rule: font size is never
-   the thing that gives here, only the card/tab's own footprint is. */
-.aurion-sort-chip {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: var(--aurion-text);
-  font-family: 'Poppins';
-  font-weight: 700;
-  font-size: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
-  max-width: 130px;
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  text-align: center;
-  transition: transform 0.25s ease;
-}
-
-.aurion-sort-chip.dragging {
-  transition: none;
-  z-index: 30;
-  cursor: grabbing;
-  position: relative;
-}
-
-/* Scene 8 — spin wheel, decorative, tap the wheel itself to spin */
-.aurion-wheel-stage {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  max-width: 75vw;
-  max-height: 75vw;
-  margin: 0 auto;
-  cursor: pointer;
-}
-
-.aurion-wheel-pointer {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 18px solid var(--aurion-gold);
-  z-index: 2;
-  filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
-}
-
-.aurion-wheel {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  background-size: cover;
-  background-position: center;
-  transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.15, 1);
-}
-
 /* Scene 8 — reveal: only chosen categories flash and open, others stay dim.
    Uses the exact same .aurion-sort-stage + .aurion-sort-board as Scene 6
    (both now fully opaque by default via .aurion-sort-tile), so the two
@@ -970,9 +662,8 @@ body {
   transform: translate(-50%, -50%);
   width: 100%;
   max-width: 220px;
-  /* Matched to .aurion-drag-card's glass — same background alpha (0.22,
-     was 0.16) and same blur (10px). Chef asked for this card's glass % to
-     be raised to whatever the drag card already uses. */
+  /* Glass card look: background alpha 0.22, blur 10px — per Chef's
+     requested glass strength for this popup. */
   background: rgba(20, 40, 90, 0.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -1316,11 +1007,20 @@ body {
   cursor: grab;
   filter: drop-shadow(0 0 8px var(--aurion-neon-purple-glow-bright));
   transition: filter 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.aurion-maze-dot.solved {
-  fill: var(--aurion-gold);
-  filter: drop-shadow(0 0 14px rgba(240, 180, 41, 0.85));
+/* Reaching the centre now makes the dot vanish (fade + shrink) instead
+   of just turning gold and sitting there — with the diamond image now
+   in place at the centre, a solid dot parked on top of it looked wrong. */
+.aurion-maze-dot.vanish {
+  animation: maze-dot-vanish 0.5s ease forwards;
+}
+
+@keyframes maze-dot-vanish {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.15); }
 }
 
 /* Scene 7 ("Choose Your Companion") — single row of four parrots,

@@ -117,118 +117,107 @@ const CORE_VALUE_MESSAGES = {
 // entrance's actual route to the center is — Chef's instruction was to let
 // difficulty do the sorting instead of a visible color/label giving it
 // away.
-// Regenerated bigger (was 7x7) after Chef first flagged the right-hand (E)
-// entrance as the obvious/easy default players would grab without
-// thinking. That earlier fix made E the LONGEST, hardest route instead.
-// This version is that same maze rotated 90° anti-clockwise as a whole
-// (walls, entrances and all) per Chef's follow-up request — physically,
-// that means whatever was on the right is now on top, whatever was on
-// top is now on the left, and so on (N->W, W->S, S->E, E->N).
-// IMPORTANT — flagging this rather than quietly changing it, since Chef
-// said not to redo anything else until she's checked this: a straight
-// rotation carries each entrance's actual difficulty along with it. The
-// entrance that was hardest (Courage, was E/right, 66 moves) is now the
-// one sitting at the TOP; the one that was easiest (Connection, was
-// N/top, 12 moves) is now on the LEFT. Chef's stated goal was "easiest at
-// the top, on purpose" — a plain rotation doesn't give that on its own,
-// it only moves whichever difficulty happened to be on the right up to
-// the top. If the top should be the easy one instead, that needs the
-// value-to-entrance assignment swapped (not another rotation) — flag it
-// back and it's a quick change once confirmed.
+// This version regenerates the maze so the TOP (N) entrance is
+// deliberately the EASIEST route in (12 moves — Connection) rather than
+// just rotating the previous maze, since a plain rotation would only
+// carry over whichever difficulty had ended up on top before, not
+// actually make the top one easy. West (Courage) is now the hardest at
+// 72 moves, South (Integrity) 42, East (Independence) 20 — a wide,
+// distinct spread so no two entrances read as similar difficulty.
 // Scoring locks in the moment the player's dot first crosses from an
 // entrance cell into the maze — not which attempt eventually reaches the
 // center, per Chef's "first entry, not other attempts" instruction.
 const MAZE_GRID_SIZE = 9;
 const MAZE_CENTER = [4, 4];
 const MAZE_ENTRANCES = {
-  Courage: { cell: [0, 4], edgeDir: 'N' },
-  Independence: { cell: [8, 4], edgeDir: 'S' },
-  Connection: { cell: [4, 0], edgeDir: 'W' },
-  Integrity: { cell: [4, 8], edgeDir: 'E' },
+  Courage: { cell: [4, 0], edgeDir: 'W' },
+  Independence: { cell: [4, 8], edgeDir: 'E' },
+  Connection: { cell: [0, 4], edgeDir: 'N' },
+  Integrity: { cell: [8, 4], edgeDir: 'S' },
 };
 
 const MAZE_CELL_OPEN = {
-  '0,0': ["E", "S"],
-  '0,1': ["W", "E"],
-  '0,2': ["W", "E"],
-  '0,3': ["W", "E"],
-  '0,4': ["W"],
-  '0,5': ["E", "S"],
-  '0,6': ["W", "E"],
-  '0,7': ["W", "E", "S"],
-  '0,8': ["W", "S"],
-  '1,0': ["E", "N"],
-  '1,1': ["W", "S"],
-  '1,2': ["E", "S"],
-  '1,3': ["W", "E"],
-  '1,4': ["W", "E"],
-  '1,5': ["W", "N"],
-  '1,6': ["S"],
-  '1,7': ["N", "S"],
-  '1,8': ["N"],
-  '2,0': ["E", "S"],
-  '2,1': ["W", "N"],
-  '2,2': ["E", "N"],
-  '2,3': ["W", "E"],
-  '2,4': ["W", "E"],
-  '2,5': ["W", "E"],
-  '2,6': ["W", "N", "S"],
-  '2,7': ["E", "N"],
-  '2,8': ["W", "S"],
-  '3,0': ["E", "N"],
-  '3,1': ["W", "E"],
-  '3,2': ["W", "S"],
-  '3,3': ["E", "S"],
-  '3,4': ["W", "E"],
-  '3,5': ["W", "E"],
-  '3,6': ["W", "N", "S"],
-  '3,7': ["E", "S"],
-  '3,8': ["W", "N"],
-  '4,0': ["E", "S"],
-  '4,1': ["W", "S"],
-  '4,2': ["E", "N"],
-  '4,3': ["W", "N"],
-  '4,4': ["E"],
-  '4,5': ["W", "S"],
+  '0,0': ["S", "E"],
+  '0,1': ["E", "W"],
+  '0,2': ["S", "W"],
+  '0,3': ["S", "E"],
+  '0,4': ["E", "W"],
+  '0,5': ["E", "W"],
+  '0,6': ["E", "W"],
+  '0,7': ["E", "W"],
+  '0,8': ["S", "W"],
+  '1,0': ["N", "S"],
+  '1,1': ["S", "E"],
+  '1,2': ["N", "W"],
+  '1,3': ["N", "S"],
+  '1,4': ["S", "E"],
+  '1,5': ["S", "W"],
+  '1,6': ["S", "E"],
+  '1,7': ["S", "W"],
+  '1,8': ["N", "S"],
+  '2,0': ["N", "S"],
+  '2,1': ["N", "E"],
+  '2,2': ["S", "W"],
+  '2,3': ["N", "E"],
+  '2,4': ["N", "W"],
+  '2,5': ["N", "S"],
+  '2,6': ["N", "S"],
+  '2,7': ["N", "S"],
+  '2,8': ["N", "S"],
+  '3,0': ["N", "S", "E"],
+  '3,1': ["W"],
+  '3,2': ["N", "S"],
+  '3,3': ["S", "E"],
+  '3,4': ["E", "W"],
+  '3,5': ["N", "W"],
+  '3,6': ["N", "S"],
+  '3,7': ["N", "S"],
+  '3,8': ["N", "S"],
+  '4,0': ["N", "S"],
+  '4,1': ["S", "E"],
+  '4,2': ["N", "W"],
+  '4,3': ["N", "E"],
+  '4,4': ["W"],
+  '4,5': ["S"],
   '4,6': ["N", "S"],
-  '4,7': ["E", "N"],
-  '4,8': ["W", "S"],
+  '4,7': ["N", "S"],
+  '4,8': ["N", "S"],
   '5,0': ["N", "S"],
-  '5,1': ["E", "N"],
-  '5,2': ["W", "S"],
-  '5,3': ["E", "S"],
-  '5,4': ["W", "E"],
-  '5,5': ["W", "N"],
-  '5,6': ["N"],
-  '5,7': ["E", "S"],
-  '5,8': ["W", "N", "S"],
+  '5,1': ["N", "S"],
+  '5,2': ["S", "E"],
+  '5,3': ["E", "W"],
+  '5,4': ["E", "W"],
+  '5,5': ["N", "S", "W"],
+  '5,6': ["N", "S"],
+  '5,7': ["N", "S"],
+  '5,8': ["N", "S"],
   '6,0': ["N", "S"],
-  '6,1': ["S"],
+  '6,1': ["N", "S"],
   '6,2': ["N", "S"],
-  '6,3': ["N", "S"],
-  '6,4': ["E", "S"],
-  '6,5': ["W", "S"],
-  '6,6': ["E", "S"],
-  '6,7': ["W", "N"],
+  '6,3': ["S", "E"],
+  '6,4': ["E", "W"],
+  '6,5': ["N", "W"],
+  '6,6': ["N", "S"],
+  '6,7': ["N", "S"],
   '6,8': ["N", "S"],
   '7,0': ["N", "S"],
   '7,1': ["N", "S"],
-  '7,2': ["E", "N"],
-  '7,3': ["W", "N"],
-  '7,4': ["N", "S"],
-  '7,5': ["E", "N"],
-  '7,6': ["W", "N"],
-  '7,7': ["E", "S"],
-  '7,8': ["W", "N"],
-  '8,0': ["E", "N"],
-  '8,1': ["W", "E", "N"],
-  '8,2': ["W", "E"],
-  '8,3': ["W", "E"],
-  '8,4': ["W", "N"],
-  '8,5': ["E"],
-  '8,6': ["W", "E"],
-  '8,7': ["W", "E", "N"],
-  '8,8': ["W"],
+  '7,2': ["N", "S"],
+  '7,3': ["N", "S"],
+  '7,4': ["S", "E"],
+  '7,5': ["E", "W"],
+  '7,6': ["N", "W"],
+  '7,7': ["N", "S"],
+  '7,8': ["N", "S"],
+  '8,0': ["N"],
+  '8,1': ["N", "E"],
+  '8,2': ["N", "W"],
+  '8,3': ["N", "E"],
+  '8,4': ["N", "E", "W"],
+  '8,5': ["E", "W"],
+  '8,6': ["W"],
+  '8,7': ["N", "E"],
+  '8,8': ["N", "W"],
 };
 
 // Any image/background field can be given as either a full Cloudflare URL
@@ -394,12 +383,28 @@ export function startGame(config, container) {
       coreValueScores[value] += points;
     }
   }
+  // With only 3 scoring moments (gear, maze entrance, companion) worth 2
+  // points each across 4 values, an exact 3-way tie at 2 points apiece
+  // happens any time all three picks land on three different values —
+  // genuinely common, not an edge case. The original version here just
+  // took the first strictly-greater score it saw while walking
+  // coreValueScores' own keys in their declared order (Courage,
+  // Independence, Connection, Integrity), which meant every tie silently
+  // resolved to whichever tied value happened to be declared earliest —
+  // Courage, almost always. That's what Chef was seeing as "I keep
+  // scoring Courage/Integrity" regardless of what she actually picked:
+  // a hidden bias from object key order, not a real reflection of her
+  // choices. Fixed by collecting every value tied for the top score and,
+  // when there's more than one, picking randomly among just those — ties
+  // still happen, but which of the tied values wins is no longer fixed
+  // to the same one every single time.
   function leadingCoreValue() {
-    let best = null;
-    Object.keys(coreValueScores).forEach(key => {
-      if (best === null || coreValueScores[key] > coreValueScores[best]) best = key;
+    let topScore = -Infinity;
+    Object.values(coreValueScores).forEach(score => {
+      if (score > topScore) topScore = score;
     });
-    return best;
+    const leaders = Object.keys(coreValueScores).filter(key => coreValueScores[key] === topScore);
+    return leaders[Math.floor(Math.random() * leaders.length)];
   }
 
   container.classList.add('aurion-game');

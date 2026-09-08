@@ -54,11 +54,15 @@ const CORE_VALUE_MESSAGES = {
 // note above coreValueScores further down for why.
 const MAZE_GRID_SIZE = 9;
 const MAZE_CENTER = [4, 4];
+// Entrance -> Core Value, ordered by actual BFS shortest-path length to the
+// center on THIS maze's own MAZE_CELL_OPEN data (verified by re-running the
+// BFS below, not assumed): N=12 (easiest), E=20, S=42, W=72 (hardest).
+// Courage = easiest (N), Integrity = hardest (W), per Chef's explicit rule.
 const MAZE_ENTRANCES = {
   Courage: { cell: [0, 4], edgeDir: 'N' },
   Connection: { cell: [4, 8], edgeDir: 'E' },
-  Integrity: { cell: [8, 4], edgeDir: 'S' },
-  Independence: { cell: [4, 0], edgeDir: 'W' },
+  Independence: { cell: [8, 4], edgeDir: 'S' },
+  Integrity: { cell: [4, 0], edgeDir: 'W' },
 };
 
 const MAZE_CELL_OPEN = {
@@ -850,7 +854,8 @@ export function startGame(config, container) {
   // four gaps in the border. The player picks the dot up from its tray
   // below the maze and drags it toward whichever entrance they choose —
   // first one they actually enter through locks in that entrance's Core
-  // Value (2 points, same weight as gear and companion), regardless of
+  // Value — the maze is the ONLY thing that scores now (gear and
+  // companion are story-only, see their own comments) — regardless of
   // how many tries it then takes to actually reach the centre. Once
   // inside, the dot can only move into an adjacent cell if this maze's
   // own wall data says that edge is open — that's the real "collision".

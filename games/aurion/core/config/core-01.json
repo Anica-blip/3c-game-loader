@@ -190,7 +190,9 @@
         {
             "id": 6,
             "mechanic": "maze",
-            "mechanicData": {},
+            "mechanicData": {
+                "goalImage": "../../../assets/favicon.png"
+            },
             "situation": "",
             "image": {
                 "label": "",

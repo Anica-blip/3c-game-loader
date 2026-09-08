@@ -1,87 +1,5 @@
 // Repo path: games/aurion/core/games/aurion.js
 
-// This game's word bank for Scene 5 — 30 words, each tagged with its
-// hidden category. The player never sees the category, only the word.
-// Specific to goal-01; a future themed week with a different word set
-// would need this made admin-editable rather than hardcoded here.
-const WORD_BANK = [
-  { word: 'Exercise', category: 'BODY' },
-  { word: 'Travel', category: 'LIFE' },
-  { word: 'Save More', category: 'WORK' },
-  { word: 'Making Things', category: 'CREATE' },
-  { word: 'Call Family', category: 'PEOPLE' },
-  { word: 'Learn a skill', category: 'YOU' },
-  { word: 'Declutter', category: 'HOME' },
-  { word: 'Find love', category: 'PEOPLE' },
-  { word: 'Eat healthier', category: 'BODY' },
-  { word: 'Give back', category: 'GIVE' },
-  { word: 'Start a business', category: 'WORK' },
-  { word: 'Read more', category: 'YOU' },
-  { word: 'More adventure', category: 'LIFE' },
-  { word: 'Be kinder', category: 'PEOPLE' },
-  { word: 'Improve home', category: 'HOME' },
-  { word: 'Support a cause', category: 'GIVE' },
-  { word: 'Sleep better', category: 'BODY' },
-  { word: 'Change career', category: 'WORK' },
-  { word: 'Write something', category: 'CREATE' },
-  { word: 'Make friends', category: 'PEOPLE' },
-  { word: 'Try something', category: 'YOU' },
-  { word: 'Earn more', category: 'WORK' },
-  { word: 'Take a break', category: 'BODY' },
-  { word: 'Help others', category: 'GIVE' },
-  { word: 'Build confidence', category: 'YOU' },
-  { word: 'Start creating', category: 'CREATE' },
-  { word: 'See a new place', category: 'LIFE' },
-  { word: 'Organise life', category: 'HOME' },
-  { word: 'Listen more', category: 'PEOPLE' },
-  { word: 'Reduce stress', category: 'BODY' }
-];
-
-// The eight reveal messages — Chef's final wording, built directly into the
-// engine since this text doesn't change per theme.
-const CATEGORY_MESSAGES = {
-  YOU: {
-    title: '🧠 YOU',
-    subtitle: 'Personal Growth',
-    body: "Your choices point towards YOU learning, developing, understanding yourself or becoming more capable. This may reveal a desire to grow, a need to invest more attention in yourself, or a decision that something you've been putting off is ready for a closer look. Growth starts when curiosity turns into action."
-  },
-  PEOPLE: {
-    title: '❤️ PEOPLE',
-    subtitle: 'Family & Relationships',
-    body: "Your choices point towards PEOPLE connection, family, friendship, communication or relationships. This may reveal a need for more connection, a desire to strengthen an important relationship, or a decision to give someone, including yourself, a little more time and attention. Sometimes the goal isn't about doing more; it's about being more present."
-  },
-  BODY: {
-    title: '🏃 BODY',
-    subtitle: 'Health & Wellbeing',
-    body: "Your choices point towards YOU + BODY energy, movement, food, rest and feeling better in yourself. This may reveal a need to look after your energy, a desire to feel stronger or healthier, or a decision to make one small change that supports the way you want to live. Your body is part of the journey, not something to deal with later."
-  },
-  WORK: {
-    title: '💼 WORK',
-    subtitle: 'Career & Finances',
-    body: "Your choices point towards WORK career, money, projects, achievement or creating greater independence. This may reveal a desire for progress, a need for greater security or direction, or a decision to start moving towards something you've been considering. A bigger change often begins with one practical move."
-  },
-  LIFE: {
-    title: '🌍 LIFE',
-    subtitle: 'Experiences & Adventure',
-    body: "Your choices point towards LIFE travel, adventure, exploration, hobbies, fun and experiences. This may reveal a desire for something new, a need for more variety or excitement, or a decision to stop waiting for the “right time” to experience something you've been wanting to do. Life isn't only about what you accomplish; it's also about what you experience."
-  },
-  HOME: {
-    title: '🏠 HOME',
-    subtitle: 'Home & Environment',
-    body: "Your choices point towards LIFE AROUND YOU your home, surroundings, routines and the spaces in which you spend your time. This may reveal a need for greater order, comfort or simplicity, a desire to create an environment that works better for you, or a decision to change something around you so everyday life feels easier. Sometimes changing the space around you changes how you move through it."
-  },
-  CREATE: {
-    title: '🎨 CREATE',
-    subtitle: 'Creativity & Projects',
-    body: "Your choices point towards CREATION making, writing, building, designing, experimenting or bringing an idea into the world. This may reveal a desire to create something of your own, a need for an outlet, or a decision to stop keeping an idea in your head and give it somewhere to go. Ideas become real when you give them a place to begin."
-  },
-  GIVE: {
-    title: '🌱 GIVE',
-    subtitle: 'Community & Giving',
-    body: "Your choices point towards CONTRIBUTION helping, teaching, supporting, volunteering or making a difference beyond yourself. This may reveal a desire to be useful, a need for greater connection to something meaningful, or a decision to share some of what you have with others. Sometimes progress feels different when it creates value beyond yourself."
-  }
-};
-
 // The four Core Values this challenge tracks a running score for, built up
 // across the gear scene, the maze scene, and the companion scene, then
 // revealed as one envelope in the final scene (whichever value scored
@@ -118,29 +36,29 @@ const CORE_VALUE_MESSAGES = {
 // difficulty do the sorting instead of a visible color/label giving it
 // away.
 // The maze geometry itself (walls, cell layout, which physical edge is
-// hardest/easiest) is unchanged from the last pass: top (N) is still the
-// easiest route in at 12 moves, east (E) 20, south (S) 42, west (W) the
-// hardest at 72 — that part Chef confirmed testing correctly. What
-// changed here is only WHICH Core Value is attached to which entrance,
-// per Chef's own read of the values: Courage is quick and decisive
-// rather than about grinding through difficulty, so it now sits on the
-// easiest (N) route; Integrity is the careful, examine-every-detail
-// temperament, so it now sits on the hardest (W) route. Connection
-// (fairly quick, people-supported) takes the next-easiest (E, 20) and
-// Independence (works it through alone, unhurried) takes the
-// next-hardest (S, 42).
+// hardest/easiest) is unchanged: top (N) is still the easiest route in at
+// 12 moves, east (E) 20, south (S) 42, west (W) the hardest at 72 — that
+// part Chef confirmed testing correctly. Courage sits on the easiest (N)
+// route (quick and decisive rather than about grinding through
+// difficulty) and Connection takes the next-easiest (E, 20). Chef's own
+// testing called the south (S, 42) route "the hard path" she'd tried, so
+// Integrity — the careful, examine-every-detail temperament — sits there
+// rather than on the technically-longest west (W, 72) route, which is
+// Independence (works it through alone, unhurried) instead.
 // Scoring locks in the moment the player's dot first crosses from an
 // entrance cell into the maze — not which attempt eventually reaches the
 // center, per Chef's "first entry, not other attempts" instruction (see
 // buildMazeMechanic's scoreLocked flag, which now also survives the
-// double-click "send the dot back and try another entrance" reset).
+// double-click "send the dot back and try another entrance" reset). This
+// is now also the ONLY thing that scores anything, full stop — see the
+// note above coreValueScores further down for why.
 const MAZE_GRID_SIZE = 9;
 const MAZE_CENTER = [4, 4];
 const MAZE_ENTRANCES = {
   Courage: { cell: [0, 4], edgeDir: 'N' },
   Connection: { cell: [4, 8], edgeDir: 'E' },
-  Independence: { cell: [8, 4], edgeDir: 'S' },
-  Integrity: { cell: [4, 0], edgeDir: 'W' },
+  Integrity: { cell: [8, 4], edgeDir: 'S' },
+  Independence: { cell: [4, 0], edgeDir: 'W' },
 };
 
 const MAZE_CELL_OPEN = {
@@ -268,12 +186,11 @@ function markWrappedButtonLabels(row) {
 
 // Every still image any scene could show gets warmed up here, while the
 // hourglass loading screen is up, so nothing pops in late once the player
-// is actually moving through scenes. This was previously missing every
-// mechanic-specific image (door open/reveal art, all 8 category tiles used
-// by both the sorting and reveal-cards scenes, the spin wheel face, and
-// every button graphic) — those were only ever fetched the first time their
-// scene actually rendered, which is exactly the kind of lag Scenes 3, 6, 7
-// and 8 (the heaviest ones) would have shown.
+// is actually moving through scenes. Covers every mechanic-specific image
+// (gear/pirate art, the maze goal image, companion/parrot art, key art,
+// envelope art) and every button graphic — those would otherwise only be
+// fetched the first time their scene actually rendered, which is exactly
+// the kind of lag the heaviest scenes would show.
 function preloadAssets(config, preloadedVideos) {
   const urls = new Set();
   const add = (url) => { if (url) urls.add(resolveAssetUrl(url)); };
@@ -291,16 +208,6 @@ function preloadAssets(config, preloadedVideos) {
     (d.buttons || []).forEach(btn => { if (btn.image) add(btn.image); });
 
     const mechanicData = d.mechanicData || {};
-    if (d.mechanic === 'door') {
-      add(mechanicData.openImage);
-      add(mechanicData.revealImage);
-    }
-    if (d.mechanic === 'spin-wheel') {
-      add(mechanicData.wheelImage);
-    }
-    if (d.mechanic === 'sorting' || d.mechanic === 'reveal-cards') {
-      Object.values(mechanicData.categoryImages || {}).forEach(add);
-    }
     if (d.mechanic === 'compass') {
       add(mechanicData.image);
     }
@@ -377,34 +284,29 @@ export function startGame(config, container) {
   let sceneIndex = 0;
   let ambientAudio = null;
   const preloadedVideos = new Map(); // scene.video url -> the real preloaded <video> element, reused (not recreated) when that scene renders
-  let selectedWords = []; // the 5 words chosen in Scene 5, carried forward to Scene 6
-  let categoryCounts = {}; // filled in once Scene 6's sorting is complete, used by Scene 8
-  // Core Values challenge only: running score across the gear, maze and
-  // companion scenes, read back by the envelope-reveal scene at the end to
-  // decide which single envelope/message the player sees. addCoreValueScore
-  // is the only way anything writes to this — one place to look if a
-  // scene's scoring ever needs adjusting.
+  // Core Values challenge only: which envelope/message the player sees at
+  // the end. Chef's call after testing: combining scores from the gear,
+  // maze and companion scenes (each worth equal points) meant Courage —
+  // whose maze entrance is the easiest/shortest — kept losing out to
+  // whichever value the gear or companion pick happened to add on top,
+  // and some values could barely ever come out ahead. The gear and
+  // companion scenes are still part of the journey (still pick one,
+  // still get dimmed/reveal feedback, still gate the button) — they just
+  // no longer call addCoreValueScore, so the maze entrance is the only
+  // thing that actually decides the outcome now. addCoreValueScore/
+  // coreValueScores stay in place as the one spot that writes the result
+  // (currently only buildMazeMechanic calls it) rather than ripping out
+  // the scoring plumbing itself — a later pass ("scoring just for the
+  // reveal") may add a different kind of scoring back in on top of this.
   const coreValueScores = { Courage: 0, Independence: 0, Connection: 0, Integrity: 0 };
   function addCoreValueScore(value, points) {
     if (Object.prototype.hasOwnProperty.call(coreValueScores, value)) {
       coreValueScores[value] += points;
     }
   }
-  // With only 3 scoring moments (gear, maze entrance, companion) worth 2
-  // points each across 4 values, an exact 3-way tie at 2 points apiece
-  // happens any time all three picks land on three different values —
-  // genuinely common, not an edge case. The original version here just
-  // took the first strictly-greater score it saw while walking
-  // coreValueScores' own keys in their declared order (Courage,
-  // Independence, Connection, Integrity), which meant every tie silently
-  // resolved to whichever tied value happened to be declared earliest —
-  // Courage, almost always. That's what Chef was seeing as "I keep
-  // scoring Courage/Integrity" regardless of what she actually picked:
-  // a hidden bias from object key order, not a real reflection of her
-  // choices. Fixed by collecting every value tied for the top score and,
-  // when there's more than one, picking randomly among just those — ties
-  // still happen, but which of the tied values wins is no longer fixed
-  // to the same one every single time.
+  // Only the maze ever writes a score now (see above), so this never
+  // actually needs to break a tie in practice — kept as a safe fallback
+  // rather than assuming the maze always ran first.
   function leadingCoreValue() {
     let topScore = -Infinity;
     Object.values(coreValueScores).forEach(score => {
@@ -584,8 +486,7 @@ export function startGame(config, container) {
     if ((!scene.mechanic || scene.mechanic === 'none') && !scene.video) {
       wrap.classList.add('aurion-no-mechanic');
     }
-    if (scene.mechanic === 'sorting' || scene.mechanic === 'reveal-cards' || scene.mechanic === 'word-picker'
-        || scene.mechanic === 'gear-select' || scene.mechanic === 'companion-select'
+    if (scene.mechanic === 'gear-select' || scene.mechanic === 'companion-select'
         || scene.mechanic === 'envelope-reveal' || scene.mechanic === 'maze') {
       wrap.classList.add('aurion-has-side-panel');
     }
@@ -717,38 +618,13 @@ export function startGame(config, container) {
       textBlock.appendChild(desc);
     }
 
-    // Reserved space for this scene's special mechanic (door, word picker,
-    // sorting, wheel, reveal cards) — filled in by dedicated code per scene.
+    // Reserved space for this scene's special mechanic (compass, gear,
+    // maze, companion, key, envelope) — filled in by dedicated code per scene.
     const mechanicSlot = document.createElement('div');
     mechanicSlot.className = 'aurion-mechanic-slot';
     wrap.appendChild(mechanicSlot);
 
     let mechanicGatesButton = false;
-
-    if (scene.mechanic === 'door' && scene.mechanicData) {
-      mechanicGatesButton = true;
-      buildDoorMechanic(mechanicSlot, scene, revealButtons);
-    }
-
-    if (scene.mechanic === 'word-picker') {
-      mechanicGatesButton = true;
-      buildWordPickerMechanic(mechanicSlot, revealButtons);
-    }
-
-    if (scene.mechanic === 'sorting') {
-      mechanicGatesButton = true;
-      buildSortingMechanic(mechanicSlot, scene, revealButtons);
-    }
-
-    if (scene.mechanic === 'spin-wheel') {
-      mechanicGatesButton = true;
-      buildSpinWheelMechanic(mechanicSlot, scene, revealButtons);
-    }
-
-    if (scene.mechanic === 'reveal-cards') {
-      mechanicGatesButton = true;
-      buildRevealMechanic(mechanicSlot, scene, revealButtons);
-    }
 
     if (scene.mechanic === 'compass') {
       mechanicGatesButton = true;
@@ -869,11 +745,11 @@ export function startGame(config, container) {
     }
 
     // Button timing: a mechanic that gates its own completion (like the
-    // door) controls reveal itself. Otherwise, a scene with its own voice
+    // maze) controls reveal itself. Otherwise, a scene with its own voice
     // line waits for that voice to finish; everything else shows its
     // button right away.
     if (mechanicGatesButton) {
-      // buildDoorMechanic (or whichever mechanic) calls revealButtons itself
+      // the active mechanic (compass, gear, maze, etc.) calls revealButtons itself
     } else if (scene.soundEffect) {
       // Was 1000ms — landing on the page and hearing Aurion start talking
       // immediately didn't leave any time to actually read the text first.
@@ -888,408 +764,6 @@ export function startGame(config, container) {
     }
   }
 
-  function buildDoorMechanic(slot, scene, onOpened) {
-    const stage = document.createElement('div');
-    stage.className = 'aurion-door-stage';
-
-    const closedImg = document.createElement('img');
-    closedImg.className = 'aurion-door-img aurion-door-closed';
-    closedImg.src = resolveAssetUrl((scene.image && scene.image.url) || '');
-    closedImg.alt = '';
-
-    const openImg = document.createElement('img');
-    openImg.className = 'aurion-door-img aurion-door-open';
-    openImg.src = resolveAssetUrl(scene.mechanicData.openImage || '');
-    openImg.alt = '';
-
-    const revealImg = document.createElement('img');
-    revealImg.className = 'aurion-door-reveal';
-    revealImg.src = resolveAssetUrl(scene.mechanicData.revealImage || '');
-    revealImg.alt = '';
-
-    stage.append(closedImg, openImg, revealImg);
-    stage.addEventListener('click', () => {
-      if (stage.classList.contains('opened')) return;
-      stage.classList.add('opened');
-      onOpened();
-    });
-
-    slot.appendChild(stage);
-  }
-
-  function buildWordPickerMechanic(slot, onComplete) {
-    const MAX_PICKS = 5;
-    const picked = [];
-
-    // Counter is 5 stars (matching the summary popup's own stars) instead
-    // of a "0 of 5" number, sitting in its own row above the grid rather
-    // than beside it.
-    const pickerWrap = document.createElement('div');
-    pickerWrap.className = 'aurion-word-picker-wrap';
-
-    const counter = document.createElement('div');
-    counter.className = 'aurion-word-counter';
-    const counterStars = [];
-    for (let i = 0; i < MAX_PICKS; i++) {
-      const star = document.createElement('span');
-      star.className = 'aurion-word-counter-star';
-      star.textContent = '★';
-      counter.appendChild(star);
-      counterStars.push(star);
-    }
-
-    // Lets a player change their mind after all 5 slots are filled, without
-    // adding any on-card "x" that would clutter the word-card artwork —
-    // double-click is the whole interaction, called out in this one hint
-    // line instead.
-    const hint = document.createElement('div');
-    hint.className = 'aurion-word-hint';
-    hint.textContent = 'Double-click a word to remove it from your list';
-
-    const grid = document.createElement('div');
-    grid.className = 'aurion-word-grid';
-
-    const popup = document.createElement('div');
-    popup.className = 'aurion-word-popup';
-
-    function updateCounterStars() {
-      counterStars.forEach((star, i) => {
-        star.classList.toggle('filled', i < picked.length);
-      });
-    }
-
-    WORD_BANK.forEach(entry => {
-      const card = document.createElement('button');
-      card.className = 'aurion-word-card';
-      card.textContent = entry.word;
-      card.addEventListener('click', () => {
-        if (card.classList.contains('picked')) return;
-        if (picked.length >= MAX_PICKS) return;
-
-        card.classList.add('picked');
-        picked.push(entry);
-        updateCounterStars();
-
-        if (picked.length === MAX_PICKS) {
-          selectedWords = picked.slice();
-          showSummary();
-        }
-      });
-      card.addEventListener('dblclick', () => {
-        if (!card.classList.contains('picked')) return;
-
-        card.classList.remove('picked');
-        const idx = picked.findIndex(e => e.word === entry.word);
-        if (idx !== -1) picked.splice(idx, 1);
-        updateCounterStars();
-        // Selection is no longer complete — close the summary popup (if it
-        // was open) so the player can pick a replacement; it reopens once
-        // 5 are picked again.
-        popup.classList.remove('open');
-      });
-      grid.appendChild(card);
-    });
-
-    function showSummary() {
-      popup.innerHTML = '';
-      popup.classList.add('open');
-
-      const title = document.createElement('h2');
-      title.textContent = 'Your List Of Five';
-
-      const stars = document.createElement('div');
-      stars.className = 'aurion-word-stars';
-      for (let i = 0; i < MAX_PICKS; i++) {
-        const star = document.createElement('span');
-        star.textContent = '★';
-        stars.appendChild(star);
-      }
-
-      const list = document.createElement('ul');
-      list.className = 'aurion-word-summary-list';
-      picked.forEach(entry => {
-        const li = document.createElement('li');
-        li.textContent = entry.word;
-        list.appendChild(li);
-      });
-
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'aurion-btn';
-      closeBtn.textContent = 'Close';
-      closeBtn.addEventListener('click', () => {
-        popup.classList.remove('open');
-        onComplete();
-      });
-
-      popup.append(title, stars, list, closeBtn);
-    }
-
-    pickerWrap.append(counter, hint, grid);
-    slot.append(pickerWrap, popup);
-  }
-
-  function buildSortingMechanic(slot, scene, onComplete) {
-    const categoryImages = (scene.mechanicData && scene.mechanicData.categoryImages) || {};
-    const categories = ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'];
-
-    // The board is the fixed point of this scene — built once, at full
-    // size, and never touched again by anything below. The word queue is a
-    // small floating card that overlays it (see .aurion-drag-card in
-    // style.css: position: absolute, anchored to .aurion-sort-stage) so it
-    // can never force the board to share width or shrink.
-    const stage = document.createElement('div');
-    stage.className = 'aurion-sort-stage';
-
-    const board = document.createElement('div');
-    board.className = 'aurion-sort-board';
-    const tiles = {};
-    categories.forEach(cat => {
-      const tile = document.createElement('div');
-      tile.className = 'aurion-sort-tile';
-      tile.dataset.category = cat;
-      if (categoryImages[cat]) {
-        tile.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
-      }
-      const countBadge = document.createElement('span');
-      countBadge.className = 'aurion-sort-count';
-      countBadge.textContent = '0';
-      tile.appendChild(countBadge);
-      board.appendChild(tile);
-      tiles[cat] = { el: tile, count: 0, badge: countBadge };
-    });
-
-    // One word at a time instead of all 5 in a permanent tray: the card
-    // closes the moment a word is placed correctly, then reopens with the
-    // next word, until the queue is empty. A wrong drop just snaps the chip
-    // back — the card stays open and doesn't advance.
-    const queue = selectedWords.slice();
-    let placedCount = 0;
-
-    const dragCard = document.createElement('div');
-    dragCard.className = 'aurion-drag-card';
-
-    function showNextChip() {
-      dragCard.innerHTML = '';
-      if (queue.length === 0) return;
-      dragCard.classList.add('open');
-
-      const entry = queue[0];
-      const label = document.createElement('div');
-      label.className = 'aurion-drag-card-label';
-      label.textContent = 'Drag This Word';
-
-      const chip = document.createElement('div');
-      chip.className = 'aurion-sort-chip';
-      chip.textContent = entry.word;
-
-      dragCard.append(label, chip);
-      wireChipDrag(chip, entry);
-    }
-
-    function wireChipDrag(chip, entry) {
-      let startX = 0, startY = 0, offsetX = 0, offsetY = 0, dragging = false;
-
-      chip.addEventListener('pointerdown', (e) => {
-        dragging = true;
-        chip.setPointerCapture(e.pointerId);
-        chip.classList.add('dragging');
-        startX = e.clientX;
-        startY = e.clientY;
-      });
-
-      chip.addEventListener('pointermove', (e) => {
-        if (!dragging) return;
-        offsetX = e.clientX - startX;
-        offsetY = e.clientY - startY;
-        chip.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-      });
-
-      chip.addEventListener('pointerup', (e) => {
-        if (!dragging) return;
-        dragging = false;
-        chip.classList.remove('dragging');
-
-        let landedTile = null;
-        for (const cat of categories) {
-          const rect = tiles[cat].el.getBoundingClientRect();
-          if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-            landedTile = cat;
-            break;
-          }
-        }
-
-        if (landedTile === entry.category) {
-          tiles[landedTile].el.classList.add('lit');
-          tiles[landedTile].count += 1;
-          tiles[landedTile].badge.textContent = String(tiles[landedTile].count);
-          categoryCounts[landedTile] = (categoryCounts[landedTile] || 0) + 1;
-          placedCount += 1;
-
-          dragCard.classList.remove('open');
-          queue.shift();
-
-          if (placedCount === selectedWords.length) {
-            setTimeout(onComplete, 300);
-          } else {
-            setTimeout(showNextChip, 400);
-          }
-        } else {
-          chip.style.transform = 'translate(0, 0)';
-        }
-      });
-    }
-
-    stage.append(board, dragCard);
-    slot.appendChild(stage);
-    showNextChip();
-  }
-
-  function buildSpinWheelMechanic(slot, scene, onComplete) {
-    const stage = document.createElement('div');
-    stage.className = 'aurion-wheel-stage';
-
-    const pointer = document.createElement('div');
-    pointer.className = 'aurion-wheel-pointer';
-
-    const wheel = document.createElement('div');
-    wheel.className = 'aurion-wheel';
-    const wheelImage = scene.mechanicData && scene.mechanicData.wheelImage;
-    if (wheelImage) {
-      wheel.style.backgroundImage = `url('${resolveAssetUrl(wheelImage)}')`;
-    } else {
-      wheel.style.background = 'conic-gradient(rgba(59,42,94,0.9) 0deg 45deg, rgba(79,209,232,0.55) 45deg 90deg, rgba(240,180,41,0.55) 90deg 135deg, rgba(59,42,94,0.9) 135deg 180deg, rgba(79,209,232,0.55) 180deg 225deg, rgba(240,180,41,0.55) 225deg 270deg, rgba(59,42,94,0.9) 270deg 315deg, rgba(79,209,232,0.55) 315deg 360deg)';
-    }
-
-    let spun = false;
-    stage.addEventListener('click', () => {
-      if (spun) return;
-      spun = true;
-      const extraSpins = 5 + Math.floor(Math.random() * 3);
-      const randomOffset = Math.floor(Math.random() * 360);
-      wheel.style.transform = `rotate(${extraSpins * 360 + randomOffset}deg)`;
-      setTimeout(onComplete, 4600);
-    });
-
-    stage.append(pointer, wheel);
-    slot.appendChild(stage);
-
-    // Landing narration for this scene — plays once, 1 second after the
-    // player arrives (moved here from Scene 6 per Chef's call: it reads
-    // better once the wheel is in front of them). Independent of the spin
-    // itself: the wheel is already clickable while it plays, nothing blocks
-    // on it, and the forward button's own timing is untouched — it still
-    // only appears once the spin animation finishes, via onComplete above.
-    if (scene.soundEffect) {
-      setTimeout(() => {
-        new Audio(scene.soundEffect).play().catch(() => {});
-      }, 1000);
-    }
-  }
-
-  function buildRevealMechanic(slot, scene, onComplete) {
-    const categoryImages = (scene.mechanicData && scene.mechanicData.categoryImages) || {};
-    const categories = ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'];
-    const chosenCategories = categories.filter(cat => categoryCounts[cat] > 0);
-    let openedCount = 0;
-
-    // Same .aurion-sort-stage + .aurion-sort-board as Scene 6, so the grid
-    // is identical in both scenes. The message popup floats above it the
-    // same way the drag card does in Scene 6 — an overlay, not a sibling
-    // that competes with the board for width.
-    const stage = document.createElement('div');
-    stage.className = 'aurion-sort-stage';
-
-    const board = document.createElement('div');
-    board.className = 'aurion-sort-board';
-
-    const popup = document.createElement('div');
-    popup.className = 'aurion-reveal-popup';
-
-    // Reverted to setting the image directly as this tile's own
-    // background (same as Scene 6's sorting tiles) instead of a separate
-    // inner .aurion-reveal-art element. The split-layer "back cover"
-    // version depended on aurion.js and style.css always shipping in sync
-    // — the moment they were even briefly out of step, the tile had
-    // nowhere for the art to render and showed as a blank color block,
-    // which is exactly what happened on the live page. One background
-    // image, one file each side, nothing that can fall out of sync.
-    categories.forEach(cat => {
-      const tile = document.createElement('button');
-      tile.className = 'aurion-sort-tile aurion-reveal-tile';
-      if (categoryImages[cat]) {
-        tile.style.backgroundImage = `url('${resolveAssetUrl(categoryImages[cat])}')`;
-      }
-
-      const isChosen = chosenCategories.includes(cat);
-      if (!isChosen) {
-        tile.classList.add('dim');
-        tile.disabled = true;
-      } else {
-        tile.classList.add('flashing');
-      }
-
-      tile.addEventListener('click', () => {
-        if (!isChosen || tile.classList.contains('opened')) return;
-
-        popup.innerHTML = '';
-        popup.classList.add('open');
-        const msg = CATEGORY_MESSAGES[cat];
-
-        const title = document.createElement('h2');
-        title.textContent = msg.title;
-
-        const subtitle = document.createElement('p');
-        subtitle.className = 'aurion-reveal-subtitle';
-        subtitle.textContent = msg.subtitle;
-
-        const body = document.createElement('p');
-        body.className = 'aurion-reveal-body';
-        body.textContent = msg.body;
-
-        // Whether THIS card is the last one, decided the moment it's opened
-        // (not later) — that's what openedCount reaching the total actually
-        // means. The trigger itself, though, waits for the close click
-        // below: per Chef's spec, the voice line starts only once the
-        // player has actually read and closed the last card's message, not
-        // the instant they open it.
-        let isLastCard = false;
-        if (!tile.classList.contains('opened')) {
-          tile.classList.remove('flashing');
-          tile.classList.add('opened');
-          openedCount += 1;
-          isLastCard = openedCount === chosenCategories.length;
-        }
-
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'aurion-btn';
-        closeBtn.textContent = 'Close';
-        closeBtn.addEventListener('click', () => {
-          popup.classList.remove('open');
-          if (isLastCard) {
-            // Voice starts only now that the last card's message has been
-            // read and closed; forward button waits for it to end. Falls
-            // straight through to onComplete if this scene has no
-            // soundEffect set, so a future themed game without narration
-            // still works as before.
-            if (scene.soundEffect) {
-              const voice = new Audio(scene.soundEffect);
-              voice.addEventListener('ended', onComplete);
-              voice.play().catch(onComplete);
-            } else {
-              onComplete();
-            }
-          }
-        });
-
-        popup.append(title, subtitle, body, closeBtn);
-      });
-
-      board.appendChild(tile);
-    });
-
-    stage.append(board, popup);
-    slot.appendChild(stage);
-  }
 
   // Scene 3 ("Where Will Your Journey Take You?") — press the compass and
   // its dial swings left-right-left, like it's finding its bearing, then
@@ -1328,10 +802,9 @@ export function startGame(config, container) {
   // Scene 5 ("Choose Your Gear") — top row is the real choice (thermos,
   // backpack, poles, binoculars), bottom row is the pirates, decorative
   // only per Chef's note ("just addition for effect"), never clickable.
-  // Reuses the exact .aurion-sort-board/.aurion-sort-tile grid Scene 6/8
-  // already use — same 4-column grid naturally gives two rows of four.
-  // Picking a gear item scores its Core Value and reveals the button
-  // immediately, same "one click, done" pattern as the door mechanic.
+  // Reuses the .aurion-sort-board/.aurion-sort-tile grid classes — same
+  // 4-column grid naturally gives two rows of four. Picking a gear item
+  // reveals the button immediately, a simple "one click, done" pattern.
   function buildGearMechanic(slot, scene, onComplete) {
     const gear = (scene.mechanicData && scene.mechanicData.gear) || {};
     const pirates = (scene.mechanicData && scene.mechanicData.pirates) || [];
@@ -1351,7 +824,9 @@ export function startGame(config, container) {
         chosen = true;
         tile.classList.add('opened');
         board.querySelectorAll('.aurion-gear-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
-        addCoreValueScore(value, 2);
+        // No longer scores — per Chef's decision, only the maze entrance
+        // decides the final Core Value now. This pick stays purely part
+        // of the story/journey, same as the pirates beside it.
         onComplete();
       });
       board.appendChild(tile);
@@ -1587,7 +1062,11 @@ export function startGame(config, container) {
 
       if (targetRow === MAZE_CENTER[0] && targetCol === MAZE_CENTER[1]) {
         solved = true;
-        dot.classList.add('solved');
+        // Fade/shrink the dot away rather than leaving it sitting on top
+        // of the diamond — reaching the centre should read as "the dot
+        // has arrived and is done", not "there's a white dot stuck on
+        // the goal art".
+        dot.classList.add('vanish');
         onComplete();
       }
     });
@@ -1638,7 +1117,8 @@ export function startGame(config, container) {
         chosen = true;
         tile.classList.add('opened');
         board.querySelectorAll('.aurion-companion-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
-        addCoreValueScore(value, 2);
+        // No longer scores — same reasoning as the gear scene above, only
+        // the maze entrance decides the final Core Value now.
 
         if (scene.soundEffect) {
           const voice = new Audio(scene.soundEffect);

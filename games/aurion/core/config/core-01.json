@@ -106,7 +106,8 @@
                     "text": "Guide Me"
                 }
             ],
-            "adminLabel": "Scene 1 — compass (interactive drag-to-rotate dial)"
+            "adminLabel": "Scene 1 — compass (interactive drag-to-rotate dial)",
+            "subtitleText": "Tap The Compass Once"
         },
         {
             "id": 4,
@@ -191,7 +192,7 @@
             "id": 6,
             "mechanic": "maze",
             "mechanicData": {
-                "goalImage": "../../../assets/favicon.png"
+                "goalImage": "../../../shared/favicon.png"
             },
             "situation": "",
             "image": {

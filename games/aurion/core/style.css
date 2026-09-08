@@ -1022,7 +1022,10 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 12px 0;
+  /* Extra room up top so the "Tap The Compass Once" subtitle above it
+     doesn't feel crammed against the image — the subtitle's own margin
+     alone wasn't enough breathing room once one was actually added. */
+  padding: 28px 0 12px;
 }
 
 .aurion-compass-dial {
@@ -1162,7 +1165,7 @@ body {
    contain, so every image sits fully inside its container with no
    cropping regardless of its own orientation. */
 .aurion-gear-board {
-  max-width: 380px;
+  max-width: 440px;
 }
 
 .aurion-gear-tile,
@@ -1304,7 +1307,16 @@ body {
   max-width: 460px;
 }
 
+/* Same fix as the gear/pirate tiles above — the parrot art (checked
+   against the actual repo files) sits on a square canvas too, and the
+   base .aurion-sort-tile portrait aspect + cover was cropping their feet
+   off the bottom edge. Size stays as-is (Chef confirmed it's good), only
+   the aspect/fit changes. */
 .aurion-companion-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   cursor: pointer;
   transition: opacity 0.3s ease, box-shadow 0.3s ease;
 }
@@ -1366,7 +1378,14 @@ body {
   max-width: 460px;
 }
 
+/* Same square-canvas fix as gear/pirate/companion above — the envelope
+   art is a wide letterboxed shape on a square canvas, cropped top/bottom
+   by the old portrait+cover combo. */
 .aurion-envelope-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   cursor: pointer;
 }
 

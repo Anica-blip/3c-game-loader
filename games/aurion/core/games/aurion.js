@@ -117,23 +117,30 @@ const CORE_VALUE_MESSAGES = {
 // entrance's actual route to the center is — Chef's instruction was to let
 // difficulty do the sorting instead of a visible color/label giving it
 // away.
-// This version regenerates the maze so the TOP (N) entrance is
-// deliberately the EASIEST route in (12 moves — Connection) rather than
-// just rotating the previous maze, since a plain rotation would only
-// carry over whichever difficulty had ended up on top before, not
-// actually make the top one easy. West (Courage) is now the hardest at
-// 72 moves, South (Integrity) 42, East (Independence) 20 — a wide,
-// distinct spread so no two entrances read as similar difficulty.
+// The maze geometry itself (walls, cell layout, which physical edge is
+// hardest/easiest) is unchanged from the last pass: top (N) is still the
+// easiest route in at 12 moves, east (E) 20, south (S) 42, west (W) the
+// hardest at 72 — that part Chef confirmed testing correctly. What
+// changed here is only WHICH Core Value is attached to which entrance,
+// per Chef's own read of the values: Courage is quick and decisive
+// rather than about grinding through difficulty, so it now sits on the
+// easiest (N) route; Integrity is the careful, examine-every-detail
+// temperament, so it now sits on the hardest (W) route. Connection
+// (fairly quick, people-supported) takes the next-easiest (E, 20) and
+// Independence (works it through alone, unhurried) takes the
+// next-hardest (S, 42).
 // Scoring locks in the moment the player's dot first crosses from an
 // entrance cell into the maze — not which attempt eventually reaches the
-// center, per Chef's "first entry, not other attempts" instruction.
+// center, per Chef's "first entry, not other attempts" instruction (see
+// buildMazeMechanic's scoreLocked flag, which now also survives the
+// double-click "send the dot back and try another entrance" reset).
 const MAZE_GRID_SIZE = 9;
 const MAZE_CENTER = [4, 4];
 const MAZE_ENTRANCES = {
-  Courage: { cell: [4, 0], edgeDir: 'W' },
-  Independence: { cell: [4, 8], edgeDir: 'E' },
-  Connection: { cell: [0, 4], edgeDir: 'N' },
-  Integrity: { cell: [8, 4], edgeDir: 'S' },
+  Courage: { cell: [0, 4], edgeDir: 'N' },
+  Connection: { cell: [4, 8], edgeDir: 'E' },
+  Independence: { cell: [8, 4], edgeDir: 'S' },
+  Integrity: { cell: [4, 0], edgeDir: 'W' },
 };
 
 const MAZE_CELL_OPEN = {
@@ -1504,6 +1511,13 @@ export function startGame(config, container) {
     let currentCell = null;
     let dragging = false;
     let solved = false;
+    // Set the moment the dot first crosses into ANY entrance and never
+    // cleared again — the actual score locks in right there per Chef's
+    // "first entry, not other attempts" rule. Everything below this that
+    // lets the player send the dot back and pick a different entrance is
+    // purely so they can look around/retry the puzzle itself; it never
+    // touches the score once this flag is true.
+    let scoreLocked = false;
 
     function svgPoint(clientX, clientY) {
       const rect = svg.getBoundingClientRect();
@@ -1535,7 +1549,10 @@ export function startGame(config, container) {
           if (Math.sqrt(dx * dx + dy * dy) < CELL * 0.5) {
             insideMaze = true;
             currentCell = cand.entry.cell.slice();
-            addCoreValueScore(cand.value, 2);
+            if (!scoreLocked) {
+              scoreLocked = true;
+              addCoreValueScore(cand.value, 2);
+            }
             const c = cellCenter(currentCell[0], currentCell[1]);
             dot.setAttribute('cx', c.x);
             dot.setAttribute('cy', c.y);
@@ -1577,7 +1594,24 @@ export function startGame(config, container) {
 
     dot.addEventListener('pointerup', () => { dragging = false; });
 
-    stage.append(hint, svg);
+    // Double-click sends the dot back to its tray so the player can look
+    // around and try a different entrance — purely exploratory, the score
+    // already locked (or didn't) on the very first entrance crossing and
+    // this never re-opens or changes it, per Chef's "no matter how many
+    // times they try, the first decision is what counts" rule above.
+    dot.addEventListener('dblclick', () => {
+      if (solved) return;
+      insideMaze = false;
+      currentCell = null;
+      dot.setAttribute('cx', dotStart.x);
+      dot.setAttribute('cy', dotStart.y);
+    });
+
+    const resetHint = document.createElement('p');
+    resetHint.className = 'aurion-maze-reset-hint';
+    resetHint.textContent = 'Double-click the dot to send it back and try another way in.';
+
+    stage.append(hint, svg, resetHint);
     slot.appendChild(stage);
   }
 
@@ -1690,6 +1724,13 @@ export function startGame(config, container) {
         if (!isWinner || tile.classList.contains('opened')) return;
         tile.classList.remove('flashing');
         tile.classList.add('opened');
+        // The board sits directly behind the popup's glass card — when the
+        // winning envelope isn't one of the two outer tiles, its own
+        // artwork was showing straight through the popup's translucent
+        // background and making the message hard to read. Dimming the
+        // whole board while the card is open (and undimming on close)
+        // clears that interference regardless of which tile opened it.
+        board.classList.add('dimmed');
 
         popup.innerHTML = '';
         popup.classList.add('open');
@@ -1709,6 +1750,7 @@ export function startGame(config, container) {
         closeBtn.textContent = 'Close';
         closeBtn.addEventListener('click', () => {
           popup.classList.remove('open');
+          board.classList.remove('dimmed');
           if (scene.soundEffect) {
             const voice = new Audio(scene.soundEffect);
             voice.addEventListener('ended', onComplete);

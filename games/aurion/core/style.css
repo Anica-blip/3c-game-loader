@@ -526,34 +526,18 @@ body {
   min-width: 240px;
 }
 
-/* Mobile: 8 tiles as 2 / 3 / 3 instead of a plain 2-per-row stack, so the
-   whole board fits without the player needing to scroll to see every
-   category — the whole point of this layout per Chef. A 6-column grid
-   with every tile spanning 2 columns gives 3 equal tiles per row; the
-   first two tiles are placed explicitly in columns 2-4 and 4-6 so they
-   sit centered as their own shorter row, leaving column 1 and column 6
-   empty as matching side margins. Tiles 3-8 then auto-place into rows 2
-   and 3, 3 per row, in the same category order as before — nothing about
-   which tile holds which category changes, only the layout. */
-@media (max-width: 700px) {
-  .aurion-sort-board {
-    grid-template-columns: repeat(6, 1fr);
-    max-width: 260px;
-    gap: 8px;
-  }
-
-  .aurion-sort-tile {
-    grid-column: span 2;
-  }
-
-  .aurion-sort-tile:nth-child(1) {
-    grid-column: 2 / span 2;
-  }
-
-  .aurion-sort-tile:nth-child(2) {
-    grid-column: 4 / span 2;
-  }
-}
+/* The old generic mobile override that used to live here (a 6-column
+   grid with explicit nth-child(1)/(2) placement, built for the 8-tile
+   goals-series sorting/reveal grid) is gone — that mechanic was removed
+   in the code cleanup, and every board that's actually live now (gear,
+   companion, envelope) has its own dedicated mobile rule further down
+   this file. Leftover here, its explicit grid-column placement on
+   nth-child(1)/(2) was silently reaching into the companion and envelope
+   boards too (they still carry the shared .aurion-sort-tile class),
+   shoving those two tiles into implicit grid columns that didn't exist
+   in the new fixed-size layout and pushing them off-screen — which is
+   exactly the "images gone missing" Chef reported. Removed at the root
+   rather than patched around. */
 
 /* No border at all, not even the box-shadow ring the previous pass used —
    just a diffuse glow, nothing with a hard edge. No background-color fill

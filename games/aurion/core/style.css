@@ -1056,6 +1056,24 @@ body {
   animation: maze-dot-vanish 0.5s ease forwards;
 }
 
+/* Invisible larger touch target laid over the dot — all drag listeners
+   live here (see setDotPos() in aurion.js), not on the small visible dot
+   itself. transparent fill still receives pointer events in SVG, so this
+   is a real target, just an unseen one, sized well past the visible
+   dot's own radius so a finger that's roughly on the dot actually grabs
+   it instead of missing and starting nothing. */
+.aurion-maze-dot-hitarea {
+  fill: transparent;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.aurion-maze-dot-hitarea.vanish {
+  animation: maze-dot-vanish 0.5s ease forwards;
+}
+
 @keyframes maze-dot-vanish {
   0% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(0.15); }
@@ -1096,6 +1114,20 @@ body {
 .aurion-companion-tile.dim {
   opacity: 0.3;
   box-shadow: none;
+}
+
+/* Mobile: same problem and same fix as the gear board — the generic
+   .aurion-sort-board 2/3/3 layout (built for an 8-tile grid) was misaligning
+   these 4 tiles (two centered in row 1, two left-aligned in row 2, not
+   matching each other). A clean 2x2 grid instead, and sized to actually
+   use the available width on a phone screen rather than sitting in the
+   cramped 260px cap the generic rule set. */
+@media (max-width: 700px) {
+  .aurion-companion-board {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 340px;
+    gap: 16px;
+  }
 }
 
 /* Scene 8 ("Grab The Key") — click, glow, then a float-up + shrink +
@@ -1169,6 +1201,17 @@ body {
    the popup's glass and fighting with the message text underneath it. */
 .aurion-envelope-board.dimmed .aurion-envelope-tile {
   opacity: 0.1;
+}
+
+/* Mobile: same fix as gear/companion above — a clean, properly-aligned
+   2x2 grid sized to use the available screen width, instead of the
+   generic 2/3/3 layout built for an unrelated 8-tile grid. */
+@media (max-width: 700px) {
+  .aurion-envelope-board {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 340px;
+    gap: 16px;
+  }
 }
 
 .aurion-credits-text {

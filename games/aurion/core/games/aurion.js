@@ -1003,6 +1003,27 @@ export function startGame(config, container) {
     dot.setAttribute('class', 'aurion-maze-dot');
     svg.appendChild(dot);
 
+    // Invisible, larger touch target sitting on top of the visible dot —
+    // the dot's own drawn radius (CELL * 0.22, ~9px on a small phone
+    // screen) is well under the ~44px a finger can reliably land on, which
+    // is the real reason a touch that looks like it's "on the dot" often
+    // doesn't register at all. All drag listeners live on this invisible
+    // circle now; setDotPos() below keeps it perfectly synced with the
+    // visible dot so nothing about the look changes.
+    const hitArea = document.createElementNS(svgNS, 'circle');
+    hitArea.setAttribute('cx', dotStart.x);
+    hitArea.setAttribute('cy', dotStart.y);
+    hitArea.setAttribute('r', Math.max(CELL * 0.22, CELL * 0.55));
+    hitArea.setAttribute('class', 'aurion-maze-dot-hitarea');
+    svg.appendChild(hitArea);
+
+    function setDotPos(x, y) {
+      dot.setAttribute('cx', x);
+      dot.setAttribute('cy', y);
+      hitArea.setAttribute('cx', x);
+      hitArea.setAttribute('cy', y);
+    }
+
     let insideMaze = false;
     let currentCell = null;
     let dragging = false;
@@ -1025,19 +1046,18 @@ export function startGame(config, container) {
       };
     }
 
-    dot.addEventListener('pointerdown', (e) => {
+    hitArea.addEventListener('pointerdown', (e) => {
       if (solved) return;
       dragging = true;
-      dot.setPointerCapture(e.pointerId);
+      hitArea.setPointerCapture(e.pointerId);
     });
 
-    dot.addEventListener('pointermove', (e) => {
+    hitArea.addEventListener('pointermove', (e) => {
       if (!dragging || solved) return;
       const p = svgPoint(e.clientX, e.clientY);
 
       if (!insideMaze) {
-        dot.setAttribute('cx', p.x);
-        dot.setAttribute('cy', p.y);
+        setDotPos(p.x, p.y);
         // Committing to an entrance: close enough to its ring AND the
         // maze's own boundary (moving inward, not just hovering nearby).
         for (const cand of entranceEls) {
@@ -1050,36 +1070,43 @@ export function startGame(config, container) {
               addCoreValueScore(cand.value, 2);
             }
             const c = cellCenter(currentCell[0], currentCell[1]);
-            dot.setAttribute('cx', c.x);
-            dot.setAttribute('cy', c.y);
+            setDotPos(c.x, c.y);
             break;
           }
         }
         return;
       }
 
-      // Inside the maze: only ever snap to an orthogonally adjacent cell,
-      // and only if this maze's own data says that side is open. Anything
-      // else is ignored — the dot simply doesn't follow, which reads as
-      // hitting a wall.
-      const targetCol = Math.round((p.x - CELL / 2) / CELL);
-      const targetRow = Math.round((p.y - CELL / 2) / CELL);
+      // Inside the maze: only ever move to an orthogonally adjacent cell,
+      // and only if this maze's own data says that side is open — anything
+      // else is ignored, which reads as hitting a wall. Snaps once the
+      // finger has crossed SNAP_FRACTION of a cell-width past the current
+      // cell's center on whichever axis it's moved furthest along (was a
+      // flat 50%/Math.round — that made the dot feel like it wasn't
+      // responding at all until the finger had moved almost a full cell).
+      const SNAP_FRACTION = 0.38;
       const [cr, cc] = currentCell;
-      const dr = targetRow - cr, dc = targetCol - cc;
+      const origin = cellCenter(cr, cc);
+      const dxCells = (p.x - origin.x) / CELL;
+      const dyCells = (p.y - origin.y) / CELL;
       let dir = null;
-      if (dr === -1 && dc === 0) dir = 'N';
-      else if (dr === 1 && dc === 0) dir = 'S';
-      else if (dr === 0 && dc === -1) dir = 'W';
-      else if (dr === 0 && dc === 1) dir = 'E';
+      if (Math.abs(dxCells) > Math.abs(dyCells)) {
+        if (dxCells > SNAP_FRACTION) dir = 'E';
+        else if (dxCells < -SNAP_FRACTION) dir = 'W';
+      } else {
+        if (dyCells > SNAP_FRACTION) dir = 'S';
+        else if (dyCells < -SNAP_FRACTION) dir = 'N';
+      }
       if (!dir) return;
 
       const open = MAZE_CELL_OPEN[`${cr},${cc}`] || [];
       if (!open.includes(dir)) return;
 
+      const targetRow = cr + (dir === 'S' ? 1 : dir === 'N' ? -1 : 0);
+      const targetCol = cc + (dir === 'E' ? 1 : dir === 'W' ? -1 : 0);
       currentCell = [targetRow, targetCol];
       const c = cellCenter(targetRow, targetCol);
-      dot.setAttribute('cx', c.x);
-      dot.setAttribute('cy', c.y);
+      setDotPos(c.x, c.y);
 
       if (targetRow === MAZE_CENTER[0] && targetCol === MAZE_CENTER[1]) {
         solved = true;
@@ -1088,23 +1115,24 @@ export function startGame(config, container) {
         // has arrived and is done", not "there's a white dot stuck on
         // the goal art".
         dot.classList.add('vanish');
+        hitArea.classList.add('vanish');
         onComplete();
       }
     });
 
-    dot.addEventListener('pointerup', () => { dragging = false; });
+    hitArea.addEventListener('pointerup', () => { dragging = false; });
+    hitArea.addEventListener('pointercancel', () => { dragging = false; });
 
     // Double-click sends the dot back to its tray so the player can look
     // around and try a different entrance — purely exploratory, the score
     // already locked (or didn't) on the very first entrance crossing and
     // this never re-opens or changes it, per Chef's "no matter how many
     // times they try, the first decision is what counts" rule above.
-    dot.addEventListener('dblclick', () => {
+    hitArea.addEventListener('dblclick', () => {
       if (solved) return;
       insideMaze = false;
       currentCell = null;
-      dot.setAttribute('cx', dotStart.x);
-      dot.setAttribute('cy', dotStart.y);
+      setDotPos(dotStart.x, dotStart.y);
     });
 
     const resetHint = document.createElement('p');

@@ -1116,17 +1116,27 @@ body {
   box-shadow: none;
 }
 
-/* Mobile: same problem and same fix as the gear board — the generic
-   .aurion-sort-board 2/3/3 layout (built for an 8-tile grid) was misaligning
-   these 4 tiles (two centered in row 1, two left-aligned in row 2, not
-   matching each other). A clean 2x2 grid instead, and sized to actually
-   use the available width on a phone screen rather than sitting in the
-   cramped 260px cap the generic rule set. */
+/* Mobile: fixed-size tiles, not fractional grid columns — the generic
+   .aurion-sort-board 2/3/3 layout (built for an 8-tile grid) was
+   misaligning these 4 tiles, and an earlier attempt at a 2-column 1fr
+   grid didn't land cleanly either. Explicit px width/height on every
+   tile removes any ambiguity: all 4 are always the exact same size,
+   arranged 2 per row, 2 rows — nothing left for the grid math to get
+   wrong. .aurion-mechanic-slot already centers its content (flex: 1 +
+   align-items/justify-content: center, see its base rule above), so a
+   correctly-sized, compact board now lands in the middle of the screen
+   on its own — the "stuck near the title" look was the oversized tiles
+   themselves pushing everything around, not a missing centering rule. */
 @media (max-width: 700px) {
   .aurion-companion-board {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 340px;
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
     gap: 16px;
+  }
+
+  .aurion-companion-tile {
+    width: 150px;
+    height: 150px;
   }
 }
 
@@ -1203,14 +1213,20 @@ body {
   opacity: 0.1;
 }
 
-/* Mobile: same fix as gear/companion above — a clean, properly-aligned
-   2x2 grid sized to use the available screen width, instead of the
-   generic 2/3/3 layout built for an unrelated 8-tile grid. */
+/* Mobile: same fixed-size approach as the companion board above — all 4
+   tiles at an explicit px size, 2 per row, 2 rows, which lets the
+   existing .aurion-mechanic-slot centering place the board in the
+   middle of the screen correctly. */
 @media (max-width: 700px) {
   .aurion-envelope-board {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 340px;
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
     gap: 16px;
+  }
+
+  .aurion-envelope-tile {
+    width: 150px;
+    height: 150px;
   }
 }
 

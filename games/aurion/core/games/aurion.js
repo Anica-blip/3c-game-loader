@@ -819,7 +819,20 @@ export function startGame(config, container) {
     const board = document.createElement('div');
     board.className = 'aurion-sort-board aurion-gear-board';
 
-    Object.entries(gear).forEach(([value, imageUrl]) => {
+    // Gear item i and pirate i are a matched pair (gear1/pirate1,
+    // gear2/pirate2, etc — the config's own array order), wrapped together
+    // in one .aurion-gear-pair container so gear sits directly above its
+    // pirate as a single unit rather than two independent grid tiles that
+    // only happened to land in the same column. Gives the illusion the
+    // player is choosing gear that matches a pirate's look, not just
+    // picking whichever gear helps their journey. Same pairing holds at
+    // every screen size — only the CSS grid's column count changes
+    // between desktop (4 pairs side by side) and mobile (2 per row).
+    const gearEntries = Object.entries(gear);
+    gearEntries.forEach(([value, imageUrl], i) => {
+      const pair = document.createElement('div');
+      pair.className = 'aurion-gear-pair';
+
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-gear-tile';
       if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
@@ -833,14 +846,17 @@ export function startGame(config, container) {
         // of the story/journey, same as the pirates beside it.
         onComplete();
       });
-      board.appendChild(tile);
-    });
+      pair.appendChild(tile);
 
-    pirates.forEach(imageUrl => {
-      const tile = document.createElement('div');
-      tile.className = 'aurion-sort-tile aurion-pirate-tile dim';
-      if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
-      board.appendChild(tile);
+      const pirateUrl = pirates[i];
+      if (pirateUrl) {
+        const pirateTile = document.createElement('div');
+        pirateTile.className = 'aurion-sort-tile aurion-pirate-tile dim';
+        pirateTile.style.backgroundImage = `url('${resolveAssetUrl(pirateUrl)}')`;
+        pair.appendChild(pirateTile);
+      }
+
+      board.appendChild(pair);
     });
 
     stage.appendChild(board);

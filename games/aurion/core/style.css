@@ -870,6 +870,16 @@ body {
   max-width: 440px;
 }
 
+/* Each pair is its own grid item now (gear stacked directly above its
+   matching pirate), so the base .aurion-sort-board grid still just lays
+   out 4 items side by side on desktop — same visual result as before,
+   now explicit instead of accidental. */
+.aurion-gear-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .aurion-gear-tile,
 .aurion-pirate-tile {
   aspect-ratio: 1 / 1;
@@ -900,18 +910,43 @@ body {
   opacity: 0.55;
 }
 
+/* Mobile: the generic .aurion-sort-board 2/3/3 layout (built for the old
+   8-unrelated-category grid) breaks the gear/pirate pairing by spreading
+   the two halves of each pair across different rows. Override it here so
+   gear stays paired with its own pirate: 2 pair-containers per row
+   (4 pairs = 2 rows of 2), each pair still stacked internally via
+   .aurion-gear-pair above. Same specificity as the generic rule but
+   later in the file, so this wins. */
+@media (max-width: 700px) {
+  .aurion-gear-board {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 300px;
+    gap: 16px;
+  }
+}
+
 /* Scene 6 ("Follow The Map") — the hand-built maze. Walls, entrance
    rings and the exit glow are all drawn in the same neon-purple family
    as everything else on the page, and critically all four entrance
    rings share IDENTICAL styling — no per-ring color or size difference
    — so the artwork itself never gives away which entrance points to
    which Core Value, per Chef's explicit note. */
+/* user-select: none across the whole stage (hint text, reset-hint text,
+   and the svg/tray) — without it, a touch-and-drag that starts on or
+   near the dot was being read by mobile browsers as a text-selection
+   gesture instead of the drag, highlighting the hint text sitting right
+   below the maze. touch-action: none (already on .aurion-maze-svg) stops
+   the browser's own pan/zoom gestures from competing; user-select is the
+   separate property that stops the highlight-text gesture specifically. */
 .aurion-maze-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   padding: 6px 0 4px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Matches .aurion-scene-subtitle exactly (Poppins, bold, same size/color)
@@ -1009,6 +1044,9 @@ body {
   transition: filter 0.2s ease;
   transform-box: fill-box;
   transform-origin: center;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Reaching the centre now makes the dot vanish (fade + shrink) instead

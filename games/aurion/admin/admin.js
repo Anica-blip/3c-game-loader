@@ -589,7 +589,73 @@ function renderGlobal() {
   globalRoot.appendChild(creditsSection);
 }
 
-// The tab bar itself — labeled by Chef's own mapping name when given
+// The 4 structural pages that always exist once per theme and never move:
+// landing, consent, send-off, final. Everything else is a plain numbered
+// scene — Chef does not type titles onto these tabs, the number is always
+// just its live position among the other numbered scenes, 1, 2, 3, 4, with
+// no gaps and nothing mixed out of order.
+const FIXED_PAGE_LABELS = new Set(['landing page', 'consent page', 'Send-off', 'final page']);
+
+function isFixedPage(decision) {
+  return FIXED_PAGE_LABELS.has(decision.adminLabel);
+}
+
+function regularSceneNumber(decision) {
+  let n = 0;
+  for (const d of state.decisions) {
+    if (isFixedPage(d)) continue;
+    n += 1;
+    if (d === decision) return n;
+  }
+  return n;
+}
+
+function regularSceneCount() {
+  return state.decisions.filter(d => !isFixedPage(d)).length;
+}
+
+// Removes the scene from wherever it is and reinserts it at the requested
+// position, counting only among the other numbered scenes (fixed pages are
+// skipped and never shifted). Always leaves the numbered scenes as a clean
+// 1, 2, 3, 4 run — never a gap, never a duplicate.
+function moveSceneToRegularPosition(decision, requestedPosition) {
+  const fromIndex = state.decisions.indexOf(decision);
+  if (fromIndex === -1) return;
+  state.decisions.splice(fromIndex, 1);
+
+  const total = regularSceneCount();
+  let target = Math.round(requestedPosition);
+  if (!Number.isFinite(target) || target < 1) target = 1;
+  if (target > total) target = total;
+
+  let count = 0;
+  let insertAt = -1;
+  for (let i = 0; i < state.decisions.length; i++) {
+    if (isFixedPage(state.decisions[i])) continue;
+    count += 1;
+    if (count === target) {
+      insertAt = i;
+      break;
+    }
+  }
+  if (insertAt === -1) {
+    // Target sits after the last remaining numbered scene — drop it right
+    // after that last one (still before whatever fixed page follows, e.g.
+    // Send-off), never at the very end of the whole array.
+    let lastRegularIdx = -1;
+    for (let i = 0; i < state.decisions.length; i++) {
+      if (!isFixedPage(state.decisions[i])) lastRegularIdx = i;
+    }
+    insertAt = lastRegularIdx === -1 ? state.decisions.length : lastRegularIdx + 1;
+  }
+
+  state.decisions.splice(insertAt, 0, decision);
+  activeSceneIndex = insertAt;
+  renderForm();
+}
+
+// The tab bar itself — fixed pages show their real name, every other scene
+// shows nothing but its plain live position, "Scene N"
 function renderSceneTabs() {
   sceneTabs.innerHTML = '';
   if (!state.decisions) state.decisions = [];
@@ -603,7 +669,9 @@ function renderSceneTabs() {
     tab.className = 'admin-tab' + (index === activeSceneIndex ? ' admin-tab-active' : '');
 
     const label = document.createElement('span');
-    label.textContent = decision.adminLabel || `Scene ${index + 1}`;
+    label.textContent = isFixedPage(decision)
+      ? (decision.adminLabel || `Scene ${index + 1}`)
+      : `Scene ${regularSceneNumber(decision)}`;
     tab.appendChild(label);
 
     tab.addEventListener('click', () => {
@@ -640,51 +708,69 @@ function renderActiveScene() {
     return;
   }
 
+  const fixed = isFixedPage(decision);
+  const displayLabel = fixed
+    ? (decision.adminLabel || `Scene ${activeSceneIndex + 1}`)
+    : `Scene ${regularSceneNumber(decision)}`;
+
   // Left: setting the stage for this scene only
-  activeLeft.appendChild(sectionTitle(`Scene ${activeSceneIndex + 1}, setting the stage`));
+  activeLeft.appendChild(sectionTitle(`${displayLabel}, setting the stage`));
 
-  const moveRow = document.createElement('div');
-  moveRow.className = 'admin-item-row';
-  const moveEarlierBtn = document.createElement('button');
-  moveEarlierBtn.className = 'admin-btn';
-  moveEarlierBtn.textContent = '\u25c0 Move earlier';
-  moveEarlierBtn.disabled = activeSceneIndex === 0;
-  moveEarlierBtn.addEventListener('click', () => {
-    const arr = state.decisions;
-    [arr[activeSceneIndex - 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex - 1]];
-    activeSceneIndex -= 1;
-    renderForm();
-  });
-  const moveLaterBtn = document.createElement('button');
-  moveLaterBtn.className = 'admin-btn';
-  moveLaterBtn.textContent = 'Move later \u25b6';
-  moveLaterBtn.disabled = activeSceneIndex === state.decisions.length - 1;
-  moveLaterBtn.addEventListener('click', () => {
-    const arr = state.decisions;
-    [arr[activeSceneIndex + 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex + 1]];
-    activeSceneIndex += 1;
-    renderForm();
-  });
-  moveRow.append(moveEarlierBtn, moveLaterBtn);
-  activeLeft.appendChild(moveRow);
+  if (fixed) {
+    const fixedNote = document.createElement('p');
+    fixedNote.className = 'admin-help';
+    fixedNote.textContent = 'This is a fixed page \u2014 its position is locked and it can\u2019t be moved or removed from here.';
+    activeLeft.appendChild(fixedNote);
 
-  const removeSceneBtn = document.createElement('button');
-  removeSceneBtn.className = 'admin-btn admin-btn-remove';
-  removeSceneBtn.textContent = 'Remove this scene';
-  removeSceneBtn.style.marginBottom = 'var(--spacing-md)';
-  removeSceneBtn.addEventListener('click', () => {
-    if (!window.confirm('Remove this scene? This cannot be undone.')) return;
-    state.decisions.splice(activeSceneIndex, 1);
-    if (activeSceneIndex >= state.decisions.length) activeSceneIndex = state.decisions.length - 1;
-    renderForm();
-  });
-  activeLeft.appendChild(removeSceneBtn);
+    activeLeft.appendChild(textField(
+      'Page name (must stay exactly "landing page", "consent page", "Send-off", or "final page" for the admin to recognize it as fixed)',
+      decision.adminLabel,
+      v => { decision.adminLabel = v; }
+    ));
+  } else {
+    const moveRow = document.createElement('div');
+    moveRow.className = 'admin-item-row';
+    const moveEarlierBtn = document.createElement('button');
+    moveEarlierBtn.className = 'admin-btn';
+    moveEarlierBtn.textContent = '\u25c0 Move earlier';
+    moveEarlierBtn.disabled = activeSceneIndex === 0 || isFixedPage(state.decisions[activeSceneIndex - 1]);
+    moveEarlierBtn.addEventListener('click', () => {
+      const arr = state.decisions;
+      [arr[activeSceneIndex - 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex - 1]];
+      activeSceneIndex -= 1;
+      renderForm();
+    });
+    const moveLaterBtn = document.createElement('button');
+    moveLaterBtn.className = 'admin-btn';
+    moveLaterBtn.textContent = 'Move later \u25b6';
+    moveLaterBtn.disabled = activeSceneIndex === state.decisions.length - 1 || isFixedPage(state.decisions[activeSceneIndex + 1]);
+    moveLaterBtn.addEventListener('click', () => {
+      const arr = state.decisions;
+      [arr[activeSceneIndex + 1], arr[activeSceneIndex]] = [arr[activeSceneIndex], arr[activeSceneIndex + 1]];
+      activeSceneIndex += 1;
+      renderForm();
+    });
+    moveRow.append(moveEarlierBtn, moveLaterBtn);
+    activeLeft.appendChild(moveRow);
 
-  activeLeft.appendChild(textField(
-    'Scene label, for your own mapping (e.g. Landing, Consent, Send-off, Final)',
-    decision.adminLabel,
-    v => { decision.adminLabel = v; }
-  ));
+    activeLeft.appendChild(numberField(
+      `Position \u2014 Scene ${regularSceneNumber(decision)} of ${regularSceneCount()} (type a number to jump straight to that slot)`,
+      regularSceneNumber(decision),
+      v => { moveSceneToRegularPosition(decision, v); }
+    ));
+
+    const removeSceneBtn = document.createElement('button');
+    removeSceneBtn.className = 'admin-btn admin-btn-remove';
+    removeSceneBtn.textContent = 'Remove this scene';
+    removeSceneBtn.style.marginBottom = 'var(--spacing-md)';
+    removeSceneBtn.addEventListener('click', () => {
+      if (!window.confirm('Remove this scene? This cannot be undone.')) return;
+      state.decisions.splice(activeSceneIndex, 1);
+      if (activeSceneIndex >= state.decisions.length) activeSceneIndex = state.decisions.length - 1;
+      renderForm();
+    });
+    activeLeft.appendChild(removeSceneBtn);
+  }
 
   if (!decision.background) decision.background = { type: 'image', url: '' };
   const bgLabel = document.createElement('span');
@@ -724,7 +810,7 @@ function renderActiveScene() {
   // Right: setting the scene, content
   const sceneHeaderBar = document.createElement('div');
   sceneHeaderBar.className = 'admin-scene-header-bar';
-  sceneHeaderBar.textContent = `Scene ${activeSceneIndex + 1}, setting the scene`;
+  sceneHeaderBar.textContent = `${displayLabel}, setting the scene`;
   activeRight.appendChild(sceneHeaderBar);
 
   activeRight.appendChild(styledTextGroup('title', decision, HEADER_FONTS,

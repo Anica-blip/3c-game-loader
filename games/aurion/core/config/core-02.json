@@ -147,6 +147,9 @@
           "text": "Got My Friend"
         }
       ],
+      "adminLabel": "Scene 2"
+    },
+    {
       "id": 5,
       "mechanic": "gear-select",
       "mechanicData": {
@@ -265,10 +268,6 @@
     },
     {
       "id": 11,
-      "titleText": "Let's Check How Far You Got",
-      "descText": "",
-      "buttons": [
-        {
       "mechanic": "envelope-reveal",
       "mechanicData": {
         "envelopes": {
@@ -292,17 +291,17 @@
         "type": "image",
         "url": ""
       },
+      "options": [],
       "overlayImage": {
         "url": "",
         "position": "center"
       },
+      "titleText": "Let's Check How Far You Got",
+      "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
           "text": "2nd Round Success"
-        }
-      ],
-      "options": [],
         }
       ],
       "adminLabel": "Scene 9",
@@ -385,7 +384,7 @@
         }
       ],
       "adminLabel": "final page"
-    },
-    {
+    }
+  ],
   "results": []
 }

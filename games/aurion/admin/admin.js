@@ -46,7 +46,8 @@ const BODY_FONTS = [
 
 const BUTTON_TEXT_COLORS = [
   { value: '#ffffff', label: 'White' },
-  { value: '#000000', label: 'Black' }
+  { value: '#000000', label: 'Black' },
+  { value: '#1a0f2e', label: 'Dark Purple' }
 ];
 
 const POSITION_OPTIONS = [
@@ -732,11 +733,10 @@ function renderActiveScene() {
   ));
 
   // Sits between the title and the description, styled distinctly from
-  // both by default (gold accent like the title, but body-text sized) —
-  // matches aurion.js's built-in default look for decision.subtitleText,
-  // stays editable per scene here the same way title/desc already are.
+  // both by default (white, body-text sized) — stays editable per scene
+  // here the same way title/desc already are.
   activeRight.appendChild(styledTextGroup('subtitle', decision, BODY_FONTS,
-    { font: 'Poppins', color: '#f0b429', size: 18, minSize: 12, maxSize: 28, bold: true },
+    { font: 'Poppins', color: '#ffffff', size: 18, minSize: 12, maxSize: 28, bold: true },
     'Subtitle (blank means no subtitle — sits between title and description)'
   ));
 

@@ -147,7 +147,8 @@
           "text": "Got My Friend"
         }
       ],
-      "adminLabel": "Scene 2"
+      "adminLabel": "Scene 2",
+      "subtitleText": "Who Will Join You?"
     },
     {
       "id": 5,
@@ -208,7 +209,21 @@
       ],
       "adminLabel": "Scene 4",
       "subtitleText": "Someone's Coming, Quick Hide",
-      "subtitleColor": "#ffffff"
+      "subtitleColor": "#ffffff",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "mechanicData": {},
+      "options": []
     },
     {
       "id": 7,
@@ -222,7 +237,21 @@
       ],
       "adminLabel": "Scene 5",
       "subtitleText": "Keep Following The Trail",
-      "subtitleColor": "#ffffff"
+      "subtitleColor": "#ffffff",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "mechanicData": {},
+      "options": []
     },
     {
       "id": 8,
@@ -236,7 +265,21 @@
       ],
       "adminLabel": "Scene 6",
       "subtitleText": "Can You Spot The 3C Diamond?",
-      "subtitleColor": "#ffffff"
+      "subtitleColor": "#ffffff",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "mechanicData": {},
+      "options": []
     },
     {
       "id": 9,
@@ -250,7 +293,21 @@
       ],
       "adminLabel": "Scene 7",
       "subtitleText": "Quickly, Add These In The Bag To Take With You",
-      "subtitleColor": "#ffffff"
+      "subtitleColor": "#ffffff",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "mechanicData": {},
+      "options": []
     },
     {
       "id": 10,
@@ -264,7 +321,21 @@
       ],
       "adminLabel": "Scene 8",
       "subtitleText": "You Need To Take That Boat, Buy Two Tickets.",
-      "subtitleColor": "#ffffff"
+      "subtitleColor": "#ffffff",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "mechanicData": {},
+      "options": []
     },
     {
       "id": 11,

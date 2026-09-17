@@ -419,20 +419,27 @@ body {
   box-shadow: none;
 }
 
+/* Same solid glow as .opened below, not a pulse — Chef's own note was
+   that the flashing sweep should look "exactly the same glow" as the
+   glow an opened envelope gets. The earlier version used a slow 1.4s
+   pulse animation, but the JS sweep swaps this class to the next tile
+   every 350ms — far faster than that animation's own cycle — so each
+   tile's glow kept resetting before it ever reached its brightest
+   point, which is why it read as barely-there. No transition at all
+   this time (a first attempt at an 0.08s transition still measurably
+   undershot the full glow value, since it hadn't finished by the next
+   350ms swap either) — the glow needs to be at its full value the
+   instant the class lands, not eased into. */
 .aurion-reveal-tile.flashing {
   opacity: 1;
-  animation: reveal-flash 1.4s ease-in-out infinite;
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  transition: none;
 }
 
 .aurion-reveal-tile.opened {
   opacity: 1;
   box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
   animation: none;
-}
-
-@keyframes reveal-flash {
-  0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
-  50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
 }
 
 .aurion-reveal-popup {
@@ -579,7 +586,14 @@ body {
   position: relative;
   width: 100%;
   max-width: 400px;
-  aspect-ratio: 4 / 3;
+  /* Taller than the original 4:3 (now on desktop too, not just the
+     mobile override below) — Chef's note was that the parrot/pirate
+     were sitting on top of the well/trees/rocks artwork on desktop too,
+     not just mobile. Only the box got taller; the well/pinetrees/rocks
+     percentages above are untouched, they just get more clear space
+     below them now that the box itself has more height to spread them
+     out over. */
+  aspect-ratio: 4 / 5;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -684,6 +698,23 @@ body {
   to { left: 110%; }
 }
 
+/* Mobile only — desktop's 4:3 box is untouched. On a narrow phone
+   screen the page has real empty space below this scene's images down
+   to where the button appears (Chef pointed at her own screenshot of
+   that empty gap), but the stage itself was only 4:3 — not tall enough
+   to give the companion dot real room to travel from its start down to
+   the rocks, or the pirate room to walk across, without either sitting
+   on top of the well/trees/rocks artwork above. Making the stage taller
+   uses that already-empty page space; it doesn't touch the well/
+   pinetrees/rocks percentages themselves (still left/top values above,
+   untouched) — they just end up with more breathing room below them
+   since everything on the stage is positioned by percent of its height. */
+@media (max-width: 700px) {
+  .aurion-hide-stage {
+    aspect-ratio: 5 / 7;
+  }
+}
+
 /* Scene 5 ("Follow The Map") — the companion is dragged freely (left AND
    top, not a fixed line) along the road image up to the mountain, then
    fades out. Chef's actual art winds bottom-left to top-right, not a
@@ -702,6 +733,19 @@ body {
   max-width: 400px;
   aspect-ratio: 448 / 391;
   margin: 0 auto;
+}
+
+/* Desktop only — mobile isn't touched here since Chef hasn't reviewed
+   this scene on mobile yet. Bigger box, same measured aspect ratio, so
+   none of the pixel-calibrated path/mountain-zone percentages in
+   aurion-core-02.js need to change — they're percentages of this box,
+   and scale correctly to any box size at the same ratio. The point is
+   just that the parrot (a fixed 70px, not a percentage) reads as less
+   cramped/cut-off against a bigger frame. */
+@media (min-width: 701px) {
+  .aurion-road-stage {
+    max-width: 460px;
+  }
 }
 
 .aurion-road-image {

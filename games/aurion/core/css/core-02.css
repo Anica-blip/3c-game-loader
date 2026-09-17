@@ -514,10 +514,13 @@ body {
 
 /* Scene 6 ("You Found A Nice Treasure") — the gem pile is this scene's
    one big visual, sized the same as this game's other single-visual
-   moments (.aurion-scene-video above uses the same 340px cap). The 3C
-   diamond sits on top of it, small, absolutely positioned.
-   NOT YET FINAL: top/left below is a placeholder — Chef needs to see
-   the real gempile art in place before this position is right. */
+   moments (.aurion-scene-video above uses the same 340px cap). The
+   diamond (shared/diamond.png, per Chef's correction — not a 3c-
+   prefixed file) sits on top of it near the sword, deliberately small
+   and with no glow so it blends into the other gems instead of
+   announcing itself — this is a find-it, not a flashing hint.
+   NOT YET FINAL: top/left is a first pass at "near the sword" from the
+   screenshot Chef shared — still needs her eyes on the real thing. */
 .aurion-spot-stage {
   position: relative;
   width: 100%;
@@ -533,10 +536,10 @@ body {
 
 .aurion-spot-hidden-item {
   position: absolute;
-  top: 55%;
-  left: 60%;
-  width: 36px;
-  height: 36px;
+  top: 38%;
+  left: 57%;
+  width: 22px;
+  height: 22px;
   transform: translate(-50%, -50%);
   background-color: transparent;
   background-size: contain;
@@ -544,11 +547,142 @@ body {
   background-position: center;
   border: none;
   cursor: pointer;
-  filter: drop-shadow(0 0 10px var(--aurion-neon-purple-glow-soft));
 }
 
 .aurion-spot-hidden-item.found {
-  filter: drop-shadow(0 0 20px rgba(240, 180, 41, 0.85));
+  filter: drop-shadow(0 0 14px rgba(240, 180, 41, 0.85));
+}
+
+/* Scene 4 ("Refreshing Spot") — waterwell/pinetrees/rocks composition,
+   companion dot that moves-and-vanishes behind the rocks, then the
+   chosen pirate walks across edge to edge.
+   NOT YET FINAL: every position/size below is a first pass at Chef's
+   layout note (waterwell left, pine trees middle, rocks left) — needs
+   her eyes once the real art is in place, same as the diamond in
+   Scene 6. */
+.aurion-hide-stage {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.aurion-hide-bg-item {
+  position: absolute;
+  height: auto;
+}
+
+.aurion-hide-waterwell {
+  left: 2%;
+  top: 8%;
+  width: 30%;
+}
+
+.aurion-hide-pinetrees {
+  left: 32%;
+  top: 0%;
+  width: 40%;
+}
+
+.aurion-hide-rocks {
+  left: 4%;
+  top: 48%;
+  width: 34%;
+}
+
+/* Companion sized small on purpose, per Chef's note it needs to be small
+   enough to reuse moving around scenes — same size as the road-drag
+   companion below, one shared convention rather than two guesses. */
+.aurion-hide-companion-dot {
+  position: absolute;
+  left: 46%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: left 0.7s ease, bottom 0.7s ease, opacity 0.4s ease;
+  z-index: 3;
+}
+
+.aurion-hide-companion-dot.moving {
+  left: 14%;
+  bottom: 30%;
+}
+
+.aurion-hide-companion-dot.vanished {
+  opacity: 0;
+}
+
+/* Small but not tiny, per Chef's note — sized between the companion dot
+   (70px) and the gear/companion tiles (150px on mobile). Walks fully
+   edge to edge: left runs from -20% to 110% of the stage's own width,
+   past both edges, no margins. */
+.aurion-hide-pirate-walk {
+  position: absolute;
+  bottom: 4%;
+  width: 130px;
+  height: 130px;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: hide-pirate-walk 2.4s linear forwards;
+  z-index: 2;
+}
+
+@keyframes hide-pirate-walk {
+  from { left: -20%; }
+  to { left: 110%; }
+}
+
+/* Scene 5 ("Follow The Map") — the companion is dragged along the road
+   image until it's close enough to the mountain, then fades out.
+   ARRIVAL_PERCENT in aurion-core-02.js (85%) is the matching placeholder
+   for where "close enough" actually is — tune both together once the
+   real art is in place. */
+.aurion-road-stage {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.aurion-road-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-road-companion {
+  position: absolute;
+  bottom: 8%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  border-radius: 50%;
+  cursor: grab;
+  touch-action: none;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+
+.aurion-road-companion.arrived {
+  opacity: 0;
+  cursor: default;
 }
 
 /* Scene 3 ("Choose Your Gear") — cloned from core-01, unchanged. */

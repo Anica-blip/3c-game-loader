@@ -621,6 +621,15 @@ body {
   border-radius: 50%;
   cursor: grab;
   touch-action: none;
+  /* Real phones specifically: without these, pressing-and-dragging a
+     button carrying a background-image can be hijacked by the browser
+     as its own native image drag, a text-selection highlight, or a
+     long-press callout menu instead of running the drag code above —
+     this is the standard set of properties that shuts all of that off. */
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   transition: opacity 0.4s ease;
   z-index: 3;
 }
@@ -664,28 +673,42 @@ body {
   to { left: 110%; }
 }
 
-/* Scene 5 ("Follow The Map") — the companion is dragged along the road
-   image until it's close enough to the mountain, then fades out.
-   ARRIVAL_PERCENT in aurion-core-02.js (85%) is the matching placeholder
-   for where "close enough" actually is — tune both together once the
-   real art is in place. */
+/* Scene 5 ("Follow The Map") — the companion is dragged freely (left AND
+   top, not a fixed line) along the road image up to the mountain, then
+   fades out. Chef's actual art winds bottom-left to top-right, not a
+   straight line — MOUNTAIN_ZONE in aurion-core-02.js is the matching
+   placeholder for where "arrived at the mountain" actually is; tune
+   both together once the real art's exact curve is confirmed. */
+/* aspect-ratio set explicitly (not left to the image to size the box)
+   so the stage has real height immediately, before the road image has
+   actually loaded — same reasoning as .aurion-hide-stage above. 1/1 is
+   a placeholder guess at the real art's proportions, not measured. */
+/* aspect-ratio measured from Chef's actual screenshot (448x391px
+   illustration content box, scanned pixel-by-pixel), not guessed. */
 .aurion-road-stage {
   position: relative;
   width: 100%;
   max-width: 400px;
+  aspect-ratio: 448 / 391;
   margin: 0 auto;
 }
 
 .aurion-road-image {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
 }
 
+/* left/top measured from the parrot's own position in Chef's actual
+   screenshot (~17%, 87% of the illustration box), matching START_LEFT/
+   START_TOP in aurion-core-02.js. */
 .aurion-road-companion {
   position: absolute;
-  bottom: 8%;
-  transform: translateX(-50%);
+  left: 17%;
+  top: 87%;
+  transform: translate(-50%, -50%);
   width: 70px;
   height: 70px;
   background-color: transparent;
@@ -696,8 +719,24 @@ body {
   border-radius: 50%;
   cursor: grab;
   touch-action: none;
+  /* Same reasoning as the hide-companion-dot above — stops a real phone
+     from hijacking the drag as a native image-drag or callout menu. */
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   transition: opacity 0.4s ease;
   z-index: 2;
+}
+
+.aurion-road-companion:active {
+  cursor: grabbing;
+}
+
+/* Missed the mountain — eases back to the trail's start instead of
+   snapping instantly, same "try again" feel as the rocks in Scene 4. */
+.aurion-road-companion.returning {
+  transition: left 0.4s ease, top 0.4s ease, opacity 0.4s ease;
 }
 
 .aurion-road-companion.arrived {

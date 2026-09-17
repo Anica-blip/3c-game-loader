@@ -934,12 +934,14 @@ export function startGame(config, container) {
     // centre line) rather than guessing proportions from looking at it.
     // The illustration's content box measured 448x391px inside that
     // screenshot — a 1.146:1 ratio, not the 1:1 square guessed before.
-    // The parrot's own resting spot measured at roughly (17%, 87%) of
-    // that box. The road's centre line's topmost point — where it
-    // visually disappears behind the mountain — measured at roughly
-    // (86%, 25%).
-    const START_LEFT = 17;
-    const START_TOP = 87;
+    // The road's centre line's topmost point — where it visually
+    // disappears behind the mountain — measured at roughly (86%, 25%).
+    // START position is deliberately NOT the measured (17%, 87%) resting
+    // spot from that screenshot's own art — Chef asked for the parrot to
+    // start centered at the bottom of the image, not off to its left
+    // side, so this is a placement choice, not a measurement.
+    const START_LEFT = 50;
+    const START_TOP = 90;
     // MOUNTAIN_ZONE is now the actual measured target, with a generous
     // margin around it (screenshot compression and my own color
     // thresholds aren't pixel-perfect, so this isn't treated as exact).
@@ -947,10 +949,11 @@ export function startGame(config, container) {
     // Kept as a second path to success alongside the measured zone, not
     // instead of it: a real drag that clearly moves it well up and to
     // the right still counts even if it lands just outside the measured
-    // zone's margin — this is what stops arrival being impossible to
-    // reach again if the real deployed art's proportions still differ
-    // slightly from this measurement.
-    const ARRIVE_RIGHT_DELTA = 55;
+    // zone's margin. Right-delta is smaller than before (35, not 55)
+    // now that START_LEFT sits at the centre (50) rather than the left
+    // edge (17) — the old 55 would have needed leftPercent >= 105,
+    // past the 98 clamp, making that fallback path unreachable.
+    const ARRIVE_RIGHT_DELTA = 35;
     const ARRIVE_UP_DELTA = 55;
     let done = false;
     let dragging = false;
@@ -1055,28 +1058,31 @@ export function startGame(config, container) {
     if (mechanicData.sack) sack.src = resolveAssetUrl(mechanicData.sack);
     stage.appendChild(sack);
 
-    // Starting spots spread the items out over the left half of the
-    // stage (percent of stage width/height). These are deliberately
-    // spaced further apart than a first pass had them — each item's own
-    // drag button is 58px square, and on the stage's real rendered size
-    // two spots that were only ~12% apart left each button's hit-area
-    // overlapping its neighbor's, so a click near that seam could grab
-    // the wrong item (or miss both). Every pair below clears either the
-    // item's own width-percent or height-percent gap, so none of the
-    // four buttons' hit-areas touch.
-    const START_SPOTS = [
-      { left: 18, top: 28 },
-      { left: 46, top: 26 },
-      { left: 32, top: 62 },
-      { left: 12, top: 64 }
+    // Starting spots for the 3 diamonds — kept close together per
+    // Chef's note that the first pass had them too spread out — plus a
+    // 4th spot, well clear of the diamond cluster, for the (now bigger)
+    // coin pile. The diamonds are smaller than before (see
+    // .aurion-sack-item-diamond) so they can sit this much closer
+    // without their own hit-areas touching; the coin's spot is placed
+    // far enough from all three (mostly by the vertical gap) that its
+    // own bigger hit-area still doesn't overlap them either.
+    const DIAMOND_SPOTS = [
+      { left: 20, top: 26 },
+      { left: 36, top: 22 },
+      { left: 26, top: 46 }
     ];
+    const COIN_SPOT = { left: 12, top: 74 };
 
     let remaining = items.length;
 
     items.forEach((url, i) => {
-      const spot = START_SPOTS[i % START_SPOTS.length];
+      // Last item in the array is always the gold coin pile
+      // (mechanicData.items is [diamond1, diamond2, diamond3, goldcoins]
+      // — see core-02.json); everything before it is a diamond.
+      const isCoin = i === items.length - 1;
+      const spot = isCoin ? COIN_SPOT : DIAMOND_SPOTS[i % DIAMOND_SPOTS.length];
       const item = document.createElement('button');
-      item.className = 'aurion-sack-item';
+      item.className = 'aurion-sack-item ' + (isCoin ? 'aurion-sack-item-coin' : 'aurion-sack-item-diamond');
       item.style.backgroundImage = `url('${resolveAssetUrl(url)}')`;
       item.setAttribute('aria-label', 'Drag this into the sack');
       let dragging = false;
@@ -1168,11 +1174,17 @@ export function startGame(config, container) {
     // Two spread-out spots over the dock art so two tickets don't sit on
     // top of each other; a third/fourth spot is here too in case
     // ticketCount is ever raised later, but only core-02's two are used.
+    // mechanicData.ticket is one graphic showing both tickets together
+    // (Chef's note: "the image of tickets shows 'two tickets' so you
+    // only need to add one") — ticketCount is 1 in core-02.json, so
+    // only TICKET_SPOTS[0] is actually used; the rest stay here only in
+    // case ticketCount is ever raised again later. Centered on the
+    // dock/boat area so it's the obvious thing to tap.
     const TICKET_SPOTS = [
-      { left: 38, top: 70 },
-      { left: 62, top: 42 },
+      { left: 55, top: 46 },
+      { left: 68, top: 34 },
       { left: 50, top: 55 },
-      { left: 25, top: 40 }
+      { left: 20, top: 30 }
     ];
 
     let remaining = ticketCount;

@@ -78,7 +78,8 @@
       "id": 3,
       "mechanic": "piratehat",
       "mechanicData": {
-        "image": "core-02-piratehat.png"
+        "image": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-piratehat.png",
+        "revealImage": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-pirategreeting.png"
       },
       "situation": "",
       "image": {
@@ -255,6 +256,7 @@
     },
     {
       "id": 8,
+      "mechanic": "spot-diamond",
       "titleText": "You Found A Nice Treasure",
       "descText": "",
       "buttons": [
@@ -278,7 +280,10 @@
         "url": "",
         "position": "center"
       },
-      "mechanicData": {},
+      "mechanicData": {
+        "gempile": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-gempile.png",
+        "diamond": "../../../shared/3c-diamond.png"
+      },
       "options": []
     },
     {

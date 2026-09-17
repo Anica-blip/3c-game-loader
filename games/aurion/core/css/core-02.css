@@ -792,19 +792,19 @@ body {
   z-index: 2;
 }
 
-/* Diamonds smaller, coin pile bigger — per Chef's note that the coins
-   read too small next to diamonds that were too spread out. Sizes are
-   deliberately different, not just repositioned, and DIAMOND_SPOTS/
-   COIN_SPOT in aurion-core-02.js are already spaced to match (no pair
-   of these hit-areas overlaps at these sizes). */
+/* Diamonds smaller, coin pile bigger — the gap between the two sizes
+   is widened again here (was 44/84) since Chef's note was that the
+   diamonds still read as large as, or larger than, the coin pile.
+   DIAMOND_SPOTS/COIN_SPOT in aurion-core-02.js are spaced to match (no
+   pair of these hit-areas overlaps at these sizes). */
 .aurion-sack-item-diamond {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
 }
 
 .aurion-sack-item-coin {
-  width: 84px;
-  height: 84px;
+  width: 92px;
+  height: 92px;
 }
 
 .aurion-sack-item.dragging {

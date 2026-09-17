@@ -32,30 +32,29 @@
 // core-01's file.
 // ============================================================
 
-// The four Core Values this challenge tracks a running score for, revealed
-// as one envelope in the final scene (whichever value scored highest).
-// Text is Chef's own, from the production notes — identical wording to
-// core-01's, cloned here rather than shared by reference.
+// core-02's own envelope-reveal content — NOT score-based (Chef's explicit
+// note for this game: "the reveal cards are not 'score based' this time").
+// Every envelope shows its own fixed value name + word list; which one the
+// player sees depends only on which envelope they tap, nothing is tracked
+// or compared. Order here matches the envelope order in core-02.json's own
+// mechanicData.envelopes (1 Courage, 2 Independence, 3 Connection,
+// 4 Integrity), which is already the envelopes' own colour-coding.
 const CORE_VALUE_MESSAGES = {
   Courage: {
     title: '🟠 COURAGE',
-    subtitle: 'One of your guiding values',
-    body: "Your choices suggest that courage may be one of the values that guides you. You seem willing to move forward even when the path isn't completely clear. For you, courage may not mean having no fear. It may mean being willing to act despite it."
+    words: ['Bravery', 'Boldness', 'Confidence', 'Determination', 'Resilience', 'Conviction', 'Initiative', 'Fortitude', 'Perseverance', 'Fearlessness', 'Audacity', 'Self-belief', 'Daring', 'Assertiveness', 'Tenacity']
   },
   Independence: {
-    title: '🟡 INDEPENDENCE',
-    subtitle: 'One of your guiding values',
-    body: "Your choices suggest that independence may be important to you. You seem to value making your own way and trusting your own judgement. Independence may mean having the freedom to choose your direction rather than simply following the path already laid out."
+    title: '🟣 INDEPENDENCE',
+    words: ['Autonomy', 'Freedom', 'Self-reliance', 'Self-direction', 'Individuality', 'Sovereignty', 'Agency', 'Resourcefulness', 'Self-sufficiency', 'Originality', 'Initiative', 'Self-determination', 'Nonconformity', 'Independence of thought', 'Personal responsibility']
   },
   Connection: {
     title: '🔵 CONNECTION',
-    subtitle: 'One of your guiding values',
-    body: "Your choices suggest that connection may be one of the values that matters to you. Your choices show that the people around you can matter when deciding how you move forward. Connection may mean support, loyalty, belonging or knowing that the journey doesn't always have to be travelled alone."
+    words: ['Belonging', 'Compassion', 'Empathy', 'Friendship', 'Community', 'Cooperation', 'Kindness', 'Loyalty', 'Trust', 'Understanding', 'Generosity', 'Acceptance', 'Support', 'Inclusion', 'Fellowship']
   },
   Integrity: {
     title: '🟢 INTEGRITY',
-    subtitle: 'One of your guiding values',
-    body: "Your choices suggest that integrity may be an important value in the way you approach things. You seem to pay attention to what feels right for you, rather than simply choosing what looks easiest or most appealing. Integrity can mean making choices that stay true to what you believe, even when nobody else is watching."
+    words: ['Honesty', 'Authenticity', 'Fairness', 'Accountability', 'Reliability', 'Transparency', 'Sincerity', 'Responsibility', 'Trustworthiness', 'Consistency', 'Honour', 'Justice', 'Principle', 'Respect', 'Truthfulness']
   }
 };
 
@@ -216,32 +215,6 @@ export function startGame(config, container) {
   // actually chose instead of a hardcoded default.
   let chosenCompanionImage = null;
   let chosenGearPirateImage = null;
-
-  // Core Values challenge only: which envelope/message the player sees at
-  // the end. This plumbing (coreValueScores/addCoreValueScore/
-  // leadingCoreValue) is cloned in because the envelope-reveal scene needs
-  // leadingCoreValue() to pick a winner — but unlike core-01, THIS file has
-  // no mechanic wired up yet that ever calls addCoreValueScore (core-01's
-  // scoring mechanic was the maze, which this game doesn't have). Until a
-  // scoring mechanic is built for core-02 — part of the still-pending
-  // mechanics discussion — every score stays at 0, which means
-  // leadingCoreValue() will fall back to picking at random among the tied
-  // four. This is expected right now, not a bug: flagging it here plainly
-  // so it isn't a surprise the first time this scene gets tested.
-  const coreValueScores = { Courage: 0, Independence: 0, Connection: 0, Integrity: 0 };
-  function addCoreValueScore(value, points) {
-    if (Object.prototype.hasOwnProperty.call(coreValueScores, value)) {
-      coreValueScores[value] += points;
-    }
-  }
-  function leadingCoreValue() {
-    let topScore = -Infinity;
-    Object.values(coreValueScores).forEach(score => {
-      if (score > topScore) topScore = score;
-    });
-    const leaders = Object.keys(coreValueScores).filter(key => coreValueScores[key] === topScore);
-    return leaders[Math.floor(Math.random() * leaders.length)];
-  }
 
   container.classList.add('aurion-game');
   container.innerHTML = '';
@@ -1324,21 +1297,25 @@ export function startGame(config, container) {
     slot.appendChild(stage);
   }
 
-  // Scene 9 ("Let's Check How Far You Got") — four envelopes on screen,
-  // but only the one matching whichever Core Value scored highest is
-  // actually openable (a soft glow, no color or label difference from
-  // the other three — the reveal is supposed to come as a surprise, not
-  // be guessable from the artwork). The other three sit there as decoys.
-  // Opening it, reading the message and closing the card: the voice line
-  // only starts once the card is closed, and the button waits for that
-  // voice line to finish. Cloned from core-01's identical mechanic — same
-  // behavior, this game's own copy. See the header note above
-  // coreValueScores: nothing in THIS file scores yet, so winner is
-  // currently a random pick among the tied four until a scoring mechanic
-  // is built for core-02.
+  // Scene 9 ("What Else Can You Find Here?") — NOT score-based for
+  // core-02 (Chef's explicit note). All four envelopes are openable, any
+  // one of them; there's no hidden "winner" to guess or compute. Instead,
+  // the four light up in sequence, left to right, fairly fast, on a
+  // repeating loop — a small sense of urgency, not a puzzle — until the
+  // player taps one. That tap stops the sequence, dims the whole board
+  // (same reasoning as before: the tile artwork behind the popup's glass
+  // card interferes with reading it), and shows that envelope's own
+  // fixed value card — title plus its 15-word list, same fonts/colors as
+  // the previous score-based popup used. Once the player closes the
+  // card, the "Aurion" voice line plays (still just scene.soundEffect —
+  // Chef's building a new version of this clip and will hand over its
+  // own Cloudflare URL once it's ready, dropped into core-02.json same
+  // as any other soundEffect) and the button waits for it to finish,
+  // same pattern as before. The other three envelopes are disabled once
+  // one is opened — this scene only ever shows one card per visit.
   function buildEnvelopeMechanic(slot, scene, onComplete) {
     const envelopes = (scene.mechanicData && scene.mechanicData.envelopes) || {};
-    const winner = leadingCoreValue();
+    const entries = Object.entries(envelopes);
 
     const stage = document.createElement('div');
     stage.className = 'aurion-sort-stage';
@@ -1347,29 +1324,49 @@ export function startGame(config, container) {
     const popup = document.createElement('div');
     popup.className = 'aurion-reveal-popup';
 
-    Object.entries(envelopes).forEach(([value, imageUrl]) => {
+    const tiles = [];
+    let opened = false;
+    let flashIndex = -1;
+    let flashTimer = null;
+
+    // Fairly fast, left-to-right, looping — "a tiny moment of urgency
+    // without turning the thing into a stressful game" (Chef's own
+    // phrasing). 350ms per envelope is quick enough to read as a
+    // deliberate sweep, not so quick it's just a flicker.
+    const FLASH_STEP_MS = 350;
+
+    function stepFlash() {
+      if (opened) return;
+      if (flashIndex >= 0 && tiles[flashIndex]) tiles[flashIndex].classList.remove('flashing');
+      flashIndex = (flashIndex + 1) % tiles.length;
+      tiles[flashIndex].classList.add('flashing');
+    }
+
+    function stopFlashing() {
+      if (flashTimer) {
+        clearInterval(flashTimer);
+        flashTimer = null;
+      }
+      tiles.forEach(t => t.classList.remove('flashing'));
+    }
+
+    entries.forEach(([value, imageUrl]) => {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-reveal-tile aurion-envelope-tile';
       if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
 
-      const isWinner = value === winner;
-      if (!isWinner) {
-        tile.classList.add('dim');
-        tile.disabled = true;
-      } else {
-        tile.classList.add('flashing');
-      }
-
       tile.addEventListener('click', () => {
-        if (!isWinner || tile.classList.contains('opened')) return;
-        tile.classList.remove('flashing');
+        if (opened) return;
+        opened = true;
+        stopFlashing();
         tile.classList.add('opened');
-        // The board sits directly behind the popup's glass card — when the
-        // winning envelope isn't one of the two outer tiles, its own
-        // artwork was showing straight through the popup's translucent
-        // background and making the message hard to read. Dimming the
-        // whole board while the card is open (and undimming on close)
-        // clears that interference regardless of which tile opened it.
+        tiles.forEach(t => { if (t !== tile) t.disabled = true; });
+        // The board sits directly behind the popup's glass card — the
+        // tile artwork was showing straight through the popup's
+        // translucent background and making the message hard to read.
+        // Dimming the whole board while the card is open (and undimming
+        // on close) clears that interference regardless of which tile
+        // opened it.
         board.classList.add('dimmed');
 
         popup.innerHTML = '';
@@ -1378,12 +1375,14 @@ export function startGame(config, container) {
 
         const title = document.createElement('h2');
         title.textContent = msg.title;
-        const subtitle = document.createElement('p');
-        subtitle.className = 'aurion-reveal-subtitle';
-        subtitle.textContent = msg.subtitle;
-        const body = document.createElement('p');
-        body.className = 'aurion-reveal-body';
-        body.textContent = msg.body;
+
+        const wordList = document.createElement('ul');
+        wordList.className = 'aurion-reveal-word-list';
+        (msg.words || []).forEach(word => {
+          const li = document.createElement('li');
+          li.textContent = word;
+          wordList.appendChild(li);
+        });
 
         const closeBtn = document.createElement('button');
         closeBtn.className = 'aurion-btn';
@@ -1400,11 +1399,17 @@ export function startGame(config, container) {
           }
         });
 
-        popup.append(title, subtitle, body, closeBtn);
+        popup.append(title, wordList, closeBtn);
       });
 
+      tiles.push(tile);
       board.appendChild(tile);
     });
+
+    if (tiles.length) {
+      stepFlash();
+      flashTimer = setInterval(stepFlash, FLASH_STEP_MS);
+    }
 
     stage.append(board, popup);
     slot.appendChild(stage);

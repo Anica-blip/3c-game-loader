@@ -15,14 +15,29 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Cache-busting: style.css and loader.js are referenced by a plain <link>/
-       <script> tag, so unlike the dynamically-fetched config JSON and game
-       module (which loader.js now busts automatically on every load), the
-       browser has no built-in reason to know this file changed. Bump the
-       "?v=" value below whenever style.css or loader.js is actually edited
-       and redeployed, so returning players are guaranteed to fetch the new
-       version instead of a cached copy. One value, one place. -->
-  <link rel="stylesheet" href="style.css?v=2026-09-09-1">
+  <!-- Stylesheet is picked per theme, not one shared file every theme edits.
+       core-01 ("game one") keeps its own style.css sitting right here in
+       games/aurion/core/ — same file, same URL, same version tag as always,
+       nothing changes for it. Every other theme (core-02 onward) gets its
+       own file in games/aurion/core/css/<configName>.css instead — that's
+       its own "kitchen space", cloned from style.css and trimmed to only
+       what that theme uses, same rule as its engine JS file.
+       Read via ?configName= on this page's own URL, same param loader.js
+       already reads below to pick the engine JS + config JSON — this just
+       does the same lookup for CSS. document.write here (not appended via
+       JS after the fact) so the stylesheet is requested during head parsing,
+       before body renders, same load timing a static <link> tag would give.
+       Bump the "?v=" value by hand whenever a theme's own CSS file is
+       edited and redeployed, same convention as before. -->
+  <script>
+    (function () {
+      var configName = new URLSearchParams(window.location.search).get('configName') || 'core-01';
+      var href = (configName === 'core-01')
+        ? 'style.css?v=2026-09-09-1'
+        : 'css/' + configName + '.css?v=2026-09-17-1';
+      document.write('<link rel="stylesheet" href="' + href + '">');
+    })();
+  </script>
 </head>
 <body>
   <div id="game-container"></div>
@@ -31,10 +46,11 @@
        across every game, it's generic dispatch logic, not game-specific).
        It reads ?configName=core-01 (or whichever Core Values entry) from
        this page's URL, fetches config/<themeName>.json (relative to THIS
-       page, i.e. games/aurion/core/config/), then loads games/aurion.js
-       (relative to this page, i.e. games/aurion/core/games/aurion.js —
-       this game's own cloned copy of the engine, separate from the goals
-       series' copy) and calls its startGame(config, container) function. -->
+       page, i.e. games/aurion/core/config/), then loads the engine module
+       named by that config's own "gameType" field (relative to THIS page,
+       i.e. games/aurion/core/games/<gameType>.js — core-01 and core-02 each
+       point at their own file there) and calls its startGame(config, container)
+       function. -->
   <script type="module" src="../../../loader.js?v=2026-09-07-1"></script>
 </body>
 </html>

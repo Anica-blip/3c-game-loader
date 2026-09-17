@@ -556,10 +556,14 @@ body {
 /* Scene 4 ("Refreshing Spot") — waterwell/pinetrees/rocks composition,
    companion dot that moves-and-vanishes behind the rocks, then the
    chosen pirate walks across edge to edge.
-   NOT YET FINAL: every position/size below is a first pass at Chef's
-   layout note (waterwell left, pine trees middle, rocks left) — needs
-   her eyes once the real art is in place, same as the diamond in
-   Scene 6. */
+   Corrected layout per Chef's note after seeing it live: waterwell
+   left, pine trees middle, rocks on the RIGHT of the trees (not left
+   — that was my misreading of her original note, now fixed). Waterwell
+   and rocks share the same baseline (top), sitting slightly forward/
+   lower than the trees behind them, instead of all three lined up flat
+   in one row.
+   NOT YET FINAL: still a first pass, not the real Canva layout — needs
+   her eyes once she's seen this version too. */
 .aurion-hide-stage {
   position: relative;
   width: 100%;
@@ -575,31 +579,38 @@ body {
 }
 
 .aurion-hide-waterwell {
-  left: 2%;
-  top: 8%;
-  width: 30%;
+  left: 4%;
+  top: 32%;
+  width: 28%;
 }
 
 .aurion-hide-pinetrees {
-  left: 32%;
-  top: 0%;
-  width: 40%;
+  left: 30%;
+  top: 4%;
+  width: 38%;
 }
 
 .aurion-hide-rocks {
-  left: 4%;
-  top: 48%;
-  width: 34%;
+  left: 68%;
+  top: 32%;
+  width: 30%;
 }
 
 /* Companion sized small on purpose, per Chef's note it needs to be small
    enough to reuse moving around scenes — same size as the road-drag
-   companion below, one shared convention rather than two guesses. */
+   companion below, one shared convention rather than two guesses.
+   Positioned via left/top (JS sets both directly while dragging, see
+   buildHideMechanic) rather than left/bottom — a straight drag needs
+   two free axes, not one. This is a DRAG, not a tap: no click here
+   decides the move for the player, per Chef's explicit correction.
+   No left/top transition while actively dragging (instant tracking,
+   no lag behind the pointer) — .returning below adds one only for the
+   snap-back-and-retry case. */
 .aurion-hide-companion-dot {
   position: absolute;
-  left: 46%;
-  bottom: 6%;
-  transform: translateX(-50%);
+  left: 50%;
+  top: 90%;
+  transform: translate(-50%, -50%);
   width: 70px;
   height: 70px;
   background-color: transparent;
@@ -608,14 +619,20 @@ body {
   background-position: center;
   border: none;
   border-radius: 50%;
-  cursor: pointer;
-  transition: left 0.7s ease, bottom 0.7s ease, opacity 0.4s ease;
+  cursor: grab;
+  touch-action: none;
+  transition: opacity 0.4s ease;
   z-index: 3;
 }
 
-.aurion-hide-companion-dot.moving {
-  left: 14%;
-  bottom: 30%;
+.aurion-hide-companion-dot:active {
+  cursor: grabbing;
+}
+
+/* Missed the rocks — eases back to the starting spot instead of
+   snapping instantly, so it reads as "try again" rather than a glitch. */
+.aurion-hide-companion-dot.returning {
+  transition: left 0.4s ease, top 0.4s ease, opacity 0.4s ease;
 }
 
 .aurion-hide-companion-dot.vanished {
@@ -625,7 +642,10 @@ body {
 /* Small but not tiny, per Chef's note — sized between the companion dot
    (70px) and the gear/companion tiles (150px on mobile). Walks fully
    edge to edge: left runs from -20% to 110% of the stage's own width,
-   past both edges, no margins. */
+   past both edges, no margins. Slowed from an earlier 2.4s (Chef's
+   note: the first pass felt rushed, every motion in this scene should
+   be unhurried) and eased instead of linear, so it reads as an actual
+   walk rather than a slide. */
 .aurion-hide-pirate-walk {
   position: absolute;
   bottom: 4%;
@@ -635,7 +655,7 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  animation: hide-pirate-walk 2.4s linear forwards;
+  animation: hide-pirate-walk 6s ease-in-out forwards;
   z-index: 2;
 }
 

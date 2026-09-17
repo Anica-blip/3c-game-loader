@@ -21,13 +21,14 @@
 // never being unsure whose code is actually running.
 //
 // This file was cloned from core-01's aurion.js and trimmed to only what
-// core-02 actually uses: companion-select, gear-select, envelope-reveal.
+// core-02 actually uses: piratehat (Scene 1) and spot-diamond (Scene 6) —
+// both this game's own, no equivalent in core-01 — plus companion-select,
+// gear-select, envelope-reveal.
 // core-01's compass, maze, and key-grab mechanics were removed entirely —
 // not just left unused — because core-02's own scenes never call them.
-// If core-02 later needs its own version of one of those, or a brand new
-// mechanic (piratehat has no code yet, on purpose — still pending the
-// mechanics discussion), it gets built/cloned in here, not borrowed by
-// reference from core-01's file.
+// If core-02 later needs its own version of one of those, or another new
+// mechanic, it gets built/cloned in here, not borrowed by reference from
+// core-01's file.
 // ============================================================
 
 // The four Core Values this challenge tracks a running score for, revealed
@@ -121,6 +122,14 @@ function preloadAssets(config, preloadedVideos) {
     (d.buttons || []).forEach(btn => { if (btn.image) add(btn.image); });
 
     const mechanicData = d.mechanicData || {};
+    if (d.mechanic === 'piratehat') {
+      add(mechanicData.image);
+      add(mechanicData.revealImage);
+    }
+    if (d.mechanic === 'spot-diamond') {
+      add(mechanicData.gempile);
+      add(mechanicData.diamond);
+    }
     if (d.mechanic === 'gear-select') {
       Object.values(mechanicData.gear || {}).forEach(add);
       (mechanicData.pirates || []).forEach(add);
@@ -521,6 +530,16 @@ export function startGame(config, container) {
 
     let mechanicGatesButton = false;
 
+    if (scene.mechanic === 'piratehat') {
+      mechanicGatesButton = true;
+      buildPirateHatMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'spot-diamond') {
+      mechanicGatesButton = true;
+      buildSpotDiamondMechanic(mechanicSlot, scene, revealButtons);
+    }
+
     if (scene.mechanic === 'gear-select') {
       mechanicGatesButton = true;
       buildGearMechanic(mechanicSlot, scene, revealButtons);
@@ -535,12 +554,6 @@ export function startGame(config, container) {
       mechanicGatesButton = true;
       buildEnvelopeMechanic(mechanicSlot, scene, revealButtons);
     }
-
-    // NOTE: "piratehat" (core-02's own Scene 1 mechanic) is not handled
-    // here on purpose — it has no code anywhere yet. Still pending the
-    // mechanics discussion. Until it's built, a scene set to it just
-    // falls through to the plain button-reveal logic below, same as any
-    // other no-mechanic scene.
 
     if (scene.video) {
       // Reuse the exact element preloadAssets() already started downloading
@@ -645,6 +658,86 @@ export function startGame(config, container) {
     } else {
       revealButtons();
     }
+  }
+
+  // Scene 1 ("Where Will Your Journey Take You?") — core-02's own mechanic,
+  // no equivalent in core-01. A single tappable image (the pirate's hat,
+  // scene.mechanicData.image). The title/subtitle wording ("Tap The Hat")
+  // is already handled by the normal titleText/subtitleText fields above
+  // — this mechanic only owns the image itself. Tapping it swaps the hat
+  // artwork for the reveal image (scene.mechanicData.revealImage — the
+  // pirate's greeting), a single one-shot swap, no going back, then the
+  // button appears. Only one tap is meaningful; further taps do nothing.
+  function buildPirateHatMechanic(slot, scene, onComplete) {
+    const mechanicData = scene.mechanicData || {};
+    const hatImage = mechanicData.image;
+    const revealImage = mechanicData.revealImage;
+    let tapped = false;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sort-stage';
+
+    const tile = document.createElement('button');
+    tile.className = 'aurion-piratehat-tile';
+    tile.setAttribute('aria-label', 'Tap the hat');
+    if (hatImage) tile.style.backgroundImage = `url('${resolveAssetUrl(hatImage)}')`;
+
+    tile.addEventListener('click', () => {
+      if (tapped) return;
+      tapped = true;
+      if (revealImage) {
+        tile.style.backgroundImage = `url('${resolveAssetUrl(revealImage)}')`;
+      }
+      tile.classList.add('opened');
+      onComplete();
+    });
+
+    stage.appendChild(tile);
+    slot.appendChild(stage);
+  }
+
+  // Scene 6 ("You Found A Nice Treasure") — core-02's own mechanic, no
+  // equivalent in core-01. scene.mechanicData.gempile is the treasure
+  // pile image, rendered as the scene's one big visual. The 3C diamond
+  // (scene.mechanicData.diamond — the shared brand asset every Aurion
+  // game carries, not a core-02-only image) sits small and absolutely
+  // positioned on top of it, hidden in plain sight among the gems. One
+  // click finds it, then the button appears.
+  //
+  // The diamond's exact top/left/size (in the CSS, .aurion-spot-hidden-
+  // item) is a placeholder until Chef confirms where it should actually
+  // sit once the real gempile artwork is in place — flagged, not final.
+  function buildSpotDiamondMechanic(slot, scene, onComplete) {
+    const mechanicData = scene.mechanicData || {};
+    const gempileImage = mechanicData.gempile;
+    const diamondImage = mechanicData.diamond;
+    let found = false;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-spot-stage';
+
+    if (gempileImage) {
+      const pile = document.createElement('img');
+      pile.src = resolveAssetUrl(gempileImage);
+      pile.alt = '';
+      pile.className = 'aurion-spot-image';
+      stage.appendChild(pile);
+    }
+
+    const diamond = document.createElement('button');
+    diamond.className = 'aurion-spot-hidden-item aurion-spot-diamond';
+    diamond.setAttribute('aria-label', 'Find the 3C diamond');
+    if (diamondImage) diamond.style.backgroundImage = `url('${resolveAssetUrl(diamondImage)}')`;
+
+    diamond.addEventListener('click', () => {
+      if (found) return;
+      found = true;
+      diamond.classList.add('found');
+      onComplete();
+    });
+
+    stage.appendChild(diamond);
+    slot.appendChild(stage);
   }
 
   // Scene 3 ("Choose Your Gear") — top row is the real choice (thermos,

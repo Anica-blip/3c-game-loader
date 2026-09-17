@@ -586,14 +586,15 @@ body {
   position: relative;
   width: 100%;
   max-width: 400px;
-  /* Taller than the original 4:3 (now on desktop too, not just the
-     mobile override below) — Chef's note was that the parrot/pirate
-     were sitting on top of the well/trees/rocks artwork on desktop too,
-     not just mobile. Only the box got taller; the well/pinetrees/rocks
-     percentages above are untouched, they just get more clear space
-     below them now that the box itself has more height to spread them
-     out over. */
-  aspect-ratio: 4 / 5;
+  /* Desktop's own height, separate from mobile's override below.
+     4:5 (500px tall at 400px wide) turned out to be too much — Chef's
+     note was it over-expanded and pushed the button too far down the
+     page. 1:1 (400px tall, a 100px increase over the original 4:3's
+     300px) is the corrected middle ground: enough extra room for the
+     parrot/pirate below the well/pinetrees/rocks without stretching the
+     whole scene out. The well/pinetrees/rocks percentages are still
+     untouched either way. */
+  aspect-ratio: 1 / 1;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -1063,4 +1064,30 @@ body {
   margin: 12px 0 20px;
   color: var(--aurion-text);
   opacity: 0.9;
+}
+
+/* Chef's flip request: 2 of the 4 companion parrots (parrot2, parrot3)
+   and all 4 decorative pirates face left in their source art but need
+   to face right so the walking/hiding scenes read correctly — done in
+   code (transform: scaleX(-1)) rather than replacing the image files.
+   aurion-core-02.js's needsFlip() adds this class only to those exact
+   images, wherever they render: the companion-select/gear-select
+   picker tiles, and (since the player's chosen companion/pirate is
+   reused later) Scene 4's hide-companion-dot + hide-pirate-walk and
+   Scene 5's road-companion.
+   .aurion-hide-companion-dot and .aurion-road-companion already carry
+   their own transform (translate(-50%,-50%), for centering on their
+   left/top position) — a bare ".aurion-flip-x { transform: scaleX(-1) }"
+   would silently overwrite that instead of combining with it, so those
+   two get their own combined-selector rule below instead. The other
+   flipped elements (picker tiles, pirate-walk) have no transform of
+   their own, so the plain rule is enough for them. */
+.aurion-flip-x {
+  transform: scaleX(-1);
+}
+.aurion-hide-companion-dot.aurion-flip-x {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+.aurion-road-companion.aurion-flip-x {
+  transform: translate(-50%, -50%) scaleX(-1);
 }

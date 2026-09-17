@@ -1,0 +1,690 @@
+/* Repo path: games/aurion/core/css/core-02.css */
+
+/* ============================================================
+   PER-GAME CODE INDEPENDENCE — read before adding or reusing a rule
+   ============================================================
+   Cloned from games/aurion/core/style.css (core-01's file) and trimmed
+   to only what core-02 actually uses, same rule as aurion-core-02.js:
+   this file must only contain what THIS game's own scenes render.
+   core-01's compass, maze, and key-grab rules were removed entirely,
+   not just left unused. If core-02 later needs one of those, or a new
+   mechanic, its CSS gets cloned/built in here — never left as a shared
+   reference back to style.css.
+   ============================================================ */
+
+:root {
+  --aurion-dark: #1a0f2e;
+  --aurion-gold: #f0b429;
+  --aurion-text: #ffffff;
+  --aurion-neon-purple: #c07df4;
+  --aurion-neon-purple-fill: rgba(140, 90, 220, 0.16);
+  --aurion-neon-purple-glow: rgba(192, 125, 244, 0.4);
+  --aurion-neon-purple-glow-soft: rgba(192, 125, 244, 0.22);
+  --aurion-neon-purple-bright: #e6cbff;
+  --aurion-neon-purple-glow-bright: rgba(230, 203, 255, 0.65);
+  --aurion-neon-purple-glow-bright-soft: rgba(230, 203, 255, 0.35);
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins';
+  background-color: var(--aurion-dark);
+  color: var(--aurion-text);
+}
+
+.aurion-page-card {
+  background: rgba(20, 20, 26, 0.72);
+  border: 2px solid var(--aurion-gold);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.aurion-page-card h1 {
+  font-family: 'Luckiest Guy';
+  font-size: 1.4rem;
+  margin: 8px 0;
+  color: var(--aurion-gold);
+}
+
+.aurion-page-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.aurion-page-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.aurion-page-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.aurion-page-btn-primary {
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .aurion-page-card {
+    padding: 18px;
+  }
+}
+
+/* Loading screen */
+.aurion-screen.aurion-loading {
+  text-align: center;
+}
+
+.aurion-hourglass-illustration {
+  width: 50px;
+  margin: 0 auto 16px;
+}
+
+.aurion-hourglass-illustration svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-loading-greeting {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 20px;
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.aurion-loading .aurion-body-text {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* ---- In-game engine styles (aurion-core-02.js) ---- */
+
+#game-container.aurion-game {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.aurion-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.aurion-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aurion-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+.aurion-watermark {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  z-index: 5;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  padding: 0 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aurion-exit-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.aurion-exit-btn:hover {
+  opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .aurion-exit-btn {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.aurion-scene-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+}
+
+@media (min-width: 700px) {
+  .aurion-scene-wrap {
+    max-width: 720px;
+  }
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-mechanic-slot {
+  display: none;
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-scene-textblock {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-wrap.aurion-mobile-hero-image {
+  justify-content: center;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-scene-textblock {
+  flex: none;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-button-row {
+  margin-top: 24px;
+}
+
+.aurion-overlay-img {
+  max-width: 260px;
+  width: 60%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.aurion-intro-scene .aurion-overlay-img {
+  max-width: 170px;
+  width: 45%;
+}
+
+@media (max-width: 480px) {
+  .aurion-mobile-hero-image .aurion-overlay-img {
+    max-width: 300px;
+    width: 82%;
+  }
+}
+
+.aurion-overlay-center { align-self: center; }
+.aurion-overlay-top { align-self: flex-start; margin-top: -10vh; }
+.aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
+
+.aurion-scene-title {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 28px;
+  margin: 6px 0 20px;
+}
+
+.aurion-scene-subtitle {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.aurion-scene-desc {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  white-space: pre-wrap;
+}
+
+.aurion-mechanic-slot {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-video {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 16px;
+  display: block;
+  background: transparent;
+  margin: 0 auto;
+}
+
+.aurion-scene-video::-webkit-media-controls,
+.aurion-scene-video::-webkit-media-controls-enclosure,
+.aurion-scene-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.aurion-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  width: 100%;
+}
+
+.aurion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: 'Poppins';
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--aurion-text);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  max-width: 220px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+  height: auto;
+}
+
+.aurion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.aurion-btn-imaged {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border-radius: 0;
+  min-width: 140px;
+  max-width: 220px;
+  min-height: 48px;
+  padding: 20px 20px 7px;
+  color: #3b2855;
+}
+
+.aurion-btn-label {
+  display: block;
+  max-width: 90px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.05;
+}
+
+.aurion-btn-label-wrapped {
+  margin-top: 0;
+}
+
+/* Shared board/tile grid — reused as-is by gear, companion and envelope
+   below, same as core-01. */
+.aurion-scene-wrap.aurion-has-side-panel {
+  max-width: 720px;
+}
+
+.aurion-sort-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.aurion-sort-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 460px;
+  min-width: 240px;
+}
+
+.aurion-sort-tile {
+  position: relative;
+  aspect-ratio: 570 / 876;
+  border-radius: 10px;
+  background-color: var(--aurion-dark);
+  background-size: cover;
+  background-position: center;
+  border: none;
+  box-shadow: 0 0 16px var(--aurion-neon-purple-glow-soft);
+  opacity: 1;
+  transition: box-shadow 0.3s ease;
+}
+
+.aurion-reveal-tile {
+  cursor: pointer;
+}
+
+.aurion-reveal-tile.dim {
+  opacity: 0.2;
+  cursor: default;
+  box-shadow: none;
+}
+
+.aurion-reveal-tile.flashing {
+  opacity: 1;
+  animation: reveal-flash 1.4s ease-in-out infinite;
+}
+
+.aurion-reveal-tile.opened {
+  opacity: 1;
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  animation: none;
+}
+
+@keyframes reveal-flash {
+  0%, 100% { box-shadow: 0 0 10px var(--aurion-neon-purple-glow-soft); }
+  50% { box-shadow: 0 0 26px var(--aurion-neon-purple-glow-bright); }
+}
+
+.aurion-reveal-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 220px;
+  background: rgba(20, 40, 90, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 25;
+}
+
+.aurion-reveal-popup.open {
+  display: block;
+}
+
+.aurion-reveal-popup h2 {
+  font-family: 'Luckiest Guy';
+  color: #ffbd59;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.aurion-reveal-subtitle {
+  font-family: 'Poppins';
+  color: #ffbd59;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.aurion-reveal-body {
+  font-family: 'Poppins';
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+/* ===========================================================
+   Core-02's own mechanics: piratehat (Scene 1) and spot-diamond
+   (Scene 6) below, plus gear-select / companion-select /
+   envelope-reveal cloned from core-01 (identical behavior, this
+   game's own copy — same reasoning as aurion-core-02.js).
+   No compass, no maze, no key-grab — this game doesn't use them.
+   =========================================================== */
+
+/* Scene 1 ("Where Will Your Journey Take You?") — the hat sits centered,
+   single tappable image. Sized and fitted the same way every other
+   single-image tile in this game already is (square canvas art,
+   background-size: contain, same convention as the gear/companion
+   tiles below) — not a new size invented for this scene. */
+.aurion-piratehat-tile {
+  width: 220px;
+  max-width: 60vw;
+  aspect-ratio: 1 / 1;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+}
+
+.aurion-piratehat-tile.opened {
+  cursor: default;
+}
+
+/* Scene 6 ("You Found A Nice Treasure") — the gem pile is this scene's
+   one big visual, sized the same as this game's other single-visual
+   moments (.aurion-scene-video above uses the same 340px cap). The 3C
+   diamond sits on top of it, small, absolutely positioned.
+   NOT YET FINAL: top/left below is a placeholder — Chef needs to see
+   the real gempile art in place before this position is right. */
+.aurion-spot-stage {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.aurion-spot-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-spot-hidden-item {
+  position: absolute;
+  top: 55%;
+  left: 60%;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px var(--aurion-neon-purple-glow-soft));
+}
+
+.aurion-spot-hidden-item.found {
+  filter: drop-shadow(0 0 20px rgba(240, 180, 41, 0.85));
+}
+
+/* Scene 3 ("Choose Your Gear") — cloned from core-01, unchanged. */
+.aurion-gear-board {
+  max-width: 440px;
+}
+
+.aurion-gear-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aurion-gear-tile,
+.aurion-pirate-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.aurion-gear-tile {
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurion-gear-tile.opened {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+}
+
+.aurion-gear-tile.dim {
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+.aurion-pirate-tile {
+  cursor: default;
+}
+
+.aurion-pirate-tile.dim {
+  opacity: 0.55;
+}
+
+@media (max-width: 700px) {
+  .aurion-gear-board {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 300px;
+    gap: 16px;
+  }
+}
+
+/* Scene 2 ("Choose Your Companion") — cloned from core-01, unchanged. */
+.aurion-companion-board {
+  max-width: 460px;
+}
+
+@media (min-width: 700px) {
+  .aurion-companion-board {
+    max-width: 580px;
+  }
+}
+
+.aurion-companion-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurion-companion-tile.opened {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+}
+
+.aurion-companion-tile.dim {
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+@media (max-width: 700px) {
+  .aurion-companion-board {
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
+    gap: 16px;
+  }
+
+  .aurion-companion-tile {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Scene 9 ("Let's Check How Far You Got") — cloned from core-01, unchanged. */
+.aurion-envelope-board {
+  max-width: 460px;
+}
+
+@media (min-width: 700px) {
+  .aurion-envelope-board {
+    max-width: 580px;
+  }
+}
+
+.aurion-envelope-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.aurion-envelope-board.dimmed .aurion-envelope-tile {
+  opacity: 0.1;
+}
+
+@media (max-width: 700px) {
+  .aurion-envelope-board {
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
+    gap: 16px;
+  }
+
+  .aurion-envelope-tile {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.aurion-credits-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-wrap;
+  margin: 12px 0 20px;
+  color: var(--aurion-text);
+  opacity: 0.9;
+}

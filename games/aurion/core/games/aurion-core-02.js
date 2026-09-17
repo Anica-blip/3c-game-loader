@@ -78,6 +78,30 @@ function resolveAssetUrl(url) {
   return 'assets/' + url;
 }
 
+// Chef's request: two of the four companion parrots and all four
+// decorative pirates face the wrong way in their source art (left
+// instead of right) for the scenes where they walk/hide — rather than
+// replacing the image files in the repo, this flips them in place via
+// CSS (transform: scaleX(-1), applied through the .aurion-flip-x class
+// below in css/core-02.css). Checked against the RAW filename (before
+// resolveAssetUrl adds any assets/ prefix or a caller passes a full
+// URL) so it matches regardless of how the image was referenced in
+// core-02.json. Only these six exact images flip — not every parrot
+// or pirate, only the ones Chef listed.
+const FLIP_IMAGE_FILENAMES = new Set([
+  'core-01.parrot2.png',
+  'core-01.parrot3.png',
+  'core-01.pirate1.png',
+  'core-01.pirate2.png',
+  'core-01.pirate3.png',
+  'core-01.pirate4.png'
+]);
+function needsFlip(url) {
+  if (!url) return false;
+  const filename = url.split('/').pop();
+  return FLIP_IMAGE_FILENAMES.has(filename);
+}
+
 // Checks each .aurion-btn-label already in the live DOM and flags the
 // ones actually rendering on 2 lines with .aurion-btn-label-wrapped, so
 // style.css can nudge just those a little further down (a 2-line label
@@ -806,6 +830,7 @@ export function startGame(config, container) {
 
     const companion = document.createElement('button');
     companion.className = 'aurion-hide-companion-dot';
+    if (needsFlip(chosenCompanionImage)) companion.classList.add('aurion-flip-x');
     companion.setAttribute('aria-label', 'Drag your companion behind the rocks');
     if (chosenCompanionImage) {
       companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
@@ -869,6 +894,7 @@ export function startGame(config, container) {
     function startPirateWalk() {
       const pirate = document.createElement('div');
       pirate.className = 'aurion-hide-pirate-walk';
+      if (needsFlip(chosenGearPirateImage)) pirate.classList.add('aurion-flip-x');
       if (chosenGearPirateImage) {
         pirate.style.backgroundImage = `url('${resolveAssetUrl(chosenGearPirateImage)}')`;
       }
@@ -944,6 +970,7 @@ export function startGame(config, container) {
 
     const companion = document.createElement('button');
     companion.className = 'aurion-road-companion';
+    if (needsFlip(chosenCompanionImage)) companion.classList.add('aurion-flip-x');
     companion.setAttribute('aria-label', 'Drag your companion along the trail to the mountain');
     if (chosenCompanionImage) {
       companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
@@ -1059,10 +1086,16 @@ export function startGame(config, container) {
       { left: 33, top: 25 },
       { left: 27, top: 37 }
     ];
+    // Pulled back 10 points to the left from the previous mobile pass —
+    // that version fixed the "cramped against the coins" complaint but
+    // over-corrected, landing too close to the sack instead. This still
+    // clears every pairwise hit-area gap the same way the last version
+    // did (checked against the same mobile stage size), just shifted
+    // back toward the coin pile.
     const MOBILE_DIAMOND_SPOTS = [
-      { left: 40, top: 20 },
-      { left: 52, top: 24 },
-      { left: 45, top: 42 }
+      { left: 30, top: 20 },
+      { left: 42, top: 24 },
+      { left: 35, top: 42 }
     ];
     const COIN_SPOT = { left: 14, top: 57 };
     const isMobileLayout = window.matchMedia('(max-width: 700px)').matches;
@@ -1256,6 +1289,7 @@ export function startGame(config, container) {
       if (pirateUrl) {
         const pirateTile = document.createElement('div');
         pirateTile.className = 'aurion-sort-tile aurion-pirate-tile dim';
+        if (needsFlip(pirateUrl)) pirateTile.classList.add('aurion-flip-x');
         pirateTile.style.backgroundImage = `url('${resolveAssetUrl(pirateUrl)}')`;
         pair.appendChild(pirateTile);
       }
@@ -1284,6 +1318,7 @@ export function startGame(config, container) {
     Object.entries(parrots).forEach(([value, imageUrl]) => {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-companion-tile';
+      if (needsFlip(imageUrl)) tile.classList.add('aurion-flip-x');
       if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
       tile.addEventListener('click', () => {
         if (chosen) return;

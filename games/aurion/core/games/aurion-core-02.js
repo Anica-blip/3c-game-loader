@@ -1058,26 +1058,26 @@ export function startGame(config, container) {
     if (mechanicData.sack) sack.src = resolveAssetUrl(mechanicData.sack);
     stage.appendChild(sack);
 
-    // Second pass on this layout per Chef's more precise note:
-    // - diamond1 (white) is the topmost of the three, diamond2 (blue)
-    //   sits to its right but LOWER than it — the first pass had that
-    //   backwards (blue higher than white), now reversed.
-    // - all three diamonds shifted right, closer to the sack, while
-    //   staying close to the coin pile (not drifting toward the sack
-    //   on their own).
-    // - the coin pile's vertical spot is set so its bottom edge lines
-    //   up with the sack image's own bottom edge (sack: top 50%,
-    //   height ~34% of stage width via aspect-ratio 1/1 → on this
-    //   stage's 3:2 aspect that's ~51% of stage height, so its bottom
-    //   sits at roughly 50 + 51/2 = 75.5% — coin top is set so
-    //   COIN half-height lands the coin's own bottom there too).
-    // Pairwise spacing still respects each item's own hit-area (see
-    // .aurion-sack-item-diamond / -coin sizes) so none of the four
-    // buttons' click targets touch.
+    // Third pass — this time measured against Chef's own screenshot of
+    // the previous version, not eyeballed. The screenshot has no ruler,
+    // but the previous DIAMOND_SPOTS/COIN_SPOT values ARE known (they're
+    // what rendered it), so those four points were used as calibration:
+    // pixel-scanned each item's own color in the screenshot (white/blue/
+    // purple diamond, gold coin) to get its rendered center in image
+    // pixels, then solved the stage's own pixel origin and width/height
+    // by least-squares fit against the percent values that actually
+    // produced those pixels. That recovered stage box (~524x344px,
+    // matching the CSS's 520px max-width / 3:2 aspect closely) is what
+    // the new spots below are computed against — not guessed proportions.
+    // Chef's actual note was that the diamonds needed to (a) sit closer
+    // to EACH OTHER — this cluster is much tighter than the last pass —
+    // and (b) move toward the COIN pile, not toward the sack, which is
+    // the direction the previous pass had wrongly gone. Coin's own spot
+    // is unchanged from the last pass; only the diamonds moved.
     const DIAMOND_SPOTS = [
-      { left: 42, top: 16 },
-      { left: 60, top: 22 },
-      { left: 50, top: 42 }
+      { left: 22, top: 22 },
+      { left: 33, top: 25 },
+      { left: 27, top: 37 }
     ];
     const COIN_SPOT = { left: 14, top: 57 };
 

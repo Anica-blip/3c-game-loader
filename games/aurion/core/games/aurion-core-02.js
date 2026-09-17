@@ -837,12 +837,20 @@ export function startGame(config, container) {
 
     companion.addEventListener('pointerdown', (e) => {
       if (placed) return;
+      // preventDefault here matters on real phones specifically: without
+      // it, pressing and dragging an element with a background-image can
+      // trigger the browser's own native "drag this image" ghost-drag or
+      // a long-press callout instead of our own drag logic — touch-
+      // action: none (in the CSS) stops page scrolling but does not by
+      // itself stop that native image-drag behavior.
+      e.preventDefault();
       dragging = true;
       companion.classList.remove('returning');
       companion.setPointerCapture(e.pointerId);
     });
     companion.addEventListener('pointermove', (e) => {
       if (!dragging || placed) return;
+      e.preventDefault();
       positionFromPointer(e.clientX, e.clientY);
     });
     companion.addEventListener('pointerup', (e) => {
@@ -887,23 +895,45 @@ export function startGame(config, container) {
   }
 
   // Scene 5 ("Follow The Map") — core-02's own mechanic, no equivalent in
-  // core-01. scene.mechanicData.road is the road/mountain background. The
-  // companion the player chose appears draggable on top of it; the
-  // player drags it along until it's close enough to the mountain (the
-  // right-hand end of the path), at which point it fades out and the
-  // button appears. Built with Pointer Events (covers mouse, touch and
-  // pen with one set of listeners) rather than a full maze-style
-  // constrained path — this is a straight left-to-right drag, not a
-  // walled maze, so it doesn't need that machinery.
+  // core-01. scene.mechanicData.road is the road/mountain background —
+  // Chef's actual art winds from the bottom-left up to the mountain at
+  // the top-right, it is NOT a straight horizontal line, so the drag is
+  // free in two dimensions (left AND top), same family as Scene 4's
+  // rock drag above — not constrained to a fixed path, since a straight
+  // left-to-right slide was never going to match a zigzag road (my
+  // earlier version did exactly that, wrongly).
   //
-  // The "close enough to the mountain" threshold (85% of the stage's
-  // width, ARRIVAL_PERCENT below) is a first-pass guess, same caveat as
-  // every other placeholder position in this file — tune it once the
-  // real road/mountain art is in place and Chef can see where the
-  // mountain actually sits.
+  // MOUNTAIN_ZONE (where the drag has to land to count as "arrived") is
+  // matched by eye to where the road visually disappears behind the
+  // mountain at the top-right of the art — a first pass, not exact,
+  // same placeholder caveat as every other position in this file.
   function buildRoadDragMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};
-    const ARRIVAL_PERCENT = 85;
+    // These are measured, not eyeballed — taken by scanning the actual
+    // screenshot Chef sent (pixel-by-pixel: background-color subtraction
+    // to find the illustration's own bounding box, a green-channel scan
+    // for the mountain, a white-pixel scan for the road's own painted
+    // centre line) rather than guessing proportions from looking at it.
+    // The illustration's content box measured 448x391px inside that
+    // screenshot — a 1.146:1 ratio, not the 1:1 square guessed before.
+    // The parrot's own resting spot measured at roughly (17%, 87%) of
+    // that box. The road's centre line's topmost point — where it
+    // visually disappears behind the mountain — measured at roughly
+    // (86%, 25%).
+    const START_LEFT = 17;
+    const START_TOP = 87;
+    // MOUNTAIN_ZONE is now the actual measured target, with a generous
+    // margin around it (screenshot compression and my own color
+    // thresholds aren't pixel-perfect, so this isn't treated as exact).
+    const MOUNTAIN_ZONE = { leftMin: 68, leftMax: 100, topMin: 8, topMax: 45 };
+    // Kept as a second path to success alongside the measured zone, not
+    // instead of it: a real drag that clearly moves it well up and to
+    // the right still counts even if it lands just outside the measured
+    // zone's margin — this is what stops arrival being impossible to
+    // reach again if the real deployed art's proportions still differ
+    // slightly from this measurement.
+    const ARRIVE_RIGHT_DELTA = 55;
+    const ARRIVE_UP_DELTA = 55;
     let done = false;
     let dragging = false;
 
@@ -920,39 +950,69 @@ export function startGame(config, container) {
 
     const companion = document.createElement('button');
     companion.className = 'aurion-road-companion';
-    companion.setAttribute('aria-label', 'Drag your companion along the trail');
+    companion.setAttribute('aria-label', 'Drag your companion along the trail to the mountain');
     if (chosenCompanionImage) {
       companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
     }
-    companion.style.left = '6%';
-    stage.appendChild(companion);
 
-    function moveTo(clientX) {
+    function setPosition(leftPercent, topPercent) {
+      companion.style.left = leftPercent + '%';
+      companion.style.top = topPercent + '%';
+    }
+    setPosition(START_LEFT, START_TOP);
+
+    function positionFromPointer(clientX, clientY) {
       const rect = stage.getBoundingClientRect();
-      if (!rect.width) return;
-      const percent = Math.max(6, Math.min(96, ((clientX - rect.left) / rect.width) * 100));
-      companion.style.left = percent + '%';
-      if (percent >= ARRIVAL_PERCENT && !done) {
+      if (!rect.width || !rect.height) return null;
+      const leftPercent = Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
+      const topPercent = Math.max(2, Math.min(98, ((clientY - rect.top) / rect.height) * 100));
+      setPosition(leftPercent, topPercent);
+      return { leftPercent, topPercent };
+    }
+
+    companion.addEventListener('pointerdown', (e) => {
+      if (done) return;
+      // Same reasoning as Scene 4's hide mechanic — without this, a real
+      // phone can hijack the press-and-drag as a native image-drag or
+      // long-press callout instead of running this drag logic.
+      e.preventDefault();
+      dragging = true;
+      companion.classList.remove('returning');
+      companion.setPointerCapture(e.pointerId);
+    });
+    companion.addEventListener('pointermove', (e) => {
+      if (!dragging || done) return;
+      e.preventDefault();
+      positionFromPointer(e.clientX, e.clientY);
+    });
+    companion.addEventListener('pointerup', (e) => {
+      if (!dragging || done) return;
+      dragging = false;
+      const pos = positionFromPointer(e.clientX, e.clientY);
+      const inMeasuredZone = pos
+        && pos.leftPercent >= MOUNTAIN_ZONE.leftMin && pos.leftPercent <= MOUNTAIN_ZONE.leftMax
+        && pos.topPercent >= MOUNTAIN_ZONE.topMin && pos.topPercent <= MOUNTAIN_ZONE.topMax;
+      const draggedFarEnough = pos
+        && (pos.leftPercent - START_LEFT) >= ARRIVE_RIGHT_DELTA
+        && (START_TOP - pos.topPercent) >= ARRIVE_UP_DELTA;
+      const arrived = inMeasuredZone || draggedFarEnough;
+      if (arrived) {
         done = true;
         companion.classList.add('arrived');
         // Small pause so the "arrived" fade is actually seen before the
         // button appears, rather than the two happening in the same frame.
         setTimeout(onComplete, 500);
+      } else {
+        // Missed the mountain — snap back to the trail's start so the
+        // player can try again, rather than leaving it stranded off the
+        // path wherever they let go.
+        companion.classList.add('returning');
+        setPosition(START_LEFT, START_TOP);
       }
-    }
-
-    companion.addEventListener('pointerdown', (e) => {
-      if (done) return;
-      dragging = true;
-      companion.setPointerCapture(e.pointerId);
     });
-    companion.addEventListener('pointermove', (e) => {
-      if (!dragging || done) return;
-      moveTo(e.clientX);
-    });
-    companion.addEventListener('pointerup', () => { dragging = false; });
     companion.addEventListener('pointercancel', () => { dragging = false; });
 
+    stage.appendChild(companion);
     slot.appendChild(stage);
   }
 

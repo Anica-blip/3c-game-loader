@@ -200,6 +200,7 @@
     },
     {
       "id": 6,
+      "mechanic": "hide-behind-rocks",
       "titleText": "Refreshing Spot",
       "descText": "",
       "buttons": [
@@ -223,11 +224,16 @@
         "url": "",
         "position": "center"
       },
-      "mechanicData": {},
+      "mechanicData": {
+        "waterwell": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-waterwell.png",
+        "pinetrees": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-pinetrees.png",
+        "rocks": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-rocks.png"
+      },
       "options": []
     },
     {
       "id": 7,
+      "mechanic": "drag-to-mountain",
       "titleText": "Follow The Map",
       "descText": "",
       "buttons": [
@@ -251,7 +257,9 @@
         "url": "",
         "position": "center"
       },
-      "mechanicData": {},
+      "mechanicData": {
+        "road": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-roadjourney.png"
+      },
       "options": []
     },
     {
@@ -282,7 +290,7 @@
       },
       "mechanicData": {
         "gempile": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-gempile.png",
-        "diamond": "../../../shared/3c-diamond.png"
+        "diamond": "../../../shared/diamond.png"
       },
       "options": []
     },

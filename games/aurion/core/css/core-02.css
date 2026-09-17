@@ -443,6 +443,12 @@ body {
   transform: translate(-50%, -50%);
   width: 100%;
   max-width: 220px;
+  /* The old score-based card was one short paragraph; this one is a
+     15-item list, which runs much taller. Capped and scrollable so it
+     never runs off-screen on a short viewport instead of just growing
+     past the visible page. */
+  max-height: 80vh;
+  overflow-y: auto;
   background: rgba(20, 40, 90, 0.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -466,21 +472,26 @@ body {
   margin: 0 0 4px;
 }
 
-.aurion-reveal-subtitle {
-  font-family: 'Poppins';
-  color: #ffbd59;
-  font-size: 11px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.aurion-reveal-body {
+/* Same font/color/weight the old .aurion-reveal-body paragraph used —
+   Chef's own instruction was to keep those, just change the content
+   from a prose paragraph to this bulleted word list. Centered as a
+   block (inline-block + text-align:left) so the bullets themselves
+   still line up naturally left-to-right instead of each one being
+   centered on its own, which reads oddly for a list. */
+.aurion-reveal-word-list {
   font-family: 'Poppins';
   color: #ffffff;
   font-weight: 700;
   font-size: 11px;
-  line-height: 1.45;
+  line-height: 1.6;
   margin: 0 0 12px;
+  padding-left: 18px;
+  text-align: left;
+  display: inline-block;
+}
+
+.aurion-reveal-word-list li {
+  margin-bottom: 2px;
 }
 
 /* ===========================================================

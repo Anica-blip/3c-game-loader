@@ -1,5 +1,26 @@
 // Repo path: games/aurion/core/games/aurion.js
 
+// ============================================================
+// PER-GAME CODE INDEPENDENCE — read before adding or reusing a mechanic
+// ============================================================
+// Each individual game (core-01, core-02, core-03, ...) keeps its own
+// "kitchen space" — clean and tidy. This file must only contain the
+// mechanics THIS game's own JSON actually calls, never a mechanic that
+// belongs to a sibling game just because it happens to share a folder.
+//
+// If a game wants to borrow or share a piece another game already built
+// (an asset, a mechanic), that piece gets CLONED into this game's own
+// file, in this game's own words — never left as a shared reference back
+// to the original game's file.
+//
+// This is a deliberate choice, not an efficiency shortcut: no file
+// overload, no code debris hanging around from a mechanic this game
+// doesn't even use, because that's the lazy way to get it done. Games do
+// NOT touch each other. Duplicated code across games is the accepted
+// cost of that — never games quietly sharing code they don't use, and
+// never being unsure whose code is actually running.
+// ============================================================
+
 // The four Core Values this challenge tracks a running score for, built up
 // across the gear scene, the maze scene, and the companion scene, then
 // revealed as one envelope in the final scene (whichever value scored

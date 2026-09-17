@@ -296,6 +296,7 @@
     },
     {
       "id": 9,
+      "mechanic": "collect-to-sack",
       "titleText": "It's Your Lucky Day",
       "descText": "",
       "buttons": [
@@ -319,11 +320,20 @@
         "url": "",
         "position": "center"
       },
-      "mechanicData": {},
+      "mechanicData": {
+        "items": [
+          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-diamond1.png",
+          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-diamond2.png",
+          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-diamond3.png",
+          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-goldcoins.png"
+        ],
+        "sack": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-sack.png"
+      },
       "options": []
     },
     {
       "id": 10,
+      "mechanic": "flash-tickets",
       "titleText": "Your Journey Continues",
       "descText": "",
       "buttons": [
@@ -347,7 +357,11 @@
         "url": "",
         "position": "center"
       },
-      "mechanicData": {},
+      "mechanicData": {
+        "boatdock": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-boatdock.png",
+        "ticket": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-boattickets.png",
+        "ticketCount": 2
+      },
       "options": []
     },
     {

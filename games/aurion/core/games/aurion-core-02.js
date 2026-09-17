@@ -139,6 +139,14 @@ function preloadAssets(config, preloadedVideos) {
     if (d.mechanic === 'drag-to-mountain') {
       add(mechanicData.road);
     }
+    if (d.mechanic === 'collect-to-sack') {
+      (mechanicData.items || []).forEach(add);
+      add(mechanicData.sack);
+    }
+    if (d.mechanic === 'flash-tickets') {
+      add(mechanicData.boatdock);
+      add(mechanicData.ticket);
+    }
     if (d.mechanic === 'gear-select') {
       Object.values(mechanicData.gear || {}).forEach(add);
       (mechanicData.pirates || []).forEach(add);
@@ -566,6 +574,16 @@ export function startGame(config, container) {
     if (scene.mechanic === 'drag-to-mountain') {
       mechanicGatesButton = true;
       buildRoadDragMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'collect-to-sack') {
+      mechanicGatesButton = true;
+      buildCollectToSackMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'flash-tickets') {
+      mechanicGatesButton = true;
+      buildFlashTicketsMechanic(mechanicSlot, scene, revealButtons);
     }
 
     if (scene.mechanic === 'gear-select') {
@@ -1013,6 +1031,172 @@ export function startGame(config, container) {
     companion.addEventListener('pointercancel', () => { dragging = false; });
 
     stage.appendChild(companion);
+    slot.appendChild(stage);
+  }
+
+  // Scene 7 ("It's Your Lucky Day") — items (3 diamonds + 1 coin pile) sit
+  // on the left, the sack sits on the right, per Chef's own layout note.
+  // Each item is its own drag target — the player drags it, individually,
+  // across into the sack, same "don't decide for the player" rule as
+  // Scene 4's rock-drag: nothing auto-travels on a tap. An item that's
+  // dropped anywhere over the sack's own box counts as collected and
+  // fades out; missed drops snap back to that item's own start spot.
+  // Scene finishes (button appears) once every item has been collected.
+  function buildCollectToSackMechanic(slot, scene, onComplete) {
+    const mechanicData = scene.mechanicData || {};
+    const items = mechanicData.items || [];
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-sack-stage';
+
+    const sack = document.createElement('img');
+    sack.className = 'aurion-sack-bag';
+    sack.alt = '';
+    if (mechanicData.sack) sack.src = resolveAssetUrl(mechanicData.sack);
+    stage.appendChild(sack);
+
+    // Starting spots spread the items out over the left half of the
+    // stage (percent of stage width/height). These are deliberately
+    // spaced further apart than a first pass had them — each item's own
+    // drag button is 58px square, and on the stage's real rendered size
+    // two spots that were only ~12% apart left each button's hit-area
+    // overlapping its neighbor's, so a click near that seam could grab
+    // the wrong item (or miss both). Every pair below clears either the
+    // item's own width-percent or height-percent gap, so none of the
+    // four buttons' hit-areas touch.
+    const START_SPOTS = [
+      { left: 18, top: 28 },
+      { left: 46, top: 26 },
+      { left: 32, top: 62 },
+      { left: 12, top: 64 }
+    ];
+
+    let remaining = items.length;
+
+    items.forEach((url, i) => {
+      const spot = START_SPOTS[i % START_SPOTS.length];
+      const item = document.createElement('button');
+      item.className = 'aurion-sack-item';
+      item.style.backgroundImage = `url('${resolveAssetUrl(url)}')`;
+      item.setAttribute('aria-label', 'Drag this into the sack');
+      let dragging = false;
+      let collected = false;
+
+      function setPosition(leftPercent, topPercent) {
+        item.style.left = leftPercent + '%';
+        item.style.top = topPercent + '%';
+      }
+      setPosition(spot.left, spot.top);
+
+      function positionFromPointer(clientX, clientY) {
+        const rect = stage.getBoundingClientRect();
+        if (!rect.width || !rect.height) return null;
+        const leftPercent = Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
+        const topPercent = Math.max(2, Math.min(98, ((clientY - rect.top) / rect.height) * 100));
+        setPosition(leftPercent, topPercent);
+        return { clientX, clientY };
+      }
+
+      item.addEventListener('pointerdown', (e) => {
+        if (collected) return;
+        e.preventDefault();
+        dragging = true;
+        item.classList.add('dragging');
+        item.setPointerCapture(e.pointerId);
+      });
+      item.addEventListener('pointermove', (e) => {
+        if (!dragging || collected) return;
+        e.preventDefault();
+        positionFromPointer(e.clientX, e.clientY);
+      });
+      item.addEventListener('pointerup', (e) => {
+        if (!dragging || collected) return;
+        dragging = false;
+        item.classList.remove('dragging');
+        positionFromPointer(e.clientX, e.clientY);
+        // A 20px margin around the sack's own rendered box, not just the
+        // exact pixels of the image — the sack graphic is small relative
+        // to a real fingertip/cursor-precision drop, and this also keeps
+        // the drop forgiving if the sack image's own box is still small
+        // right as it finishes loading rather than needing an exact hit.
+        const DROP_MARGIN = 20;
+        const sackBox = sack.getBoundingClientRect();
+        const droppedOverSack = e.clientX >= sackBox.left - DROP_MARGIN && e.clientX <= sackBox.right + DROP_MARGIN
+          && e.clientY >= sackBox.top - DROP_MARGIN && e.clientY <= sackBox.bottom + DROP_MARGIN;
+        if (droppedOverSack) {
+          collected = true;
+          item.classList.add('collected');
+          remaining -= 1;
+          if (remaining <= 0) {
+            setTimeout(onComplete, 400);
+          }
+        } else {
+          item.classList.add('returning');
+          setPosition(spot.left, spot.top);
+          setTimeout(() => item.classList.remove('returning'), 260);
+        }
+      });
+      item.addEventListener('pointercancel', () => { dragging = false; });
+
+      stage.appendChild(item);
+    });
+
+    slot.appendChild(stage);
+  }
+
+  // Scene 8 ("Your Journey Continues") — the boat dock is the backdrop,
+  // the ticket(s) sit over it and flash to draw the eye, per Chef's
+  // "appear flashing so the player clicks on them" note. This is a tap,
+  // not a drag — clicking a ticket makes it vanish. Once every ticket on
+  // this scene has been clicked (mechanicData.ticketCount of them, all
+  // the same art, placed at their own spot), the button appears.
+  function buildFlashTicketsMechanic(slot, scene, onComplete) {
+    const mechanicData = scene.mechanicData || {};
+    const ticketCount = mechanicData.ticketCount || 1;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-tickets-stage';
+
+    if (mechanicData.boatdock) {
+      const dock = document.createElement('img');
+      dock.src = resolveAssetUrl(mechanicData.boatdock);
+      dock.alt = '';
+      dock.className = 'aurion-tickets-dock';
+      stage.appendChild(dock);
+    }
+
+    // Two spread-out spots over the dock art so two tickets don't sit on
+    // top of each other; a third/fourth spot is here too in case
+    // ticketCount is ever raised later, but only core-02's two are used.
+    const TICKET_SPOTS = [
+      { left: 38, top: 70 },
+      { left: 62, top: 42 },
+      { left: 50, top: 55 },
+      { left: 25, top: 40 }
+    ];
+
+    let remaining = ticketCount;
+    for (let i = 0; i < ticketCount; i++) {
+      const spot = TICKET_SPOTS[i % TICKET_SPOTS.length];
+      const ticket = document.createElement('button');
+      ticket.className = 'aurion-ticket-item';
+      ticket.style.left = spot.left + '%';
+      ticket.style.top = spot.top + '%';
+      if (mechanicData.ticket) {
+        ticket.style.backgroundImage = `url('${resolveAssetUrl(mechanicData.ticket)}')`;
+      }
+      ticket.setAttribute('aria-label', 'Click this ticket');
+      ticket.addEventListener('click', () => {
+        if (ticket.classList.contains('collected')) return;
+        ticket.classList.add('collected');
+        remaining -= 1;
+        if (remaining <= 0) {
+          setTimeout(onComplete, 400);
+        }
+      });
+      stage.appendChild(ticket);
+    }
+
     slot.appendChild(stage);
   }
 

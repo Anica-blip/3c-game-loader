@@ -1047,12 +1047,26 @@ export function startGame(config, container) {
     // and (b) move toward the COIN pile, not toward the sack, which is
     // the direction the previous pass had wrongly gone. Coin's own spot
     // is unchanged from the last pass; only the diamonds moved.
+    // This desktop-confirmed layout is untouched — Chef was explicit
+    // that desktop stays as-is. Mobile gets its own, separate set below,
+    // because the same percent positions read as far more cramped there:
+    // every item's own size (38px diamond, 92px coin) is a fixed pixel
+    // value, not a percentage, so on a narrower mobile stage that same
+    // 38px/92px eats up a much bigger share of the visible width, and
+    // the desktop gap that looked fine there reads as clutter here.
     const DIAMOND_SPOTS = [
       { left: 22, top: 22 },
       { left: 33, top: 25 },
       { left: 27, top: 37 }
     ];
+    const MOBILE_DIAMOND_SPOTS = [
+      { left: 40, top: 20 },
+      { left: 52, top: 24 },
+      { left: 45, top: 42 }
+    ];
     const COIN_SPOT = { left: 14, top: 57 };
+    const isMobileLayout = window.matchMedia('(max-width: 700px)').matches;
+    const activeDiamondSpots = isMobileLayout ? MOBILE_DIAMOND_SPOTS : DIAMOND_SPOTS;
 
     let remaining = items.length;
 
@@ -1061,7 +1075,7 @@ export function startGame(config, container) {
       // (mechanicData.items is [diamond1, diamond2, diamond3, goldcoins]
       // — see core-02.json); everything before it is a diamond.
       const isCoin = i === items.length - 1;
-      const spot = isCoin ? COIN_SPOT : DIAMOND_SPOTS[i % DIAMOND_SPOTS.length];
+      const spot = isCoin ? COIN_SPOT : activeDiamondSpots[i % activeDiamondSpots.length];
       const item = document.createElement('button');
       item.className = 'aurion-sack-item ' + (isCoin ? 'aurion-sack-item-coin' : 'aurion-sack-item-diamond');
       item.style.backgroundImage = `url('${resolveAssetUrl(url)}')`;

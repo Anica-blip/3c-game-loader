@@ -770,22 +770,32 @@ export function startGame(config, container) {
 
   // Scene 4 ("Refreshing Spot") — core-02's own mechanic, no equivalent in
   // core-01. Three background pieces (waterwell, pinetrees, rocks —
-  // scene.mechanicData) make up the scene's composition. The companion
-  // the player already chose in Scene 2 appears as a small clickable
-  // "dot"; clicking it moves it toward the rocks and fades it out
-  // (vanishes behind them). Once it's gone, the pirate matching whichever
-  // gear the player chose in Scene 3 walks across the screen left to
-  // right, edge to edge — no margins, per Chef's note. Only once that
-  // walk finishes does the button appear.
+  // scene.mechanicData) make up the scene's composition. The player
+  // DRAGS the companion (not a tap — a tap would be deciding the move
+  // for them, per Chef's explicit correction) behind the rocks; letting
+  // go inside the rocks' drop zone vanishes it there, letting go
+  // anywhere else snaps it back to try again. Once it's vanished, the
+  // pirate matching whichever gear the player chose in Scene 3 walks
+  // across the screen left to right, edge to edge — no margins — at an
+  // unhurried pace (see @keyframes hide-pirate-walk's duration in the
+  // CSS; slowed down per Chef's note that the first pass felt rushed).
+  // Only once that walk finishes does the button appear.
   //
-  // The three background pieces' exact positions (CSS: .aurion-hide-
-  // waterwell/.aurion-hide-pinetrees/.aurion-hide-rocks) are a first pass
-  // at Chef's own layout note (waterwell left, pine trees middle, rocks
-  // left) — placeholders until she sees the real art in place, same as
-  // the diamond position in Scene 6.
+  // Built with Pointer Events, same family as Scene 5's road drag below
+  // — this one drags in two dimensions (left AND top) since the rock
+  // drop zone isn't a straight horizontal line the way the road is.
+  //
+  // ROCK_ZONE (the drop target the drag has to land in) is matched by
+  // eye to .aurion-hide-rocks' own position in the CSS — a first pass,
+  // not exact, same placeholder caveat as everything else positioned
+  // against art Chef hasn't confirmed live yet.
   function buildHideMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};
-    let tapped = false;
+    const ROCK_ZONE = { leftMin: 64, leftMax: 100, topMin: 26, topMax: 68 };
+    const START_LEFT = 50;
+    const START_TOP = 90;
+    let placed = false;
+    let dragging = false;
 
     const stage = document.createElement('div');
     stage.className = 'aurion-hide-stage';
@@ -805,23 +815,56 @@ export function startGame(config, container) {
 
     const companion = document.createElement('button');
     companion.className = 'aurion-hide-companion-dot';
-    companion.setAttribute('aria-label', 'Move your companion behind the rocks');
+    companion.setAttribute('aria-label', 'Drag your companion behind the rocks');
     if (chosenCompanionImage) {
       companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
     }
 
-    companion.addEventListener('click', () => {
-      if (tapped) return;
-      tapped = true;
-      companion.classList.add('moving');
-      // Gives the move-toward-the-rocks transition (defined in CSS) time
-      // to actually play before the vanish + pirate walk starts — without
-      // this the fade and the move would read as happening at once.
-      setTimeout(() => {
+    function setPosition(leftPercent, topPercent) {
+      companion.style.left = leftPercent + '%';
+      companion.style.top = topPercent + '%';
+    }
+    setPosition(START_LEFT, START_TOP);
+
+    function positionFromPointer(clientX, clientY) {
+      const rect = stage.getBoundingClientRect();
+      if (!rect.width || !rect.height) return null;
+      const leftPercent = Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
+      const topPercent = Math.max(2, Math.min(98, ((clientY - rect.top) / rect.height) * 100));
+      setPosition(leftPercent, topPercent);
+      return { leftPercent, topPercent };
+    }
+
+    companion.addEventListener('pointerdown', (e) => {
+      if (placed) return;
+      dragging = true;
+      companion.classList.remove('returning');
+      companion.setPointerCapture(e.pointerId);
+    });
+    companion.addEventListener('pointermove', (e) => {
+      if (!dragging || placed) return;
+      positionFromPointer(e.clientX, e.clientY);
+    });
+    companion.addEventListener('pointerup', (e) => {
+      if (!dragging || placed) return;
+      dragging = false;
+      const pos = positionFromPointer(e.clientX, e.clientY);
+      const inZone = pos
+        && pos.leftPercent >= ROCK_ZONE.leftMin && pos.leftPercent <= ROCK_ZONE.leftMax
+        && pos.topPercent >= ROCK_ZONE.topMin && pos.topPercent <= ROCK_ZONE.topMax;
+      if (inZone) {
+        placed = true;
         companion.classList.add('vanished');
         startPirateWalk();
-      }, 700);
+      } else {
+        // Missed the rocks — snap back to the start so the player can
+        // try again, rather than leaving it stranded wherever they let go.
+        companion.classList.add('returning');
+        setPosition(START_LEFT, START_TOP);
+      }
     });
+    companion.addEventListener('pointercancel', () => { dragging = false; });
+
     stage.appendChild(companion);
 
     function startPirateWalk() {

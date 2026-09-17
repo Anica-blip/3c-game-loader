@@ -394,7 +394,7 @@
         "url": "",
         "position": "center"
       },
-      "titleText": "Let's Check How Far You Got",
+      "titleText": "What Else Can You Find Here?",
       "descText": "",
       "buttons": [
         {
@@ -403,7 +403,7 @@
         }
       ],
       "adminLabel": "Scene 9",
-      "subtitleText": "You've Made Part Of The Journey",
+      "subtitleText": "Tap On An Envelope",
       "subtitleColor": "#ffffff"
     },
     {

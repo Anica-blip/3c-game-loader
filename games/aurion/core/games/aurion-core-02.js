@@ -1058,20 +1058,28 @@ export function startGame(config, container) {
     if (mechanicData.sack) sack.src = resolveAssetUrl(mechanicData.sack);
     stage.appendChild(sack);
 
-    // Starting spots for the 3 diamonds — kept close together per
-    // Chef's note that the first pass had them too spread out — plus a
-    // 4th spot, well clear of the diamond cluster, for the (now bigger)
-    // coin pile. The diamonds are smaller than before (see
-    // .aurion-sack-item-diamond) so they can sit this much closer
-    // without their own hit-areas touching; the coin's spot is placed
-    // far enough from all three (mostly by the vertical gap) that its
-    // own bigger hit-area still doesn't overlap them either.
+    // Second pass on this layout per Chef's more precise note:
+    // - diamond1 (white) is the topmost of the three, diamond2 (blue)
+    //   sits to its right but LOWER than it — the first pass had that
+    //   backwards (blue higher than white), now reversed.
+    // - all three diamonds shifted right, closer to the sack, while
+    //   staying close to the coin pile (not drifting toward the sack
+    //   on their own).
+    // - the coin pile's vertical spot is set so its bottom edge lines
+    //   up with the sack image's own bottom edge (sack: top 50%,
+    //   height ~34% of stage width via aspect-ratio 1/1 → on this
+    //   stage's 3:2 aspect that's ~51% of stage height, so its bottom
+    //   sits at roughly 50 + 51/2 = 75.5% — coin top is set so
+    //   COIN half-height lands the coin's own bottom there too).
+    // Pairwise spacing still respects each item's own hit-area (see
+    // .aurion-sack-item-diamond / -coin sizes) so none of the four
+    // buttons' click targets touch.
     const DIAMOND_SPOTS = [
-      { left: 20, top: 26 },
-      { left: 36, top: 22 },
-      { left: 26, top: 46 }
+      { left: 42, top: 16 },
+      { left: 60, top: 22 },
+      { left: 50, top: 42 }
     ];
-    const COIN_SPOT = { left: 12, top: 74 };
+    const COIN_SPOT = { left: 14, top: 57 };
 
     let remaining = items.length;
 

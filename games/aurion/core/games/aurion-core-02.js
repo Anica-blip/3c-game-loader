@@ -21,8 +21,9 @@
 // never being unsure whose code is actually running.
 //
 // This file was cloned from core-01's aurion.js and trimmed to only what
-// core-02 actually uses: piratehat (Scene 1) and spot-diamond (Scene 6) —
-// both this game's own, no equivalent in core-01 — plus companion-select,
+// core-02 actually uses: piratehat (Scene 1), hide-behind-rocks (Scene 4)
+// and drag-to-mountain (Scene 5), and spot-diamond (Scene 6) — all four
+// this game's own, no equivalent in core-01 — plus companion-select,
 // gear-select, envelope-reveal.
 // core-01's compass, maze, and key-grab mechanics were removed entirely —
 // not just left unused — because core-02's own scenes never call them.
@@ -130,6 +131,14 @@ function preloadAssets(config, preloadedVideos) {
       add(mechanicData.gempile);
       add(mechanicData.diamond);
     }
+    if (d.mechanic === 'hide-behind-rocks') {
+      add(mechanicData.waterwell);
+      add(mechanicData.pinetrees);
+      add(mechanicData.rocks);
+    }
+    if (d.mechanic === 'drag-to-mountain') {
+      add(mechanicData.road);
+    }
     if (d.mechanic === 'gear-select') {
       Object.values(mechanicData.gear || {}).forEach(add);
       (mechanicData.pirates || []).forEach(add);
@@ -190,6 +199,15 @@ export function startGame(config, container) {
   let sceneIndex = 0;
   let ambientAudio = null;
   const preloadedVideos = new Map(); // scene.video url -> the real preloaded <video> element, reused (not recreated) when that scene renders
+
+  // The companion (Scene 2) and gear/pirate (Scene 3) picks need to keep
+  // showing up in later scenes (Chef's own note: "the companion the player
+  // chose will appear in every scene thereafter"). Captured here, at
+  // startGame's own scope, the moment each pick is made, so Scene 4's hide
+  // mechanic and Scene 5's road mechanic can read the SAME art the player
+  // actually chose instead of a hardcoded default.
+  let chosenCompanionImage = null;
+  let chosenGearPirateImage = null;
 
   // Core Values challenge only: which envelope/message the player sees at
   // the end. This plumbing (coreValueScores/addCoreValueScore/
@@ -540,6 +558,16 @@ export function startGame(config, container) {
       buildSpotDiamondMechanic(mechanicSlot, scene, revealButtons);
     }
 
+    if (scene.mechanic === 'hide-behind-rocks') {
+      mechanicGatesButton = true;
+      buildHideMechanic(mechanicSlot, scene, revealButtons);
+    }
+
+    if (scene.mechanic === 'drag-to-mountain') {
+      mechanicGatesButton = true;
+      buildRoadDragMechanic(mechanicSlot, scene, revealButtons);
+    }
+
     if (scene.mechanic === 'gear-select') {
       mechanicGatesButton = true;
       buildGearMechanic(mechanicSlot, scene, revealButtons);
@@ -740,6 +768,151 @@ export function startGame(config, container) {
     slot.appendChild(stage);
   }
 
+  // Scene 4 ("Refreshing Spot") — core-02's own mechanic, no equivalent in
+  // core-01. Three background pieces (waterwell, pinetrees, rocks —
+  // scene.mechanicData) make up the scene's composition. The companion
+  // the player already chose in Scene 2 appears as a small clickable
+  // "dot"; clicking it moves it toward the rocks and fades it out
+  // (vanishes behind them). Once it's gone, the pirate matching whichever
+  // gear the player chose in Scene 3 walks across the screen left to
+  // right, edge to edge — no margins, per Chef's note. Only once that
+  // walk finishes does the button appear.
+  //
+  // The three background pieces' exact positions (CSS: .aurion-hide-
+  // waterwell/.aurion-hide-pinetrees/.aurion-hide-rocks) are a first pass
+  // at Chef's own layout note (waterwell left, pine trees middle, rocks
+  // left) — placeholders until she sees the real art in place, same as
+  // the diamond position in Scene 6.
+  function buildHideMechanic(slot, scene, onComplete) {
+    const mechanicData = scene.mechanicData || {};
+    let tapped = false;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-hide-stage';
+
+    function addBgItem(url, className) {
+      if (!url) return;
+      const img = document.createElement('img');
+      img.src = resolveAssetUrl(url);
+      img.alt = '';
+      img.className = 'aurion-hide-bg-item ' + className;
+      stage.appendChild(img);
+    }
+
+    addBgItem(mechanicData.waterwell, 'aurion-hide-waterwell');
+    addBgItem(mechanicData.pinetrees, 'aurion-hide-pinetrees');
+    addBgItem(mechanicData.rocks, 'aurion-hide-rocks');
+
+    const companion = document.createElement('button');
+    companion.className = 'aurion-hide-companion-dot';
+    companion.setAttribute('aria-label', 'Move your companion behind the rocks');
+    if (chosenCompanionImage) {
+      companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
+    }
+
+    companion.addEventListener('click', () => {
+      if (tapped) return;
+      tapped = true;
+      companion.classList.add('moving');
+      // Gives the move-toward-the-rocks transition (defined in CSS) time
+      // to actually play before the vanish + pirate walk starts — without
+      // this the fade and the move would read as happening at once.
+      setTimeout(() => {
+        companion.classList.add('vanished');
+        startPirateWalk();
+      }, 700);
+    });
+    stage.appendChild(companion);
+
+    function startPirateWalk() {
+      const pirate = document.createElement('div');
+      pirate.className = 'aurion-hide-pirate-walk';
+      if (chosenGearPirateImage) {
+        pirate.style.backgroundImage = `url('${resolveAssetUrl(chosenGearPirateImage)}')`;
+      }
+      // The walk is a plain CSS animation (see @keyframes hide-pirate-walk)
+      // — animationend is what actually gates the button, not a timer
+      // guessed to roughly match the animation's own duration.
+      pirate.addEventListener('animationend', () => {
+        pirate.remove();
+        onComplete();
+      });
+      stage.appendChild(pirate);
+    }
+
+    slot.appendChild(stage);
+  }
+
+  // Scene 5 ("Follow The Map") — core-02's own mechanic, no equivalent in
+  // core-01. scene.mechanicData.road is the road/mountain background. The
+  // companion the player chose appears draggable on top of it; the
+  // player drags it along until it's close enough to the mountain (the
+  // right-hand end of the path), at which point it fades out and the
+  // button appears. Built with Pointer Events (covers mouse, touch and
+  // pen with one set of listeners) rather than a full maze-style
+  // constrained path — this is a straight left-to-right drag, not a
+  // walled maze, so it doesn't need that machinery.
+  //
+  // The "close enough to the mountain" threshold (85% of the stage's
+  // width, ARRIVAL_PERCENT below) is a first-pass guess, same caveat as
+  // every other placeholder position in this file — tune it once the
+  // real road/mountain art is in place and Chef can see where the
+  // mountain actually sits.
+  function buildRoadDragMechanic(slot, scene, onComplete) {
+    const mechanicData = scene.mechanicData || {};
+    const ARRIVAL_PERCENT = 85;
+    let done = false;
+    let dragging = false;
+
+    const stage = document.createElement('div');
+    stage.className = 'aurion-road-stage';
+
+    if (mechanicData.road) {
+      const road = document.createElement('img');
+      road.src = resolveAssetUrl(mechanicData.road);
+      road.alt = '';
+      road.className = 'aurion-road-image';
+      stage.appendChild(road);
+    }
+
+    const companion = document.createElement('button');
+    companion.className = 'aurion-road-companion';
+    companion.setAttribute('aria-label', 'Drag your companion along the trail');
+    if (chosenCompanionImage) {
+      companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
+    }
+    companion.style.left = '6%';
+    stage.appendChild(companion);
+
+    function moveTo(clientX) {
+      const rect = stage.getBoundingClientRect();
+      if (!rect.width) return;
+      const percent = Math.max(6, Math.min(96, ((clientX - rect.left) / rect.width) * 100));
+      companion.style.left = percent + '%';
+      if (percent >= ARRIVAL_PERCENT && !done) {
+        done = true;
+        companion.classList.add('arrived');
+        // Small pause so the "arrived" fade is actually seen before the
+        // button appears, rather than the two happening in the same frame.
+        setTimeout(onComplete, 500);
+      }
+    }
+
+    companion.addEventListener('pointerdown', (e) => {
+      if (done) return;
+      dragging = true;
+      companion.setPointerCapture(e.pointerId);
+    });
+    companion.addEventListener('pointermove', (e) => {
+      if (!dragging || done) return;
+      moveTo(e.clientX);
+    });
+    companion.addEventListener('pointerup', () => { dragging = false; });
+    companion.addEventListener('pointercancel', () => { dragging = false; });
+
+    slot.appendChild(stage);
+  }
+
   // Scene 3 ("Choose Your Gear") — top row is the real choice (thermos,
   // backpack, poles, binoculars), bottom row is the pirates, decorative
   // only, never clickable. Reuses the .aurion-sort-board/.aurion-sort-tile
@@ -777,7 +950,10 @@ export function startGame(config, container) {
         board.querySelectorAll('.aurion-gear-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
         // Not scored — same as core-01, this pick is part of the story/
         // journey, same as the pirates beside it, not what decides the
-        // envelope reveal.
+        // envelope reveal. Captured here (not scored, just remembered) so
+        // Scene 4's pirate-walk mechanic shows the SAME pirate the player
+        // just picked, not a hardcoded one.
+        chosenGearPirateImage = pirates[i];
         onComplete();
       });
       pair.appendChild(tile);
@@ -820,7 +996,11 @@ export function startGame(config, container) {
         chosen = true;
         tile.classList.add('opened');
         board.querySelectorAll('.aurion-companion-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
-        // Not scored — same reasoning as the gear scene above.
+        // Not scored — same reasoning as the gear scene above. Captured
+        // (not scored) so every later scene shows THIS companion, per
+        // Chef's note that the chosen companion appears in every scene
+        // from here on.
+        chosenCompanionImage = imageUrl;
 
         if (scene.soundEffect) {
           const voice = new Audio(scene.soundEffect);

@@ -1012,28 +1012,38 @@ body {
   transition: opacity 0.8s ease;
 }
 
-/* Per Chef's correction: this was just pulsing in one spot — she wants
-   Casey actively swimming back and forth across the whole scene, left
-   to right and back, "showing off, like an otter does". Replaced the
-   tiny in-place bob with a wide sweep across most of the stage's width
-   (left animates between 10% and 88%), still bobbing up/down and
-   wobbling a little as it goes rather than sliding in a flat line.
-   NOT YET FINAL: the exact path is a first pass, not measured against
-   Chef's real undersea.png/casey.png art yet — easy to retune once
-   she's seen it live. */
+/* Real root cause of "the otter is swimming outside the container",
+   found and fixed with actual numbers, not a guess: every scene image
+   in this production is 1080x1080 (Chef's confirmed standard, verified
+   directly on the sailmap art). This stage box is aspect-ratio 4/3,
+   wider than that square image, so object-fit:contain pillarboxes it —
+   the VISIBLE photo only occupies the middle 75% of the box width
+   (12.5% empty margin on each side), even though the box itself (and
+   its overflow:hidden clip) is the full width.
+   The otter is a fixed 70px sprite centered via translate(-50%,0), so
+   at the desktop 420px cap its half-width is 35px = 8.33% of the box.
+   The old swim range (left: 15% to 85%) only accounted for the
+   CENTER point staying on-stage — the sprite's actual EDGE at those
+   extremes lands at 6.7% and 93.3%, both well past the 12.5%/87.5%
+   edges of the real visible photo. That's it swimming into the empty
+   pillarbox margin beside the picture, which reads as "outside the
+   container" even though overflow:hidden still clips it to the box
+   itself. Range tightened to 25%-75%, which keeps the sprite's full
+   edge-to-edge width inside the visible photo down to a ~320px mobile
+   width, not just the 420px desktop cap. */
 .aurion-casey-otter.visible {
   opacity: 1;
   animation: casey-swim-across 9s ease-in-out infinite;
 }
 
 @keyframes casey-swim-across {
-  0%   { left: 15%;  bottom: 8%;  transform: translate(-50%, 0) rotate(-4deg); }
-  20%  { left: 36%;  bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
-  40%  { left: 58%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
-  50%  { left: 85%;  bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
-  60%  { left: 58%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
-  80%  { left: 36%;  bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
-  100% { left: 15%;  bottom: 8%;  transform: translate(-50%, 0) rotate(-4deg); }
+  0%   { left: 25%;   bottom: 8%;  transform: translate(-50%, 0) rotate(-4deg); }
+  20%  { left: 40%;   bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
+  40%  { left: 55.7%; bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
+  50%  { left: 75%;   bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
+  60%  { left: 55.7%; bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
+  80%  { left: 40%;   bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
+  100% { left: 25%;   bottom: 8%;  transform: translate(-50%, 0) rotate(-4deg); }
 }
 
 /* Scene 6 ("Follow The Map") and Scene 10 ("Your Journey Continues") —
@@ -1102,6 +1112,75 @@ body {
   cursor: default;
   pointer-events: none;
   transition: opacity 0.4s ease;
+}
+
+/* Calibration overlay — only rendered when ?calibrate=1 is on the URL,
+   see aurion-core-03.js. Numbered circles show exactly where each
+   checkpoint (and its hit radius) currently sits against the real map
+   art, so it's directly visible whether they're actually in the right
+   place, rather than a guess from either side. */
+.aurion-calibrate-checkpoint {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255, 60, 60, 0.25);
+  border: 2px solid rgba(255, 60, 60, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.aurion-calibrate-target {
+  position: absolute;
+  border: 2px dashed rgba(60, 255, 120, 0.9);
+  background: rgba(60, 255, 120, 0.12);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  padding-top: 4px;
+  box-sizing: border-box;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.aurion-calibrate-readout {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.aurion-calibrate-click-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: #ffe45c;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+  z-index: 6;
+  pointer-events: none;
 }
 
 .aurion-road-companion.aurion-flip-x {

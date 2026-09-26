@@ -474,17 +474,32 @@ export function startGame(config, container) {
       wrap.classList.add('aurion-image-left-layout');
     }
 
+    // Every overlay-image scene routes through the SAME placement now —
+    // appended into textblock, below the title (see where introOverlayImg
+    // gets used further down). This used to branch on adminLabel
+    // (landing/consent/final only), and anything else fell into an
+    // "else" that appended the image straight onto wrap BEFORE the
+    // title existed in the DOM yet — title gets appended further below,
+    // so that image rendered ABOVE the title. That's exactly the bug
+    // Chef reported on Scene 7 ("You Sailed Through"), the only other
+    // scene in this game that sets an overlayImage. There's no longer
+    // any scene in this file that needs the old "straight onto wrap"
+    // placement, so it's gone — one consistent path for all of them.
     let introOverlayImg = null;
     if (!isImageLeftLayout && scene.overlayImage && scene.overlayImage.url) {
       const img = document.createElement('img');
       img.src = resolveAssetUrl(scene.overlayImage.url);
       img.alt = '';
-      img.className = 'aurion-overlay-img aurion-overlay-' + (scene.overlayImage.position || 'center');
-      if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page' || scene.adminLabel === 'final page') {
-        introOverlayImg = img;
-      } else {
-        wrap.appendChild(img);
-      }
+      // Landing/consent/final keep the smaller, deliberate "hero" sizing
+      // (.aurion-overlay-img) — a genuine in-game scene picture like
+      // Scene 7 ("You Sailed Through") instead gets .aurion-scene-picture,
+      // the same shared frame width every other scene-picture mechanic
+      // now uses (see --aurion-scene-frame-width in the CSS).
+      const isIntroBookend = scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page' || scene.adminLabel === 'final page';
+      img.className = isIntroBookend
+        ? 'aurion-overlay-img aurion-overlay-' + (scene.overlayImage.position || 'center')
+        : 'aurion-scene-picture';
+      introOverlayImg = img;
     }
 
     // Title stays exactly where it always has — pinned at the top,
@@ -541,9 +556,6 @@ export function startGame(config, container) {
       wrap.appendChild(row);
     } else {
       wrap.appendChild(textBlock);
-      if (introOverlayImg) {
-        textBlock.appendChild(introOverlayImg);
-      }
     }
 
     // Optional — only present when a scene sets "subtitleText". Renders
@@ -564,6 +576,18 @@ export function startGame(config, container) {
       desc.textContent = scene.descText;
       applyStyledText(desc, scene, 'desc');
       textBlock.appendChild(desc);
+    }
+
+    // Overlay image goes in LAST, after subtitle/description — same
+    // order every other scene already uses (title, then subtitle, then
+    // its picture/mechanic below that). This used to go in before
+    // subtitle was appended, which put the image ABOVE the subtitle
+    // text instead of below it, alongside the earlier above-the-title
+    // bug — both were the same root cause: this element getting
+    // appended too early, before the rest of the scene's text existed
+    // in the DOM yet.
+    if (!isImageLeftLayout && introOverlayImg) {
+      textBlock.appendChild(introOverlayImg);
     }
 
     // Reserved space for this scene's special mechanic — filled in by
@@ -790,13 +814,23 @@ export function startGame(config, container) {
   // actually sit in the image. Each hotspot is its own invisible tap
   // target; once all 6 are found, the beach image swaps for the huts
   // image (mechanicData.huts) and the button appears.
+  // Measured directly against Chef's own screenshot of the rendered
+  // findshells.png (gridded and cross-checked at 10% intervals, not a
+  // guess) — the six visible shell/starfish clusters sit at roughly:
+  // near the waterline center, a snail+starfish cluster left-of-center,
+  // a shell+star cluster upper-right, a shell+star cluster lower-left,
+  // a shell cluster lower-center, and a starfish+shell cluster
+  // lower-right. Since .aurion-spot-image renders at width:100%,
+  // height:auto (the image's own natural proportions, no cropping or
+  // letterboxing), these percentages are resolution-independent and
+  // don't need to change if the frame's pixel width changes later.
   const DEFAULT_SHELL_SPOTS = [
-    { left: 18, top: 62 },
-    { left: 32, top: 78 },
-    { left: 48, top: 55 },
-    { left: 62, top: 70 },
-    { left: 76, top: 48 },
-    { left: 85, top: 66 }
+    { left: 7,  top: 64 },
+    { left: 41, top: 58 },
+    { left: 84, top: 53 },
+    { left: 14, top: 87 },
+    { left: 55, top: 78 },
+    { left: 87, top: 82 }
   ];
   function buildShellFindMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};

@@ -429,6 +429,13 @@ export function startGame(config, container) {
         || scene.mechanic === 'envelope-reveal') {
       wrap.classList.add('aurion-has-side-panel');
     }
+    // Pulls the mechanic content up to sit right under the subtitle
+    // instead of vertically centering in the full remaining space — per
+    // Chef's correction that the wrong-map-land ship/island images sat
+    // too low with too much gap above them.
+    if (scene.mechanic === 'wrong-map-land') {
+      wrap.classList.add('aurion-align-mechanic-top');
+    }
     // Landing and consent are the only two scenes whose overlay image should
     // render smaller — scoped to these two specifically (by adminLabel, set
     // in the config) so the shared .aurion-overlay-img class doesn't also
@@ -839,8 +846,10 @@ export function startGame(config, container) {
   // Scene 6 ("Follow The Map") and Scene 10 ("Your Journey Continues") —
   // both core-03 scenes reuse this one mechanic (cloned from core-02),
   // scene.mechanicData.road is whichever trail background that scene
-  // uses. The drag is free in two dimensions (left AND top), not
-  // constrained to a fixed path, since neither trail is a straight line.
+  // uses. The drag is free in two dimensions (left AND top); it is only
+  // constrained to the trail's actual shape when a scene supplies its
+  // own mechanicData.checkpoints (see below) — Scene 10 doesn't, so it
+  // keeps the original open drag-anywhere behavior unchanged.
   //
   // The two scenes need different target shapes though — Scene 6's
   // sailmap winds up toward a mountain at the top-RIGHT, Scene 10's
@@ -855,6 +864,21 @@ export function startGame(config, container) {
   // margin, same placeholder caveat as every other position in this
   // file — not pixel-measured against Chef's actual art yet for Scene
   // 10, easy to retune once she's seen it live).
+  //
+  // CHECKPOINTS (Chef's explicit request, Scene 6 only): a straight-line
+  // drag straight to the target was too easy to "cheat". When
+  // mechanicData.checkpoints is set — an ordered array of
+  // {left, top, radius?} percent positions along the trail — the player
+  // must pass the companion within `radius` percent (default 10) of
+  // each checkpoint IN ORDER while dragging before a release inside
+  // targetZone counts as arriving; releasing in the target zone without
+  // having passed every checkpoint first is treated as a miss and snaps
+  // back, same as missing the zone entirely. A scene with no checkpoints
+  // array behaves exactly as before (target zone alone decides it).
+  // Scene 6's own checkpoint coordinates below are a first-pass estimate
+  // from Chef's screenshot of the trail's shape (left, then a zig-zag,
+  // curving back toward the island) — NOT pixel-measured against the
+  // real sailmap.png art yet, easy to retune once she's seen it live.
   function buildRoadDragMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};
     const START_LEFT = typeof mechanicData.startLeft === 'number' ? mechanicData.startLeft : 50;
@@ -867,6 +891,8 @@ export function startGame(config, container) {
     const ARRIVE_RIGHT_DELTA = 35;
     const ARRIVE_UP_DELTA = 55;
     const useFallbackDelta = !mechanicData.targetZone;
+    const CHECKPOINTS = Array.isArray(mechanicData.checkpoints) ? mechanicData.checkpoints : null;
+    let nextCheckpointIndex = 0;
     let done = false;
     let dragging = false;
 
@@ -917,7 +943,20 @@ export function startGame(config, container) {
     companion.addEventListener('pointermove', (e) => {
       if (!dragging || done) return;
       e.preventDefault();
-      positionFromPointer(e.clientX, e.clientY);
+      const pos = positionFromPointer(e.clientX, e.clientY);
+      // Advance through checkpoints in order as the player actually
+      // drags near each one — checked continuously during the drag, not
+      // just at release, so a straight-line jump past a checkpoint
+      // never silently counts as having passed it.
+      if (CHECKPOINTS && pos && nextCheckpointIndex < CHECKPOINTS.length) {
+        const cp = CHECKPOINTS[nextCheckpointIndex];
+        const radius = typeof cp.radius === 'number' ? cp.radius : 10;
+        const dx = pos.leftPercent - cp.left;
+        const dy = pos.topPercent - cp.top;
+        if (Math.sqrt(dx * dx + dy * dy) <= radius) {
+          nextCheckpointIndex += 1;
+        }
+      }
     });
     companion.addEventListener('pointerup', (e) => {
       if (!dragging || done) return;
@@ -929,7 +968,8 @@ export function startGame(config, container) {
       const draggedFarEnough = useFallbackDelta && pos
         && (pos.leftPercent - START_LEFT) >= ARRIVE_RIGHT_DELTA
         && (START_TOP - pos.topPercent) >= ARRIVE_UP_DELTA;
-      const arrived = inMeasuredZone || draggedFarEnough;
+      const checkpointsCleared = !CHECKPOINTS || nextCheckpointIndex >= CHECKPOINTS.length;
+      const arrived = (inMeasuredZone || draggedFarEnough) && checkpointsCleared;
       if (arrived) {
         done = true;
         companion.classList.add('arrived');
@@ -937,9 +977,13 @@ export function startGame(config, container) {
         // button appears, rather than the two happening in the same frame.
         setTimeout(onComplete, 500);
       } else {
-        // Missed the mountain — snap back to the trail's start so the
-        // player can try again, rather than leaving it stranded off the
-        // path wherever they let go.
+        // Missed the mountain (or, with checkpoints, skipped one) —
+        // snap back to the trail's start so the player can try again,
+        // rather than leaving it stranded off the path wherever they
+        // let go. Checkpoint progress resets too, so a retry has to
+        // pass through all of them again in order, not just the ones
+        // it missed last time.
+        nextCheckpointIndex = 0;
         companion.classList.add('returning');
         setPosition(START_LEFT, START_TOP);
       }
@@ -1026,8 +1070,12 @@ export function startGame(config, container) {
         companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
       }
 
+      // Starts in the clear strip below the boat art (see .aurion-boat-box
+      // / .aurion-boat-image in the CSS — the image only fills the top
+      // 82% of the box now, leaving this bottom strip free) rather than
+      // overlapping the picture itself, per Chef's correction.
       const START_LEFT = 50;
-      const START_TOP = 90;
+      const START_TOP = 94;
       function setPosition(leftPercent, topPercent) {
         companion.style.left = leftPercent + '%';
         companion.style.top = topPercent + '%';
@@ -1043,14 +1091,14 @@ export function startGame(config, container) {
         return { leftPercent, topPercent };
       }
 
-      // Boat's own box (a generous margin around the visible boat art,
-      // not pixel-measured against Chef's actual art yet — same
-      // placeholder caveat as everywhere else in this file) is what a
-      // drop is checked against, not just the exact pixels of the boat
-      // image itself. Positions are now relative to boatBox itself
-      // (the boat's own dedicated container) rather than a full stage
-      // shared with the item tiles.
-      const BOAT_ZONE = { leftMin: 8, leftMax: 92, topMin: 12, topMax: 92 };
+      // A drop only counts inside the boat ART's own area now (roughly
+      // the top 82% of the box, matching .aurion-boat-image) — not the
+      // bottom start strip — so the player actually has to drag the
+      // parrot up onto the picture, not just release it where it
+      // started. Not pixel-measured against Chef's real fishboat.png
+      // art yet — same placeholder caveat as everywhere else in this
+      // file, easy to retune once she's seen it live.
+      const BOAT_ZONE = { leftMin: 8, leftMax: 92, topMin: 5, topMax: 78 };
 
       companion.addEventListener('pointerdown', (e) => {
         if (boatDone) return;

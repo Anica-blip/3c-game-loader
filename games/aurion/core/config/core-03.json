@@ -78,8 +78,8 @@
       "id": 3,
       "mechanic": "bottle-smash",
       "mechanicData": {
-        "bottle": "core.03 - bottle.png",
-        "map": "core.03 - map.png"
+        "bottle": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20bottle.png",
+        "map": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20map.png"
       },
       "situation": "",
       "image": {
@@ -156,12 +156,12 @@
       "mechanic": "item-select-boat",
       "mechanicData": {
         "items": {
-          "Protection": "core.03 - item1.png",
-          "Calm": "core.03 - item2.png",
-          "Carer": "core.03 - item3.png",
-          "Planner": "core.03 - item4.png"
+          "Protection": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20item1.png",
+          "Calm": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20item2.png",
+          "Carer": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20item3.png",
+          "Planner": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20item4.png"
         },
-        "boat": "core.03 - fishboat.png"
+        "boat": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20fishboat.png"
       },
       "situation": "",
       "image": {
@@ -197,8 +197,8 @@
       "id": 6,
       "mechanic": "spin-wheel",
       "mechanicData": {
-        "pirateviewing": "core.03 -pirateviewing.png",
-        "wheel": "core.03 - spinwheel.png"
+        "pirateviewing": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-pirateviewing.png",
+        "wheel": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20spinwheel.png"
       },
       "situation": "",
       "image": {
@@ -234,9 +234,9 @@
       "id": 7,
       "mechanic": "wrong-map-land",
       "mechanicData": {
-        "pirateship": "core.03 - pirateship.png",
-        "pirateisland": "core.03 -pirateisland.png",
-        "wrongmap": "core.03 -wrongmap.png"
+        "pirateship": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20pirateship.png",
+        "pirateisland": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-pirateisland.png",
+        "wrongmap": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-wrongmap.png"
       },
       "situation": "",
       "image": {
@@ -272,7 +272,7 @@
       "id": 8,
       "mechanic": "drag-to-mountain",
       "mechanicData": {
-        "road": "core.03 - sailmap.png"
+        "road": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20sailmap.png"
       },
       "situation": "",
       "image": {
@@ -323,7 +323,7 @@
       },
       "options": [],
       "overlayImage": {
-        "url": "core.03 - islandspot.png",
+        "url": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-islandspot.png",
         "position": "center"
       },
       "titleText": "You Sailed Through",
@@ -342,8 +342,8 @@
       "id": 10,
       "mechanic": "casey-swim",
       "mechanicData": {
-        "undersea": "core.03 - undersea.png",
-        "casey": "core.03 - casey.png"
+        "undersea": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20undersea.png",
+        "casey": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20casey.png"
       },
       "situation": "",
       "image": {
@@ -379,8 +379,8 @@
       "id": 11,
       "mechanic": "shell-find",
       "mechanicData": {
-        "beach": "core.03 - findshells.png",
-        "huts": "core.03 - islandhuts.png"
+        "beach": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20findshells.png",
+        "huts": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-islandhuts.png"
       },
       "situation": "",
       "image": {
@@ -417,7 +417,7 @@
       "id": 12,
       "mechanic": "drag-to-mountain",
       "mechanicData": {
-        "road": "core.03 - endjourney.png",
+        "road": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-endjourney.png",
         "startLeft": 50,
         "startTop": 90,
         "targetZone": { "leftMin": 35, "leftMax": 65, "topMin": 5, "topMax": 25 }

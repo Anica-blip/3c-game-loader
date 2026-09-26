@@ -1096,7 +1096,19 @@ export function startGame(config, container) {
         // The one and only place this game's score gets written — see the
         // header comment above.
         chosenItemValue = value;
-        showCompanion();
+        // Per Chef's correction (both desktop and mobile): let the pick
+        // register with its highlight glow for a moment, then ALL FOUR
+        // item tiles vanish together before the companion appears —
+        // they used to just stay on screen (dimmed) next to the boat.
+        setTimeout(() => {
+          leftCol.classList.add('vanished');
+          rightCol.classList.add('vanished');
+          setTimeout(() => {
+            leftCol.remove();
+            rightCol.remove();
+            showCompanion();
+          }, 350);
+        }, 550);
       });
       return tile;
     }

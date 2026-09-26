@@ -272,7 +272,15 @@
       "id": 8,
       "mechanic": "drag-to-mountain",
       "mechanicData": {
-        "road": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20sailmap.png"
+        "road": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/core.03%20-%20sailmap.png",
+        "startLeft": 50,
+        "startTop": 80,
+        "targetZone": { "leftMin": 52, "leftMax": 88, "topMin": 45, "topMax": 82 },
+        "checkpoints": [
+          { "left": 35, "top": 65, "radius": 12 },
+          { "left": 25, "top": 40, "radius": 12 },
+          { "left": 45, "top": 45, "radius": 12 }
+        ]
       },
       "situation": "",
       "image": {

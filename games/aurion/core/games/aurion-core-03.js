@@ -462,6 +462,23 @@ export function startGame(config, container) {
     if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page' || scene.adminLabel === 'final page') {
       wrap.classList.add('aurion-mobile-hero-image');
     }
+    // Mobile-only fix for Chef's "the subtitle shouldn't be centered like
+    // a page scene, it's a subtitle" — a genuine in-game scene with its
+    // own overlay picture (Scene 7, "You Sailed Through" is the one she
+    // flagged) was inheriting the same flex:1 + justify-content:center
+    // treatment as the landing/consent/finale bookend screens, which
+    // vertically centers the whole subtitle+image block in the page
+    // instead of letting the subtitle sit right under the title the way
+    // a subtitle normally does. Scoped to no-mechanic scenes that carry
+    // a real overlay image and are NOT the hero-image bookends above
+    // (those are deliberately centered, untouched), and only takes
+    // effect on mobile — desktop, which Chef confirmed is correct,
+    // keeps its current centered layout.
+    if (wrap.classList.contains('aurion-no-mechanic')
+        && !wrap.classList.contains('aurion-mobile-hero-image')
+        && scene.overlayImage && scene.overlayImage.url) {
+      wrap.classList.add('aurion-mobile-subtitle-top');
+    }
 
     // Landing, consent and finale have no title/description of their own —
     // their overlay image is the only thing on the page above the button,

@@ -436,6 +436,19 @@ export function startGame(config, container) {
     if (scene.mechanic === 'wrong-map-land') {
       wrap.classList.add('aurion-align-mechanic-top');
     }
+    // Same fix as wrong-map-land above, now applied to Scene 6 ("Follow
+    // The Map"). Its mechanic-slot was still vertically centering in the
+    // full remaining space by default, which is barely visible on a wide
+    // short desktop viewport but opens up into a real gap on a tall
+    // mobile screen — that's Chef's "map further away from the subtitle
+    // on mobile, correct on desktop" report. Scoped to scenes that carry
+    // checkpoints (only Scene 6 does) rather than the whole drag-to-
+    // mountain mechanic, so Scene 10 — which she confirmed is already
+    // right and did not ask to have touched — keeps its current
+    // (centered) behavior.
+    if (scene.mechanic === 'drag-to-mountain' && Array.isArray(scene.mechanicData && scene.mechanicData.checkpoints)) {
+      wrap.classList.add('aurion-align-mechanic-top');
+    }
     // Landing and consent are the only two scenes whose overlay image should
     // render smaller — scoped to these two specifically (by adminLabel, set
     // in the config) so the shared .aurion-overlay-img class doesn't also
@@ -957,6 +970,54 @@ export function startGame(config, container) {
       stage.appendChild(road);
     }
 
+    // CALIBRATION MODE — add ?calibrate=1 to the game's URL to turn this
+    // on for Follow The Map (and any other checkpoint scene). It draws
+    // the 3 checkpoints and the target zone as visible numbered markers
+    // directly on top of the real map art, and shows a live readout of
+    // wherever you click. This exists so Chef can see exactly where the
+    // hotspots currently sit against her actual art and read off the
+    // exact left/top percentages a checkpoint SHOULD be at, without
+    // screenshots or guesswork on either side — never shown to a real
+    // player, only active with that URL flag. Safe to leave in
+    // permanently; it's inert unless the flag is present.
+    const CALIBRATE = typeof location !== 'undefined' && /[?&]calibrate=1/.test(location.search);
+    if (CALIBRATE && CHECKPOINTS) {
+      CHECKPOINTS.forEach((cp, i) => {
+        const marker = document.createElement('div');
+        marker.className = 'aurion-calibrate-checkpoint';
+        marker.style.left = cp.left + '%';
+        marker.style.top = cp.top + '%';
+        const radius = typeof cp.radius === 'number' ? cp.radius : 10;
+        marker.style.width = (radius * 2) + '%';
+        marker.style.height = (radius * 2) + '%';
+        marker.textContent = String(i + 1);
+        stage.appendChild(marker);
+      });
+      const targetMarker = document.createElement('div');
+      targetMarker.className = 'aurion-calibrate-target';
+      targetMarker.style.left = TARGET_ZONE.leftMin + '%';
+      targetMarker.style.top = TARGET_ZONE.topMin + '%';
+      targetMarker.style.width = (TARGET_ZONE.leftMax - TARGET_ZONE.leftMin) + '%';
+      targetMarker.style.height = (TARGET_ZONE.topMax - TARGET_ZONE.topMin) + '%';
+      targetMarker.textContent = 'TARGET';
+      stage.appendChild(targetMarker);
+      const readout = document.createElement('div');
+      readout.className = 'aurion-calibrate-readout';
+      readout.textContent = 'Click anywhere on the map to read its left/top %';
+      stage.appendChild(readout);
+      stage.addEventListener('click', (e) => {
+        const rect = stage.getBoundingClientRect();
+        const left = (((e.clientX - rect.left) / rect.width) * 100).toFixed(1);
+        const top = (((e.clientY - rect.top) / rect.height) * 100).toFixed(1);
+        readout.textContent = `left: ${left}%   top: ${top}%`;
+        const dot = document.createElement('div');
+        dot.className = 'aurion-calibrate-click-dot';
+        dot.style.left = left + '%';
+        dot.style.top = top + '%';
+        stage.appendChild(dot);
+      });
+    }
+
     const companion = document.createElement('button');
     companion.className = 'aurion-road-companion';
     if (needsFlip(chosenCompanionImage)) companion.classList.add('aurion-flip-x');
@@ -1026,14 +1087,28 @@ export function startGame(config, container) {
         // Small pause so the "arrived" fade is actually seen before the
         // button appears, rather than the two happening in the same frame.
         setTimeout(onComplete, 500);
+      } else if (CHECKPOINTS) {
+        // Real root cause of "I have to do it 4+ times / it keeps going
+        // back to the start", per Chef: it wasn't the checkpoint size,
+        // it was this — ANY release before full arrival used to snap the
+        // parrot all the way back to the trail's start AND wipe out
+        // checkpoint progress, even if the player had already cleared
+        // 2 of 3 checkpoints. On a touch screen that means one single
+        // unbroken finger-drag across the entire trail, never lifting,
+        // or you lose everything and start over. That's brutal, and it
+        // is what was actually making this feel broken, not the hotspot
+        // radius. Checkpoint scenes now just leave the companion exactly
+        // where it was let go, with progress intact — the player can
+        // pick it back up and keep going toward the next checkpoint in
+        // as many separate drags as they need. Order is still enforced
+        // (checkpoints must still be hit in sequence during a drag), so
+        // this stays true to the original "no straight-line cheating"
+        // request; it just stops punishing a natural pause mid-drag.
+        companion.classList.remove('returning');
       } else {
-        // Missed the mountain (or, with checkpoints, skipped one) —
-        // snap back to the trail's start so the player can try again,
-        // rather than leaving it stranded off the path wherever they
-        // let go. Checkpoint progress resets too, so a retry has to
-        // pass through all of them again in order, not just the ones
-        // it missed last time.
-        nextCheckpointIndex = 0;
+        // No checkpoints on this scene (Scene 10) — original behavior,
+        // unchanged: missed the target, snap back to the trail's start
+        // so the player can try again.
         companion.classList.add('returning');
         setPosition(START_LEFT, START_TOP);
       }

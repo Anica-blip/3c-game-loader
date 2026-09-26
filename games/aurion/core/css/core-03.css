@@ -280,11 +280,16 @@ body {
    different, intentional design and NOT part of this fix. Scene 7's
    cove picture is a genuine in-game scene image, so it takes the same
    shared frame width as every other scene picture instead. */
+/* Matches Scene 10's own container treatment (aspect-ratio 4/3 +
+   object-fit: contain) per Chef's explicit instruction — she flagged
+   this one (along with the underwater and beach photos) as too large
+   next to Scene 10's, which is "the right size". */
 .aurion-scene-picture {
   display: block;
   width: 100%;
   max-width: var(--aurion-scene-frame-width);
-  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
   margin: 0 auto 16px;
 }
 
@@ -601,6 +606,23 @@ body {
   cursor: pointer;
   opacity: 0;
   animation: bottle-map-fade-in 0.6s ease forwards;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Per Chef's correction: the subtitle says "grab the map", so tapping it
+   should make it vanish (it's been picked up), not just sit there while
+   the Continue button appears. Same fade-out treatment as the bottle
+   itself, applied via aurion-core-03.js right before onComplete fires. */
+.aurion-bottle-map-reveal.grabbed {
+  /* Must override the fade-in animation itself, not just its opacity —
+     a CSS animation with fill-mode "forwards" (the fade-in above) keeps
+     winning the cascade for the properties it touches even after a
+     plain opacity:0 declaration is added, so it has to be turned off
+     here for the vanish to actually take effect. */
+  animation: none;
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
 }
 
 @keyframes bottle-map-fade-in {
@@ -626,7 +648,20 @@ body {
 .aurion-spot-image {
   display: block;
   width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+}
+
+/* Scene 4 ("You Been Spotted") — the pirate-viewing image, shown before
+   the wheel appears. Per Chef's correction: it was reading too large
+   next to the spinning wheel (which caps at 300px) — capped smaller
+   here (200px) so the wheel stays the visually dominant element. */
+.aurion-viewing-image {
+  display: block;
+  width: 100%;
+  max-width: 200px;
   height: auto;
+  margin: 0 auto;
 }
 
 .aurion-shell-hotspot {
@@ -656,7 +691,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 8px;
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
@@ -666,7 +701,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex: 0 0 auto;
 }
 
@@ -674,9 +709,13 @@ body {
 .aurion-boat-box { order: 0; }
 .aurion-item-col-right { order: 1; }
 
+/* Per Chef's correction: the item containers were reading too big next
+   to the boat, making the boat (the actual focal point) look small by
+   comparison. Shrunk (100px -> 72px) and pulled in closer (stage/column
+   gaps reduced), so the boat reads as the clear center of the scene. */
 .aurion-item-tile {
-  width: 100px;
-  max-width: 24vw;
+  width: 72px;
+  max-width: 18vw;
   aspect-ratio: 1 / 1;
   background-size: contain;
   background-repeat: no-repeat;
@@ -702,12 +741,19 @@ body {
    a clear strip below the boat art — that's where the companion starts
    (see START_TOP in aurion-core-03.js), instead of starting "basically
    on the image" and being hard to tell apart from it. */
+/* flex: 0 1 auto (not 1 1 220px) is the actual reason "closer to the
+   image" wasn't working before — with flex-grow:1 this box was
+   expanding to swallow ALL of the stage's leftover horizontal space
+   (the stage itself is up to 640px wide), which shoved the item columns
+   out to the far edges instead of hugging the boat. Without grow, the
+   row sizes to its natural content width and justify-content: center on
+   the stage packs everything into a tight, centered group instead. */
 .aurion-boat-box {
   position: relative;
   width: 100%;
   max-width: 300px;
   aspect-ratio: 4 / 3.4;
-  flex: 1 1 220px;
+  flex: 0 1 auto;
 }
 
 .aurion-boat-image {
@@ -732,7 +778,7 @@ body {
     flex-direction: row;
   }
   .aurion-item-tile {
-    width: 80px;
+    width: 64px;
   }
 }
 
@@ -864,6 +910,9 @@ body {
   animation: wrong-map-fly 5.5s ease-in-out forwards;
 }
 
+/* Per Chef's correction: the landing spot was just slightly below the
+   trunk — nudged the final approach up by ~8% (last two keyframes only;
+   the earlier circling path is untouched). */
 @keyframes wrong-map-fly {
   0%   { left: 110%; top: 20%; opacity: 0; transform: scale(0.9); }
   12%  { opacity: 1; }
@@ -871,8 +920,8 @@ body {
   50%  { left: 68%;  top: 30%; }
   65%  { left: 80%;  top: 16%; }
   80%  { left: 70%;  top: 34%; }
-  92%  { left: 76%;  top: 52%; transform: scale(0.95); }
-  100% { left: 74%;  top: 58%; opacity: 1; transform: scale(0.85); }
+  92%  { left: 76%;  top: 44%; transform: scale(0.95); }
+  100% { left: 74%;  top: 50%; opacity: 1; transform: scale(0.85); }
 }
 
 /* Scene 8 ("You Found A Friendly Smile") — fully automatic ambient
@@ -881,17 +930,27 @@ body {
    player interaction. NOT YET FINAL: positioning/motion is a first
    pass, not measured against Chef's real undersea.png / casey.png art
    yet. */
+/* Matches Scene 10's own container treatment exactly (same aspect-ratio
+   4/3 stage + width:100%/height:100%/object-fit:contain image pattern
+   as .aurion-road-stage/.aurion-road-image) per Chef's explicit
+   instruction — the underwater photo was reading too large next to
+   Scene 10's "right size" one. The stage now has a real, definite box
+   (it didn't before — height was purely content-driven), which is also
+   what casey-otter's percentage left/top positioning needs to make
+   sense against. */
 .aurion-casey-stage {
   position: relative;
   width: 100%;
   max-width: var(--aurion-scene-frame-width);
+  aspect-ratio: 4 / 3;
   margin: 0 auto;
 }
 
 .aurion-casey-undersea {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
 }
 
 .aurion-casey-otter {

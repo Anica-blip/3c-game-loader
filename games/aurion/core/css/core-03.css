@@ -659,7 +659,7 @@ body {
 .aurion-viewing-image {
   display: block;
   width: 100%;
-  max-width: 200px;
+  max-width: 240px;
   height: auto;
   margin: 0 auto;
 }
@@ -703,6 +703,19 @@ body {
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Per Chef's correction (applies to both desktop and mobile): once an
+   item is picked, ALL four item tiles vanish — not just dim/glow —
+   before the companion appears, rather than staying on screen next to
+   the boat. Added by aurion-core-03.js a beat after the picked tile's
+   own highlight glow is shown, so the player sees the pick register
+   before everything clears away. */
+.aurion-item-col.vanished {
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
 }
 
 .aurion-item-col-left { order: -1; }
@@ -773,6 +786,17 @@ body {
     flex: 0 0 100%;
     max-width: 220px;
     margin: 0 auto 4px;
+  }
+  /* Bug fix: .aurion-item-col-left inherits order:-1 from the desktop
+     rule above, same as .aurion-boat-box here — with a tie, flexbox
+     falls back to DOM order, and the left column is appended before the
+     boat box in the JS, so it was rendering ABOVE the boat instead of
+     below it (Chef's "two containers above the main image and two
+     below it"). Both columns now explicitly go to order:1, after the
+     boat, so all four sit together below the image as one group. */
+  .aurion-item-col-left,
+  .aurion-item-col-right {
+    order: 1;
   }
   .aurion-item-col {
     flex-direction: row;
@@ -944,6 +968,12 @@ body {
   max-width: var(--aurion-scene-frame-width);
   aspect-ratio: 4 / 3;
   margin: 0 auto;
+  /* Belt-and-suspenders fix for Chef's "otter going off the container":
+     overflow:hidden guarantees Casey is clipped to this exact box no
+     matter the viewport width, rather than relying only on getting the
+     swim keyframe percentages/sizing math exactly right (which is also
+     tightened below, but this is what actually GUARANTEES containment). */
+  overflow: hidden;
 }
 
 .aurion-casey-undersea {
@@ -957,8 +987,12 @@ body {
   position: absolute;
   left: 62%;
   bottom: 10%;
-  width: 90px;
-  height: 90px;
+  /* Shrunk 90px -> 70px (matches the boat/road companion size elsewhere
+     in this file) and the swim range below tightened with a real
+     margin, so Casey stays inside the frame at small viewport widths
+     too, not just at the 420px desktop cap. */
+  width: 70px;
+  height: 70px;
   transform: translate(-50%, 0);
   background-color: transparent;
   background-size: contain;
@@ -983,13 +1017,13 @@ body {
 }
 
 @keyframes casey-swim-across {
-  0%   { left: 10%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
-  20%  { left: 34%;  bottom: 22%; transform: translate(-50%, 0) rotate(4deg); }
-  40%  { left: 60%;  bottom: 4%;  transform: translate(-50%, 0) rotate(-4deg); }
-  50%  { left: 88%;  bottom: 24%; transform: translate(-50%, 0) rotate(4deg); }
-  60%  { left: 60%;  bottom: 4%;  transform: translate(-50%, 0) rotate(-4deg); }
-  80%  { left: 34%;  bottom: 22%; transform: translate(-50%, 0) rotate(4deg); }
-  100% { left: 10%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
+  0%   { left: 15%;  bottom: 8%;  transform: translate(-50%, 0) rotate(-4deg); }
+  20%  { left: 36%;  bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
+  40%  { left: 58%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
+  50%  { left: 85%;  bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
+  60%  { left: 58%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
+  80%  { left: 36%;  bottom: 20%; transform: translate(-50%, 0) rotate(4deg); }
+  100% { left: 15%;  bottom: 8%;  transform: translate(-50%, 0) rotate(-4deg); }
 }
 
 /* Scene 6 ("Follow The Map") and Scene 10 ("Your Journey Continues") —

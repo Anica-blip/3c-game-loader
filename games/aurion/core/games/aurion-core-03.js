@@ -720,11 +720,17 @@ export function startGame(config, container) {
 
   // Scene 1 ("Where Will Your Journey Take You?") — core-03's own
   // mechanic. A single tappable bottle (scene.mechanicData.bottle).
-  // Tapping it "smashes" it — the bottle art fades/vanishes and the map
-  // art (scene.mechanicData.map) fades in in its place, a one-shot swap,
-  // same "tap once, no going back" pattern as core-02's piratehat. Only
-  // the first tap is meaningful; further taps do nothing. Button appears
-  // once the map has finished fading in.
+  // Tapping it "smashes" it — the bottle art fades out in place and the
+  // map art (scene.mechanicData.map) fades in, stacked exactly on top of
+  // it (both absolutely positioned inside their own dedicated
+  // .aurion-bottle-stage — see the CSS note there for why: the earlier
+  // version used the generic flex .aurion-sort-stage, which re-centers
+  // its row every time a second child is added, so the bottle visibly
+  // shifted left the instant the map element was appended, then faded —
+  // that reflow, not the fade itself, was Chef's reported "moved left").
+  // Per Chef's explicit correction: the button must NOT appear on a
+  // timer — the revealed map itself becomes the tap target, and only
+  // tapping the map calls onComplete.
   function buildBottleSmashMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};
     const bottleImage = mechanicData.bottle;
@@ -732,7 +738,7 @@ export function startGame(config, container) {
     let tapped = false;
 
     const stage = document.createElement('div');
-    stage.className = 'aurion-sort-stage';
+    stage.className = 'aurion-bottle-stage';
 
     const tile = document.createElement('button');
     tile.className = 'aurion-bottle-tile';
@@ -744,18 +750,20 @@ export function startGame(config, container) {
       tapped = true;
       tile.classList.add('smashed');
       if (mapImage) {
-        // Fresh element, not a background-image swap on the same button —
-        // the bottle and the map aren't the same shape/aspect ratio, so
-        // swapping the one element's background would stretch whichever
-        // art doesn't match the bottle's own box.
-        const mapEl = document.createElement('img');
-        mapEl.src = resolveAssetUrl(mapImage);
-        mapEl.alt = '';
-        mapEl.className = 'aurion-bottle-map-reveal';
-        stage.appendChild(mapEl);
-        // Matches the CSS fade-in's own duration (0.6s) plus a short beat
-        // to actually see the map before the button appears.
-        setTimeout(onComplete, 900);
+        // A button, not an <img> — same reasoning as every other tap
+        // target in this file (background-image + background-size:
+        // contain), and it needs to be clickable now that the map itself
+        // is what gates the button reveal.
+        const mapBtn = document.createElement('button');
+        mapBtn.className = 'aurion-bottle-map-reveal';
+        mapBtn.style.backgroundImage = `url('${resolveAssetUrl(mapImage)}')`;
+        mapBtn.setAttribute('aria-label', 'Tap the map to continue');
+        mapBtn.addEventListener('click', () => {
+          if (mapBtn.disabled) return;
+          mapBtn.disabled = true;
+          onComplete();
+        });
+        stage.appendChild(mapBtn);
       } else {
         onComplete();
       }
@@ -949,6 +957,13 @@ export function startGame(config, container) {
   // follows is purely a completion step — it doesn't score anything,
   // it just has to land somewhere over the boat's own box to finish the
   // scene, same "drop zone" idea as core-02's sack/road drags.
+  //
+  // Per Chef's explicit correction: this is ONE unified layout, not a
+  // two-stage swap — the boat image sits centered on the page from the
+  // very start, with 2 item tiles to its left and 2 to its right, all
+  // visible together. Only the draggable companion parrot is added
+  // later, once an item has been picked (appended straight into the
+  // same boat box, not a separate stage element).
   function buildItemSelectBoatMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};
     const items = mechanicData.items || {};
@@ -958,11 +973,24 @@ export function startGame(config, container) {
     let boatDone = false;
 
     const stage = document.createElement('div');
-    stage.className = 'aurion-sort-stage';
-    const board = document.createElement('div');
-    board.className = 'aurion-sort-board aurion-item-board';
+    stage.className = 'aurion-boat-select-stage';
 
-    Object.entries(items).forEach(([value, imageUrl]) => {
+    const leftCol = document.createElement('div');
+    leftCol.className = 'aurion-item-col aurion-item-col-left';
+    const rightCol = document.createElement('div');
+    rightCol.className = 'aurion-item-col aurion-item-col-right';
+
+    const boatBox = document.createElement('div');
+    boatBox.className = 'aurion-boat-box';
+    if (boatImage) {
+      const boatEl = document.createElement('img');
+      boatEl.src = resolveAssetUrl(boatImage);
+      boatEl.alt = '';
+      boatEl.className = 'aurion-boat-image';
+      boatBox.appendChild(boatEl);
+    }
+
+    function makeItemTile(value, imageUrl) {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-item-tile';
       if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
@@ -970,30 +998,26 @@ export function startGame(config, container) {
         if (itemChosen) return;
         itemChosen = true;
         tile.classList.add('opened');
-        board.querySelectorAll('.aurion-item-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
+        stage.querySelectorAll('.aurion-item-tile').forEach(t => { if (t !== tile) t.classList.add('dim'); });
         // The one and only place this game's score gets written — see the
         // header comment above.
         chosenItemValue = value;
-        showBoatStage();
+        showCompanion();
       });
-      board.appendChild(tile);
-    });
+      return tile;
+    }
 
-    stage.appendChild(board);
+    // First 2 entries go left of the boat, the remaining 2 go right —
+    // matches Chef's production.md item order (Protection, Calm, Carer,
+    // Planner) and her requested left/right split exactly.
+    const entries = Object.entries(items);
+    entries.slice(0, 2).forEach(([value, imageUrl]) => leftCol.appendChild(makeItemTile(value, imageUrl)));
+    entries.slice(2, 4).forEach(([value, imageUrl]) => rightCol.appendChild(makeItemTile(value, imageUrl)));
+
+    stage.append(leftCol, boatBox, rightCol);
     slot.appendChild(stage);
 
-    function showBoatStage() {
-      const boatStage = document.createElement('div');
-      boatStage.className = 'aurion-boat-stage';
-
-      if (boatImage) {
-        const boatEl = document.createElement('img');
-        boatEl.src = resolveAssetUrl(boatImage);
-        boatEl.alt = '';
-        boatEl.className = 'aurion-boat-image';
-        boatStage.appendChild(boatEl);
-      }
-
+    function showCompanion() {
       const companion = document.createElement('button');
       companion.className = 'aurion-boat-companion';
       if (needsFlip(chosenCompanionImage)) companion.classList.add('aurion-flip-x');
@@ -1002,8 +1026,8 @@ export function startGame(config, container) {
         companion.style.backgroundImage = `url('${resolveAssetUrl(chosenCompanionImage)}')`;
       }
 
-      const START_LEFT = 12;
-      const START_TOP = 85;
+      const START_LEFT = 50;
+      const START_TOP = 90;
       function setPosition(leftPercent, topPercent) {
         companion.style.left = leftPercent + '%';
         companion.style.top = topPercent + '%';
@@ -1011,7 +1035,7 @@ export function startGame(config, container) {
       setPosition(START_LEFT, START_TOP);
 
       function positionFromPointer(clientX, clientY) {
-        const rect = boatStage.getBoundingClientRect();
+        const rect = boatBox.getBoundingClientRect();
         if (!rect.width || !rect.height) return null;
         const leftPercent = Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
         const topPercent = Math.max(2, Math.min(98, ((clientY - rect.top) / rect.height) * 100));
@@ -1023,8 +1047,10 @@ export function startGame(config, container) {
       // not pixel-measured against Chef's actual art yet — same
       // placeholder caveat as everywhere else in this file) is what a
       // drop is checked against, not just the exact pixels of the boat
-      // image itself.
-      const BOAT_ZONE = { leftMin: 35, leftMax: 95, topMin: 40, topMax: 95 };
+      // image itself. Positions are now relative to boatBox itself
+      // (the boat's own dedicated container) rather than a full stage
+      // shared with the item tiles.
+      const BOAT_ZONE = { leftMin: 8, leftMax: 92, topMin: 12, topMax: 92 };
 
       companion.addEventListener('pointerdown', (e) => {
         if (boatDone) return;
@@ -1056,8 +1082,7 @@ export function startGame(config, container) {
       });
       companion.addEventListener('pointercancel', () => { dragging = false; });
 
-      boatStage.appendChild(companion);
-      slot.appendChild(boatStage);
+      boatBox.appendChild(companion);
     }
   }
 
@@ -1075,8 +1100,14 @@ export function startGame(config, container) {
     const wheelImage = mechanicData.wheel;
     let spun = false;
 
+    // .aurion-spot-stage (not the generic, unbounded .aurion-sort-stage)
+    // is what actually caps .aurion-spot-image's width — this was the
+    // bug behind Chef's "oversized image" report: .aurion-sort-stage has
+    // no max-width of its own, so the image was stretching to fill the
+    // full scene width instead of the ~340px every other scene using
+    // .aurion-spot-image (shell-find) already caps at.
     const stage = document.createElement('div');
-    stage.className = 'aurion-sort-stage';
+    stage.className = 'aurion-spot-stage';
 
     const viewingEl = document.createElement('img');
     if (viewingImage) viewingEl.src = resolveAssetUrl(viewingImage);

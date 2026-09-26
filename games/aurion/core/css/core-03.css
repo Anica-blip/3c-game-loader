@@ -255,6 +255,19 @@ body {
   margin-top: 24px;
 }
 
+/* Mobile-only per Chef's "the sub-title shouldn't be centered like a
+   page scene, it's a sub-title" — see aurion-core-03.js for exactly
+   which scenes get this class. Desktop is untouched: this only
+   overrides the no-mechanic textblock's justify-content inside the
+   max-width:700px query below, so the subtitle (and the image under
+   it) sit right under the title instead of floating centered in the
+   leftover page space. */
+@media (max-width: 700px) {
+  .aurion-scene-wrap.aurion-mobile-subtitle-top .aurion-scene-textblock {
+    justify-content: flex-start;
+  }
+}
+
 .aurion-overlay-img {
   max-width: 260px;
   width: 60%;
@@ -791,10 +804,18 @@ body {
   .aurion-boat-select-stage {
     flex-wrap: wrap;
   }
+  /* Per Chef's explicit mobile-only request: now that the 4 item tiles
+     sit below the boat instead of beside it, the boat has the full
+     width of the screen to itself, so it should read as a real, large
+     scene image on mobile — not stay capped at the small size it needed
+     when it had to share a row with the item columns on desktop. Bumped
+     220px -> 320px (the min() keeps a safety margin on anything
+     narrower than a typical phone). Desktop's .aurion-boat-box rule
+     above is completely untouched. */
   .aurion-boat-box {
     order: -1;
     flex: 0 0 100%;
-    max-width: 220px;
+    max-width: min(320px, 92vw);
     margin: 0 auto 4px;
   }
   /* Bug fix: .aurion-item-col-left inherits order:-1 from the desktop

@@ -1,5 +1,5 @@
 {
-  "gameType": "aurion-core-02",
+  "gameType": "aurion-core-03",
   "theme": "starlight",
   "title": "Aurion Core Values Challenge",
   "introImage": "../assets/aurion-intro.png",
@@ -10,7 +10,7 @@
   },
   "ambientSound": "",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCasey, Creative Director\n\nProducer & Creator\nAnica",
   "characterImages": [],
   "decisions": [
     {
@@ -76,10 +76,10 @@
     },
     {
       "id": 3,
-      "mechanic": "piratehat",
+      "mechanic": "bottle-smash",
       "mechanicData": {
-        "image": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-piratehat.png",
-        "revealImage": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-pirategreeting.png"
+        "bottle": "core.03 - bottle.png",
+        "map": "core.03 - map.png"
       },
       "situation": "",
       "image": {
@@ -87,7 +87,7 @@
         "url": ""
       },
       "motion": "",
-      "duration": 2,
+      "duration": 4,
       "verticalPosition": 0,
       "soundEffect": "",
       "background": {
@@ -104,11 +104,11 @@
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
-          "text": "Off I Go"
+          "text": "Grabbed The Map"
         }
       ],
       "adminLabel": "Scene 1",
-      "subtitleText": "Tap The Hat",
+      "subtitleText": "Smash The Bottle & Grab The Map",
       "subtitleColor": "#ffffff"
     },
     {
@@ -153,20 +153,15 @@
     },
     {
       "id": 5,
-      "mechanic": "gear-select",
+      "mechanic": "item-select-boat",
       "mechanicData": {
-        "gear": {
-          "Independence": "core-01.gear1.png",
-          "Integrity": "core-01.gear2.png",
-          "Courage": "core-01.gear3.png",
-          "Connection": "core-01.gear4.png"
+        "items": {
+          "Protection": "core.03 - item1.png",
+          "Calm": "core.03 - item2.png",
+          "Carer": "core.03 - item3.png",
+          "Planner": "core.03 - item4.png"
         },
-        "pirates": [
-          "core-01.pirate1.png",
-          "core-01.pirate2.png",
-          "core-01.pirate3.png",
-          "core-01.pirate4.png"
-        ]
+        "boat": "core.03 - fishboat.png"
       },
       "situation": "",
       "image": {
@@ -174,7 +169,7 @@
         "url": ""
       },
       "motion": "",
-      "duration": 2,
+      "duration": 4,
       "verticalPosition": 0,
       "soundEffect": "",
       "background": {
@@ -186,194 +181,206 @@
         "url": "",
         "position": "center"
       },
-      "titleText": "Choose Your Gear",
+      "titleText": "Jump On Board",
       "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
-          "text": "Grabbed It"
+          "text": "Off We Go"
         }
       ],
       "adminLabel": "Scene 3",
-      "subtitleText": "What Will You Take With You?",
+      "subtitleText": "Grab One Item, Take Your Friend",
       "subtitleColor": "#ffffff"
     },
     {
       "id": 6,
-      "mechanic": "hide-behind-rocks",
-      "titleText": "Refreshing Spot",
-      "descText": "",
-      "buttons": [
-        {
-          "image": "../assets/goal.01.button.png",
-          "text": "Ready To Go"
-        }
-      ],
-      "adminLabel": "Scene 4",
-      "subtitleText": "Someone's Coming, Quick Hide",
-      "subtitleColor": "#ffffff",
-      "background": {
-        "type": "image",
-        "url": ""
+      "mechanic": "spin-wheel",
+      "mechanicData": {
+        "pirateviewing": "core.03 -pirateviewing.png",
+        "wheel": "core.03 - spinwheel.png"
       },
+      "situation": "",
       "image": {
         "label": "",
         "url": ""
       },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 0,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/06%20You%20Been%20Spotted.mp3",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
       "overlayImage": {
         "url": "",
         "position": "center"
       },
-      "mechanicData": {
-        "waterwell": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-waterwell.png",
-        "pinetrees": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-pinetrees.png",
-        "rocks": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-rocks.png"
-      },
-      "options": []
+      "titleText": "You Been Spotted",
+      "descText": "",
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "Confused Pirates"
+        }
+      ],
+      "adminLabel": "Scene 4",
+      "subtitleText": "Press The 3C Diamond To Make The Pirates Lose Speed",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 7,
+      "mechanic": "wrong-map-land",
+      "mechanicData": {
+        "pirateship": "core.03 - pirateship.png",
+        "pirateisland": "core.03 -pirateisland.png",
+        "wrongmap": "core.03 -wrongmap.png"
+      },
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 0,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/07%20Your%20Companion%20Is%20Helping%20Out.mp3",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "titleText": "Your Companion Is Helping Out",
+      "descText": "",
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "2nd Big Win"
+        }
+      ],
+      "adminLabel": "Scene 5",
+      "subtitleText": "Dropped The Wrong Map",
+      "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 8,
       "mechanic": "drag-to-mountain",
+      "mechanicData": {
+        "road": "core.03 - sailmap.png"
+      },
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
       "titleText": "Follow The Map",
       "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
-          "text": "Made It Through"
-        }
-      ],
-      "adminLabel": "Scene 5",
-      "subtitleText": "Keep Following The Trail",
-      "subtitleColor": "#ffffff",
-      "background": {
-        "type": "image",
-        "url": ""
-      },
-      "image": {
-        "label": "",
-        "url": ""
-      },
-      "overlayImage": {
-        "url": "",
-        "position": "center"
-      },
-      "mechanicData": {
-        "road": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-roadjourney.png"
-      },
-      "options": []
-    },
-    {
-      "id": 8,
-      "mechanic": "spot-diamond",
-      "titleText": "You Found A Nice Treasure",
-      "descText": "",
-      "buttons": [
-        {
-          "image": "../assets/goal.01.button.png",
-          "text": "Spotted It"
+          "text": "Mission Complete"
         }
       ],
       "adminLabel": "Scene 6",
-      "subtitleText": "Can You Spot The 3C Diamond?",
-      "subtitleColor": "#ffffff",
-      "background": {
-        "type": "image",
-        "url": ""
-      },
-      "image": {
-        "label": "",
-        "url": ""
-      },
-      "overlayImage": {
-        "url": "",
-        "position": "center"
-      },
-      "mechanicData": {
-        "gempile": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-gempile.png",
-        "diamond": "../../../shared/diamond.png"
-      },
-      "options": []
+      "subtitleText": "Keep Following The Trail",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 9,
-      "mechanic": "collect-to-sack",
-      "titleText": "It's Your Lucky Day",
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 0,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/09%20You%20Sailed%20Through.mp3",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "core.03 - islandspot.png",
+        "position": "center"
+      },
+      "titleText": "You Sailed Through",
       "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
-          "text": "My Bag Is Full"
+          "text": "Going Swimming"
         }
       ],
       "adminLabel": "Scene 7",
-      "subtitleText": "Quickly, Add These In The Bag To Take With You",
-      "subtitleColor": "#ffffff",
-      "background": {
-        "type": "image",
-        "url": ""
+      "subtitleText": "Now Enjoy The Scenes & Weather",
+      "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 10,
+      "mechanic": "casey-swim",
+      "mechanicData": {
+        "undersea": "core.03 - undersea.png",
+        "casey": "core.03 - casey.png"
       },
+      "situation": "",
       "image": {
         "label": "",
         "url": ""
       },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
       "overlayImage": {
         "url": "",
         "position": "center"
       },
-      "mechanicData": {
-        "items": [
-          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-diamond1.png",
-          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-diamond2.png",
-          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-diamond3.png",
-          "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-goldcoins.png"
-        ],
-        "sack": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-sack.png"
-      },
-      "options": []
-    },
-    {
-      "id": 10,
-      "mechanic": "flash-tickets",
-      "titleText": "Your Journey Continues",
+      "titleText": "You Found A Friendly Smile",
       "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
-          "text": "Bought Tickets"
+          "text": "Made My Day"
         }
       ],
       "adminLabel": "Scene 8",
-      "subtitleText": "You Need To Take That Boat, Buy Two Tickets.",
-      "subtitleColor": "#ffffff",
-      "background": {
-        "type": "image",
-        "url": ""
-      },
-      "image": {
-        "label": "",
-        "url": ""
-      },
-      "overlayImage": {
-        "url": "",
-        "position": "center"
-      },
-      "mechanicData": {
-        "boatdock": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-boatdock.png",
-        "ticket": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/core-02-boattickets.png",
-        "ticketCount": 1
-      },
-      "options": []
+      "subtitleText": "Enjoy The View, Just For Your Eyes Only",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 11,
-      "mechanic": "envelope-reveal",
+      "mechanic": "shell-find",
       "mechanicData": {
-        "envelopes": {
-          "Courage": "core-01.env1.png",
-          "Independence": "core-01.env2.png",
-          "Connection": "core-01.env3.png",
-          "Integrity": "core-01.env4.png"
-        }
+        "beach": "core.03 - findshells.png",
+        "huts": "core.03 - islandhuts.png"
       },
       "situation": "",
       "image": {
@@ -383,7 +390,7 @@
       "motion": "",
       "duration": 4,
       "verticalPosition": 40,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-02/11%20Let's%20Check%20How%20Far%20You%20Got.mp3",
+      "soundEffect": "",
       "video": "",
       "background": {
         "type": "image",
@@ -394,20 +401,101 @@
         "url": "",
         "position": "center"
       },
-      "titleText": "What Else Can You Find Here?",
+      "titleText": "Time To Collect Some Sea Shells",
       "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
-          "text": "2nd Round Success"
+          "text": "Found A Hut"
         }
       ],
       "adminLabel": "Scene 9",
-      "subtitleText": "Tap On An Envelope",
+      "subtitleText": "Find Six Sets Of Sea Shells",
       "subtitleColor": "#ffffff"
     },
     {
       "id": 12,
+      "mechanic": "drag-to-mountain",
+      "mechanicData": {
+        "road": "core.03 - endjourney.png",
+        "startLeft": 50,
+        "startTop": 90,
+        "targetZone": { "leftMin": 35, "leftMax": 65, "topMin": 5, "topMax": 25 }
+      },
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 40,
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "Beautiful Island"
+        }
+      ],
+      "titleText": "Your Journey Continues",
+      "descText": "",
+      "adminLabel": "Scene 10",
+      "subtitleText": "You Need To Take This Trail",
+      "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 13,
+      "mechanic": "envelope-reveal",
+      "mechanicData": {
+        "envelopes": {
+          "Protection": "core-01.env1.png",
+          "Calm": "core-01.env2.png",
+          "Carer": "core-01.env3.png",
+          "Planner": "core-01.env4.png"
+        }
+      },
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 40,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/13%20Let's%20Check%20How%20Far%20You%20Got.mp3",
+      "video": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "titleText": "Let's Check How Far You Got",
+      "descText": "",
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "3rd Round Success"
+        }
+      ],
+      "adminLabel": "Scene 11",
+      "subtitleText": "You've Made Part Of The Journey",
+      "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 14,
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",
@@ -440,7 +528,7 @@
       "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
     },
     {
-      "id": 13,
+      "id": 15,
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",

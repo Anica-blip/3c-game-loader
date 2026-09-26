@@ -667,21 +667,26 @@ body {
 
 /* The boat itself, plus (once an item is picked) the draggable
    companion appended straight inside it — same drag/return/arrived
-   pattern as the road-companion drag below. NOT YET FINAL: sizing is a
-   first pass, not measured against Chef's real fishboat.png art yet. */
+   pattern as the road-companion drag below. Per Chef's correction: the
+   image is slightly bigger now (260px -> 300px), and the box is taller
+   than the image itself (aspect-ratio 4/3.4 instead of 4/3) so there's
+   a clear strip below the boat art — that's where the companion starts
+   (see START_TOP in aurion-core-03.js), instead of starting "basically
+   on the image" and being hard to tell apart from it. */
 .aurion-boat-box {
   position: relative;
   width: 100%;
-  max-width: 260px;
-  aspect-ratio: 4 / 3;
-  flex: 1 1 200px;
+  max-width: 300px;
+  aspect-ratio: 4 / 3.4;
+  flex: 1 1 220px;
 }
 
 .aurion-boat-image {
   display: block;
   width: 100%;
-  height: 100%;
+  height: 82%;
   object-fit: contain;
+  object-position: top;
 }
 
 @media (max-width: 700px) {
@@ -773,17 +778,24 @@ body {
    pirateisland.png art yet — easy to retune once she's seen it live. */
 /* Confirmed correct by Chef (the parrot lands exactly on the trunk) —
    only sizing/position needed adjusting: slightly bigger, and pulled up
-   closer to the subtitle instead of centering in the full mechanic-slot
-   height (align-self: flex-start overrides the slot's own
-   align-items: center just for this scene). */
+   closer to the subtitle. The earlier align-self/negative-margin patch
+   wasn't enough (Chef's follow-up: "images are still too low") because
+   .aurion-mechanic-slot's own align-items: center was still centering
+   the whole vertical leftover space either side of the stage. Fixed
+   properly now via .aurion-align-mechanic-top on the scene wrap (added
+   in aurion-core-03.js for this mechanic only), which overrides the
+   slot's own centering to flex-start instead — no more guessing at a
+   margin offset. */
 .aurion-wrongmap-stage {
   position: relative;
   width: 100%;
   max-width: 480px;
   aspect-ratio: 4 / 3;
   margin: 0 auto;
-  align-self: flex-start;
-  margin-top: -12px;
+}
+
+.aurion-align-mechanic-top .aurion-mechanic-slot {
+  align-items: flex-start;
 }
 
 .aurion-wrongmap-ship {

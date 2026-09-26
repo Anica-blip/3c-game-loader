@@ -517,13 +517,30 @@ body {
    background-size: contain, same convention as the gear/companion
    tiles below) — not a new size invented for this scene. */
 /* Scene 1 ("Where Will Your Journey Take You?") — core-03's own
-   mechanic. Tap the bottle to "smash" it; the map fades in over/beside
-   it. NOT YET FINAL: sizing is a first pass, not measured against
-   Chef's real art yet. */
-.aurion-bottle-tile {
+   mechanic. Tap the bottle to "smash" it; the map fades in in its exact
+   place. Both the bottle tile and the revealed map are absolutely
+   positioned on top of each other inside this one fixed-size stage —
+   Chef's reported "bottle moved left" was actually .aurion-sort-stage
+   (a flex row with justify-content:center) re-centering its whole row
+   the instant a second child (the map) was appended, shoving the still-
+   fading bottle sideways. Stacking both elements via position:absolute
+   inside a dedicated stage removes that reflow entirely: adding the map
+   can never move the bottle, and the map is always dead-center. NOT YET
+   FINAL: sizing is a first pass, not measured against Chef's real art
+   yet. */
+.aurion-bottle-stage {
+  position: relative;
   width: 220px;
   max-width: 60vw;
   aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+.aurion-bottle-tile {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   background-color: transparent;
   background-size: contain;
   background-repeat: no-repeat;
@@ -535,15 +552,24 @@ body {
 
 .aurion-bottle-tile.smashed {
   opacity: 0;
-  transform: scale(1.15);
+  transform: scale(0.92);
   pointer-events: none;
 }
 
+/* Now the tap target for continuing — per Chef's correction, the button
+   only appears once the player taps this map (see buildBottleSmashMechanic),
+   not on a timer. */
 .aurion-bottle-map-reveal {
-  display: block;
-  width: 220px;
-  max-width: 60vw;
-  margin: 0 auto;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
   opacity: 0;
   animation: bottle-map-fade-in 0.6s ease forwards;
 }
@@ -589,22 +615,39 @@ body {
   pointer-events: none;
 }
 
-/* Scene 3 ("Jump On Board") — two-stage mechanic. First the 4 item
-   tiles (same sort-tile/sort-board pattern every picker in this game
-   uses); picking one is this game's ONE scoring moment (see
-   chosenItemValue in aurion-core-03.js) and swaps the mechanic slot for
-   the boat-drag stage below. */
-.aurion-item-board {
-  max-width: 460px;
+/* Scene 3 ("Jump On Board") — ONE unified layout per Chef's explicit
+   correction: the boat sits centered from the very start, with 2 item
+   tiles to its left and 2 to its right, all visible together. Picking
+   an item is this game's ONE scoring moment (see chosenItemValue in
+   aurion-core-03.js) and adds the draggable companion into the SAME
+   boat box — no separate "stage" swap. */
+.aurion-boat-select-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
-@media (min-width: 700px) {
-  .aurion-item-board {
-    max-width: 580px;
-  }
+.aurion-item-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
 }
+
+.aurion-item-col-left { order: -1; }
+.aurion-boat-box { order: 0; }
+.aurion-item-col-right { order: 1; }
 
 .aurion-item-tile {
+  width: 100px;
+  max-width: 24vw;
   aspect-ratio: 1 / 1;
   background-size: contain;
   background-repeat: no-repeat;
@@ -622,25 +665,16 @@ body {
   box-shadow: none;
 }
 
-@media (max-width: 700px) {
-  .aurion-item-board {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 300px;
-    gap: 16px;
-  }
-}
-
-/* Second stage of Scene 3 — drag the chosen companion onto the boat.
-   Purely a completion step, no scoring (see buildItemSelectBoatMechanic).
-   Same drag/return/arrived pattern as the road-companion drag below.
-   NOT YET FINAL: sizing/positioning is a first pass, not measured
-   against Chef's real fishboat.png art yet. */
-.aurion-boat-stage {
+/* The boat itself, plus (once an item is picked) the draggable
+   companion appended straight inside it — same drag/return/arrived
+   pattern as the road-companion drag below. NOT YET FINAL: sizing is a
+   first pass, not measured against Chef's real fishboat.png art yet. */
+.aurion-boat-box {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 260px;
   aspect-ratio: 4 / 3;
-  margin: 0 auto;
+  flex: 1 1 200px;
 }
 
 .aurion-boat-image {
@@ -648,6 +682,24 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+@media (max-width: 700px) {
+  .aurion-boat-select-stage {
+    flex-wrap: wrap;
+  }
+  .aurion-boat-box {
+    order: -1;
+    flex: 0 0 100%;
+    max-width: 220px;
+    margin: 0 auto 4px;
+  }
+  .aurion-item-col {
+    flex-direction: row;
+  }
+  .aurion-item-tile {
+    width: 80px;
+  }
 }
 
 .aurion-boat-companion {
@@ -719,19 +771,26 @@ body {
    NOT YET FINAL: the flight path (start/circle/landing coordinates) is
    a first pass, not measured against Chef's real pirateship.png /
    pirateisland.png art yet — easy to retune once she's seen it live. */
+/* Confirmed correct by Chef (the parrot lands exactly on the trunk) —
+   only sizing/position needed adjusting: slightly bigger, and pulled up
+   closer to the subtitle instead of centering in the full mechanic-slot
+   height (align-self: flex-start overrides the slot's own
+   align-items: center just for this scene). */
 .aurion-wrongmap-stage {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   aspect-ratio: 4 / 3;
   margin: 0 auto;
+  align-self: flex-start;
+  margin-top: -12px;
 }
 
 .aurion-wrongmap-ship {
   position: absolute;
   left: 2%;
   bottom: 4%;
-  width: 46%;
+  width: 50%;
   height: auto;
 }
 
@@ -739,7 +798,7 @@ body {
   position: absolute;
   right: 4%;
   bottom: 2%;
-  width: 48%;
+  width: 52%;
   height: auto;
 }
 
@@ -813,6 +872,67 @@ body {
 @keyframes casey-bob {
   0%, 100% { transform: translate(-50%, 0) rotate(-2deg); }
   50%      { transform: translate(-46%, -6%) rotate(2deg); }
+}
+
+/* Scene 6 ("Follow The Map") and Scene 10 ("Your Journey Continues") —
+   both reuse buildRoadDragMechanic. THIS BLOCK WAS MISSING ENTIRELY,
+   which was the actual cause of Chef's "can't see the parrot" report:
+   .aurion-road-companion had no width/height/background-size/position
+   rules at all, so it rendered as a default zero-content button with no
+   positioning context (the JS sets left/top as inline percentages, but
+   those do nothing without position:absolute here and position:relative
+   on the stage) — effectively invisible and in the wrong place in the
+   document flow. Free 2D drag over the trail image; the companion
+   starts centered per aurion-core-03.js's own START_LEFT/START_TOP
+   defaults (50/90 — bottom-center), matching Chef's "parrot shows in
+   the centre, player moves it" description. NOT YET FINAL: sizing is a
+   first pass, not measured against Chef's real sailmap.png /
+   endjourney.png art yet. */
+.aurion-road-stage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+}
+
+.aurion-road-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.aurion-road-companion {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: grab;
+  touch-action: none;
+  z-index: 2;
+}
+
+.aurion-road-companion:active {
+  cursor: grabbing;
+}
+
+.aurion-road-companion.returning {
+  transition: left 0.4s ease, top 0.4s ease, opacity 0.4s ease;
+}
+
+.aurion-road-companion.arrived {
+  opacity: 0;
+  cursor: default;
+}
+
+.aurion-road-companion.aurion-flip-x {
+  transform: translate(-50%, -50%) scaleX(-1);
 }
 
 /* Scene 2 ("Choose Your Companion") — cloned from core-01, unchanged. */

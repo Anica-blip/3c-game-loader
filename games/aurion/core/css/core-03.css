@@ -25,6 +25,21 @@
   --aurion-neon-purple-bright: #e6cbff;
   --aurion-neon-purple-glow-bright: rgba(230, 203, 255, 0.65);
   --aurion-neon-purple-glow-bright-soft: rgba(230, 203, 255, 0.35);
+
+  /* ONE shared "scene picture" frame width, used by every mechanic that
+     shows a single main scene image (Scene 7's cove picture, the spin-
+     wheel/shell-find beach image, the wrongmap ship+island canvas, the
+     road/trail drag canvas, the casey undersea photo). Before this,
+     each of these had picked its own number independently across
+     rounds of "make this one bigger" fixes (340px, 480px, 260px, 300px,
+     ...), which is why the scenes visibly looked like different-sized
+     containers next to each other. Everything below now reads from
+     this one value instead of hardcoding its own. Deliberately NOT
+     applied to .aurion-bottle-stage (a small single tappable prop
+     icon, not a full scene picture) or .aurion-boat-box (shares its
+     row with the flanking item tiles, so it's sized to fit alongside
+     them) — flagged in the reply, not silently decided. */
+  --aurion-scene-frame-width: 420px;
 }
 
 body {
@@ -257,6 +272,20 @@ body {
     max-width: 300px;
     width: 82%;
   }
+}
+
+/* Scene 7 ("You Sailed Through") gets its own class rather than reusing
+   .aurion-overlay-img above — that one is deliberately smaller (260px)
+   for the landing/consent/finale "hero" bookend screens, which is a
+   different, intentional design and NOT part of this fix. Scene 7's
+   cove picture is a genuine in-game scene image, so it takes the same
+   shared frame width as every other scene picture instead. */
+.aurion-scene-picture {
+  display: block;
+  width: 100%;
+  max-width: var(--aurion-scene-frame-width);
+  height: auto;
+  margin: 0 auto 16px;
 }
 
 .aurion-overlay-center { align-self: center; }
@@ -590,7 +619,7 @@ body {
 .aurion-spot-stage {
   position: relative;
   width: 100%;
-  max-width: 340px;
+  max-width: var(--aurion-scene-frame-width);
   margin: 0 auto;
 }
 
@@ -602,8 +631,8 @@ body {
 
 .aurion-shell-hotspot {
   position: absolute;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   transform: translate(-50%, -50%);
   background-color: transparent;
   border: none;
@@ -789,7 +818,7 @@ body {
 .aurion-wrongmap-stage {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: var(--aurion-scene-frame-width);
   aspect-ratio: 4 / 3;
   margin: 0 auto;
 }
@@ -802,15 +831,19 @@ body {
   position: absolute;
   left: 2%;
   bottom: 4%;
-  width: 50%;
+  width: 44%;
   height: auto;
 }
 
+/* Chef's correction: the island was reading smaller than the ship,
+   which is backwards — an island shouldn't look smaller than a ship
+   sitting next to it. Ship brought down slightly (50% -> 44%), island
+   brought up significantly (52% -> 62%) to fix that balance. */
 .aurion-wrongmap-island {
   position: absolute;
   right: 4%;
   bottom: 2%;
-  width: 52%;
+  width: 62%;
   height: auto;
 }
 
@@ -851,7 +884,7 @@ body {
 .aurion-casey-stage {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: var(--aurion-scene-frame-width);
   margin: 0 auto;
 }
 
@@ -876,14 +909,28 @@ body {
   transition: opacity 0.8s ease;
 }
 
+/* Per Chef's correction: this was just pulsing in one spot — she wants
+   Casey actively swimming back and forth across the whole scene, left
+   to right and back, "showing off, like an otter does". Replaced the
+   tiny in-place bob with a wide sweep across most of the stage's width
+   (left animates between 10% and 88%), still bobbing up/down and
+   wobbling a little as it goes rather than sliding in a flat line.
+   NOT YET FINAL: the exact path is a first pass, not measured against
+   Chef's real undersea.png/casey.png art yet — easy to retune once
+   she's seen it live. */
 .aurion-casey-otter.visible {
   opacity: 1;
-  animation: casey-bob 3.2s ease-in-out infinite;
+  animation: casey-swim-across 9s ease-in-out infinite;
 }
 
-@keyframes casey-bob {
-  0%, 100% { transform: translate(-50%, 0) rotate(-2deg); }
-  50%      { transform: translate(-46%, -6%) rotate(2deg); }
+@keyframes casey-swim-across {
+  0%   { left: 10%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
+  20%  { left: 34%;  bottom: 22%; transform: translate(-50%, 0) rotate(4deg); }
+  40%  { left: 60%;  bottom: 4%;  transform: translate(-50%, 0) rotate(-4deg); }
+  50%  { left: 88%;  bottom: 24%; transform: translate(-50%, 0) rotate(4deg); }
+  60%  { left: 60%;  bottom: 4%;  transform: translate(-50%, 0) rotate(-4deg); }
+  80%  { left: 34%;  bottom: 22%; transform: translate(-50%, 0) rotate(4deg); }
+  100% { left: 10%;  bottom: 6%;  transform: translate(-50%, 0) rotate(-4deg); }
 }
 
 /* Scene 6 ("Follow The Map") and Scene 10 ("Your Journey Continues") —
@@ -903,7 +950,7 @@ body {
 .aurion-road-stage {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: var(--aurion-scene-frame-width);
   aspect-ratio: 4 / 3;
   margin: 0 auto;
 }

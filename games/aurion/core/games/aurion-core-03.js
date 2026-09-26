@@ -792,7 +792,11 @@ export function startGame(config, container) {
         mapBtn.addEventListener('click', () => {
           if (mapBtn.disabled) return;
           mapBtn.disabled = true;
-          onComplete();
+          // Grab the map — it vanishes on tap (the subtitle literally
+          // says "grab the map"), same fade-out as the bottle, then the
+          // Continue button appears once it's gone.
+          mapBtn.classList.add('grabbed');
+          setTimeout(onComplete, 350);
         });
         stage.appendChild(mapBtn);
       } else {
@@ -824,13 +828,25 @@ export function startGame(config, container) {
   // height:auto (the image's own natural proportions, no cropping or
   // letterboxing), these percentages are resolution-independent and
   // don't need to change if the frame's pixel width changes later.
+  // Same six clusters as before, remapped for the container change
+  // above: .aurion-spot-image now matches Scene 10's box treatment
+  // (aspect-ratio 4/3 + object-fit: contain, per Chef's explicit "match
+  // the container you did for scene 10"), instead of stretching to the
+  // image's own natural ~1:1 shape. Since 4:3 is wider than the real
+  // photo, contain now letterboxes it — height-constrained, centered
+  // horizontally with ~12.3% empty margin on each side (measured from
+  // Chef's own screenshot crop: real image ~340x338px ≈ 1:1, box 4:3).
+  // The original percentages (relative to the photo's own content) were
+  // remapped through that letterbox math: new_left = 12.3 + old_left *
+  // 0.754, top unchanged (no vertical letterbox since height fills the
+  // box exactly).
   const DEFAULT_SHELL_SPOTS = [
-    { left: 7,  top: 64 },
-    { left: 41, top: 58 },
-    { left: 84, top: 53 },
-    { left: 14, top: 87 },
-    { left: 55, top: 78 },
-    { left: 87, top: 82 }
+    { left: 17.6, top: 64 },
+    { left: 43.2, top: 58 },
+    { left: 75.6, top: 53 },
+    { left: 22.8, top: 87 },
+    { left: 53.8, top: 78 },
+    { left: 77.9, top: 82 }
   ];
   function buildShellFindMechanic(slot, scene, onComplete) {
     const mechanicData = scene.mechanicData || {};
@@ -1183,22 +1199,27 @@ export function startGame(config, container) {
     let spun = false;
 
     // .aurion-spot-stage (not the generic, unbounded .aurion-sort-stage)
-    // is what actually caps .aurion-spot-image's width — this was the
-    // bug behind Chef's "oversized image" report: .aurion-sort-stage has
-    // no max-width of its own, so the image was stretching to fill the
-    // full scene width instead of the ~340px every other scene using
-    // .aurion-spot-image (shell-find) already caps at.
+    // is what actually caps the container's width — this was the bug
+    // behind Chef's original "oversized image" report. The viewing
+    // image itself now gets its own dedicated class (.aurion-viewing-
+    // image, deliberately smaller than the wheel) rather than sharing
+    // .aurion-spot-image with shell-find's beach photo — Chef's
+    // correction was that this pirate image specifically needed to be
+    // smaller than the wheel, not resized together with shell-find.
     const stage = document.createElement('div');
     stage.className = 'aurion-spot-stage';
 
     const viewingEl = document.createElement('img');
     if (viewingImage) viewingEl.src = resolveAssetUrl(viewingImage);
     viewingEl.alt = '';
-    viewingEl.className = 'aurion-spot-image';
+    viewingEl.className = 'aurion-viewing-image';
     stage.appendChild(viewingEl);
     slot.appendChild(stage);
 
+    let wheelShown = false;
     function showWheel() {
+      if (wheelShown) return;
+      wheelShown = true;
       viewingEl.remove();
       const wheel = document.createElement('button');
       wheel.className = 'aurion-spin-wheel';
@@ -1217,6 +1238,19 @@ export function startGame(config, container) {
 
     if (scene.soundEffect) {
       const voice = new Audio(scene.soundEffect);
+      // Per Chef's correction: Aurion's voice line actually mentions the
+      // wheel near the end of the clip, so the wheel should already be
+      // showing by the time she stops talking — not swapped in only
+      // once the audio has fully finished. Once the clip's duration is
+      // known, the swap is scheduled EARLY_SWAP_SECONDS before the end
+      // instead of waiting for 'ended'. 'ended' stays as a safety net
+      // (showWheel() is idempotent via wheelShown) for whenever duration
+      // metadata never loads at all.
+      const EARLY_SWAP_SECONDS = 1.8;
+      voice.addEventListener('loadedmetadata', () => {
+        const swapAt = Math.max(0, voice.duration - EARLY_SWAP_SECONDS);
+        setTimeout(showWheel, swapAt * 1000);
+      });
       voice.addEventListener('ended', showWheel);
       voice.play().catch(showWheel);
     } else {

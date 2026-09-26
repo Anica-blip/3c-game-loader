@@ -1,0 +1,925 @@
+/* Repo path: games/aurion/core/css/core-03.css */
+
+/* ============================================================
+   PER-GAME CODE INDEPENDENCE — read before adding or reusing a rule
+   ============================================================
+   Cloned from games/aurion/core/css/core-02.css and trimmed/extended to
+   only what core-03 actually uses, same rule as aurion-core-03.js: this
+   file must only contain what THIS game's own scenes render. core-02's
+   piratehat, hide-behind-rocks, sack, tickets and gear/pirate rules
+   were removed entirely, not just left unused, and core-03's own new
+   rules (bottle-smash, shell-find, item-select + boat-drag, spin-wheel,
+   wrong-map-land, casey-swim) were built fresh below. If core-03 later
+   needs another new mechanic, its CSS gets cloned/built in here — never
+   left as a shared reference back to another game's file.
+   ============================================================ */
+
+:root {
+  --aurion-dark: #1a0f2e;
+  --aurion-gold: #f0b429;
+  --aurion-text: #ffffff;
+  --aurion-neon-purple: #c07df4;
+  --aurion-neon-purple-fill: rgba(140, 90, 220, 0.16);
+  --aurion-neon-purple-glow: rgba(192, 125, 244, 0.4);
+  --aurion-neon-purple-glow-soft: rgba(192, 125, 244, 0.22);
+  --aurion-neon-purple-bright: #e6cbff;
+  --aurion-neon-purple-glow-bright: rgba(230, 203, 255, 0.65);
+  --aurion-neon-purple-glow-bright-soft: rgba(230, 203, 255, 0.35);
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins';
+  background-color: var(--aurion-dark);
+  color: var(--aurion-text);
+}
+
+.aurion-page-card {
+  background: rgba(20, 20, 26, 0.72);
+  border: 2px solid var(--aurion-gold);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.aurion-page-card h1 {
+  font-family: 'Luckiest Guy';
+  font-size: 1.4rem;
+  margin: 8px 0;
+  color: var(--aurion-gold);
+}
+
+.aurion-page-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.aurion-page-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.aurion-page-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.aurion-page-btn-primary {
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .aurion-page-card {
+    padding: 18px;
+  }
+}
+
+/* Loading screen */
+.aurion-screen.aurion-loading {
+  text-align: center;
+}
+
+.aurion-hourglass-illustration {
+  width: 50px;
+  margin: 0 auto 16px;
+}
+
+.aurion-hourglass-illustration svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-loading-greeting {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 20px;
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.aurion-loading .aurion-body-text {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* ---- In-game engine styles (aurion-core-02.js) ---- */
+
+#game-container.aurion-game {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.aurion-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.aurion-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aurion-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+.aurion-watermark {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  z-index: 5;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  padding: 0 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aurion-exit-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.aurion-exit-btn:hover {
+  opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .aurion-exit-btn {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.aurion-scene-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+}
+
+@media (min-width: 700px) {
+  .aurion-scene-wrap {
+    max-width: 720px;
+  }
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-mechanic-slot {
+  display: none;
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-scene-textblock {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-wrap.aurion-mobile-hero-image {
+  justify-content: center;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-scene-textblock {
+  flex: none;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-button-row {
+  margin-top: 24px;
+}
+
+.aurion-overlay-img {
+  max-width: 260px;
+  width: 60%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.aurion-intro-scene .aurion-overlay-img {
+  max-width: 170px;
+  width: 45%;
+}
+
+@media (max-width: 480px) {
+  .aurion-mobile-hero-image .aurion-overlay-img {
+    max-width: 300px;
+    width: 82%;
+  }
+}
+
+.aurion-overlay-center { align-self: center; }
+.aurion-overlay-top { align-self: flex-start; margin-top: -10vh; }
+.aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
+
+.aurion-scene-title {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 28px;
+  margin: 6px 0 20px;
+}
+
+.aurion-scene-subtitle {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.aurion-scene-desc {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  white-space: pre-wrap;
+}
+
+.aurion-mechanic-slot {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-video {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 16px;
+  display: block;
+  background: transparent;
+  margin: 0 auto;
+}
+
+.aurion-scene-video::-webkit-media-controls,
+.aurion-scene-video::-webkit-media-controls-enclosure,
+.aurion-scene-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.aurion-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  width: 100%;
+}
+
+.aurion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: 'Poppins';
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--aurion-text);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  max-width: 220px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+  height: auto;
+}
+
+.aurion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.aurion-btn-imaged {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border-radius: 0;
+  min-width: 140px;
+  max-width: 220px;
+  min-height: 48px;
+  padding: 20px 20px 7px;
+  color: #3b2855;
+}
+
+.aurion-btn-label {
+  display: block;
+  max-width: 90px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.05;
+}
+
+.aurion-btn-label-wrapped {
+  margin-top: 0;
+}
+
+/* Shared board/tile grid — reused as-is by gear, companion and envelope
+   below, same as core-01. */
+.aurion-scene-wrap.aurion-has-side-panel {
+  max-width: 720px;
+}
+
+.aurion-sort-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.aurion-sort-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 460px;
+  min-width: 240px;
+}
+
+.aurion-sort-tile {
+  position: relative;
+  aspect-ratio: 570 / 876;
+  border-radius: 10px;
+  background-color: var(--aurion-dark);
+  background-size: cover;
+  background-position: center;
+  border: none;
+  box-shadow: 0 0 16px var(--aurion-neon-purple-glow-soft);
+  opacity: 1;
+  transition: box-shadow 0.3s ease;
+}
+
+.aurion-reveal-tile {
+  cursor: pointer;
+}
+
+.aurion-reveal-tile.dim {
+  opacity: 0.2;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Same solid glow as .opened below, not a pulse — Chef's own note was
+   that the flashing sweep should look "exactly the same glow" as the
+   glow an opened envelope gets. The earlier version used a slow 1.4s
+   pulse animation, but the JS sweep swaps this class to the next tile
+   every 350ms — far faster than that animation's own cycle — so each
+   tile's glow kept resetting before it ever reached its brightest
+   point, which is why it read as barely-there. No transition at all
+   this time (a first attempt at an 0.08s transition still measurably
+   undershot the full glow value, since it hadn't finished by the next
+   350ms swap either) — the glow needs to be at its full value the
+   instant the class lands, not eased into. */
+.aurion-reveal-tile.flashing {
+  opacity: 1;
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  transition: none;
+}
+
+.aurion-reveal-tile.opened {
+  opacity: 1;
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  animation: none;
+}
+
+.aurion-reveal-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 220px;
+  /* The old score-based card was one short paragraph; this one is a
+     15-item list, which runs much taller. Capped and scrollable so it
+     never runs off-screen on a short viewport instead of just growing
+     past the visible page. */
+  max-height: 80vh;
+  overflow-y: auto;
+  background: rgba(20, 40, 90, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 25;
+}
+
+.aurion-reveal-popup.open {
+  display: block;
+}
+
+.aurion-reveal-popup h2 {
+  font-family: 'Luckiest Guy';
+  color: #ffbd59;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+/* Same font/color/weight the old .aurion-reveal-body paragraph used —
+   Chef's own instruction was to keep those, just change the content
+   from a prose paragraph to this bulleted word list. Centered as a
+   block (inline-block + text-align:left) so the bullets themselves
+   still line up naturally left-to-right instead of each one being
+   centered on its own, which reads oddly for a list. */
+.aurion-reveal-word-list {
+  font-family: 'Poppins';
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+  padding-left: 18px;
+  text-align: left;
+  display: inline-block;
+}
+
+.aurion-reveal-word-list li {
+  margin-bottom: 2px;
+}
+
+/* ===========================================================
+   Core-02's own mechanics: piratehat (Scene 1) and spot-diamond
+   (Scene 6) below, plus gear-select / companion-select /
+   envelope-reveal cloned from core-01 (identical behavior, this
+   game's own copy — same reasoning as aurion-core-02.js).
+   No compass, no maze, no key-grab — this game doesn't use them.
+   =========================================================== */
+
+/* Scene 1 ("Where Will Your Journey Take You?") — the hat sits centered,
+   single tappable image. Sized and fitted the same way every other
+   single-image tile in this game already is (square canvas art,
+   background-size: contain, same convention as the gear/companion
+   tiles below) — not a new size invented for this scene. */
+/* Scene 1 ("Where Will Your Journey Take You?") — core-03's own
+   mechanic. Tap the bottle to "smash" it; the map fades in over/beside
+   it. NOT YET FINAL: sizing is a first pass, not measured against
+   Chef's real art yet. */
+.aurion-bottle-tile {
+  width: 220px;
+  max-width: 60vw;
+  aspect-ratio: 1 / 1;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.aurion-bottle-tile.smashed {
+  opacity: 0;
+  transform: scale(1.15);
+  pointer-events: none;
+}
+
+.aurion-bottle-map-reveal {
+  display: block;
+  width: 220px;
+  max-width: 60vw;
+  margin: 0 auto;
+  opacity: 0;
+  animation: bottle-map-fade-in 0.6s ease forwards;
+}
+
+@keyframes bottle-map-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scene 9 ("Time To Collect Some Sea Shells") — reuses the same
+   .aurion-spot-stage / .aurion-spot-image sizing as Scene 4's spin-wheel
+   viewing image, just with 6 tap targets instead of 1. Each hotspot is
+   deliberately invisible (no border/background) until found, same "find
+   it, don't announce it" idea core-02's single diamond used.
+   NOT YET FINAL: hotspot positions in aurion-core-03.js's
+   DEFAULT_SHELL_SPOTS are a placeholder layout, not measured against
+   Chef's actual findshells.png art yet. */
+.aurion-spot-stage {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.aurion-spot-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-shell-hotspot {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.aurion-shell-hotspot.found {
+  filter: drop-shadow(0 0 14px rgba(240, 180, 41, 0.85));
+  pointer-events: none;
+}
+
+/* Scene 3 ("Jump On Board") — two-stage mechanic. First the 4 item
+   tiles (same sort-tile/sort-board pattern every picker in this game
+   uses); picking one is this game's ONE scoring moment (see
+   chosenItemValue in aurion-core-03.js) and swaps the mechanic slot for
+   the boat-drag stage below. */
+.aurion-item-board {
+  max-width: 460px;
+}
+
+@media (min-width: 700px) {
+  .aurion-item-board {
+    max-width: 580px;
+  }
+}
+
+.aurion-item-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurion-item-tile.opened {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+}
+
+.aurion-item-tile.dim {
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+@media (max-width: 700px) {
+  .aurion-item-board {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 300px;
+    gap: 16px;
+  }
+}
+
+/* Second stage of Scene 3 — drag the chosen companion onto the boat.
+   Purely a completion step, no scoring (see buildItemSelectBoatMechanic).
+   Same drag/return/arrived pattern as the road-companion drag below.
+   NOT YET FINAL: sizing/positioning is a first pass, not measured
+   against Chef's real fishboat.png art yet. */
+.aurion-boat-stage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+}
+
+.aurion-boat-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.aurion-boat-companion {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: grab;
+  touch-action: none;
+}
+
+.aurion-boat-companion:active {
+  cursor: grabbing;
+}
+
+.aurion-boat-companion.returning {
+  transition: left 0.4s ease, top 0.4s ease, opacity 0.4s ease;
+}
+
+.aurion-boat-companion.arrived {
+  opacity: 0;
+  cursor: default;
+}
+
+.aurion-boat-companion.aurion-flip-x {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+
+/* Scene 4 ("You Been Spotted") — pirateviewing image swaps (after
+   Aurion's voice line) for the spinning wheel; one tap on the wheel
+   (the diamond is part of the art, so the whole wheel is the tap
+   target) triggers one fast automatic spin, then the button appears.
+   NOT YET FINAL: sizing is a first pass, not measured against Chef's
+   real spinwheel.png art yet. */
+.aurion-spin-wheel {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+}
+
+.aurion-spin-wheel.spinning {
+  animation: spin-wheel-fast 1.6s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  cursor: default;
+  pointer-events: none;
+}
+
+@keyframes spin-wheel-fast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(1080deg); }
+}
+
+/* Scene 5 ("Your Companion Is Helping Out") — fully automatic, no
+   player interaction. Static ship + island art, then the wrongmap
+   sprite flies in from the right, circles, and lands — one CSS
+   animation combining all three stages via percentage keyframes.
+   NOT YET FINAL: the flight path (start/circle/landing coordinates) is
+   a first pass, not measured against Chef's real pirateship.png /
+   pirateisland.png art yet — easy to retune once she's seen it live. */
+.aurion-wrongmap-stage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+}
+
+.aurion-wrongmap-ship {
+  position: absolute;
+  left: 2%;
+  bottom: 4%;
+  width: 46%;
+  height: auto;
+}
+
+.aurion-wrongmap-island {
+  position: absolute;
+  right: 4%;
+  bottom: 2%;
+  width: 48%;
+  height: auto;
+}
+
+.aurion-wrongmap-flyer {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  left: 110%;
+  top: 20%;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+}
+
+.aurion-wrongmap-flyer.flying {
+  animation: wrong-map-fly 5.5s ease-in-out forwards;
+}
+
+@keyframes wrong-map-fly {
+  0%   { left: 110%; top: 20%; opacity: 0; transform: scale(0.9); }
+  12%  { opacity: 1; }
+  35%  { left: 78%;  top: 12%; transform: scale(1); }
+  50%  { left: 68%;  top: 30%; }
+  65%  { left: 80%;  top: 16%; }
+  80%  { left: 70%;  top: 34%; }
+  92%  { left: 76%;  top: 52%; transform: scale(0.95); }
+  100% { left: 74%;  top: 58%; opacity: 1; transform: scale(0.85); }
+}
+
+/* Scene 8 ("You Found A Friendly Smile") — fully automatic ambient
+   scene, Casey fades in after a short delay and bobs/drifts gently in
+   a slow, looping animation ("like otters behave" per Chef's note), no
+   player interaction. NOT YET FINAL: positioning/motion is a first
+   pass, not measured against Chef's real undersea.png / casey.png art
+   yet. */
+.aurion-casey-stage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.aurion-casey-undersea {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-casey-otter {
+  position: absolute;
+  left: 62%;
+  bottom: 10%;
+  width: 90px;
+  height: 90px;
+  transform: translate(-50%, 0);
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.aurion-casey-otter.visible {
+  opacity: 1;
+  animation: casey-bob 3.2s ease-in-out infinite;
+}
+
+@keyframes casey-bob {
+  0%, 100% { transform: translate(-50%, 0) rotate(-2deg); }
+  50%      { transform: translate(-46%, -6%) rotate(2deg); }
+}
+
+/* Scene 2 ("Choose Your Companion") — cloned from core-01, unchanged. */
+.aurion-companion-board {
+  max-width: 460px;
+}
+
+@media (min-width: 700px) {
+  .aurion-companion-board {
+    max-width: 580px;
+  }
+}
+
+.aurion-companion-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurion-companion-tile.opened {
+  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+}
+
+.aurion-companion-tile.dim {
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+@media (max-width: 700px) {
+  .aurion-companion-board {
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
+    gap: 16px;
+  }
+
+  .aurion-companion-tile {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Scene 9 ("Let's Check How Far You Got") — cloned from core-01, unchanged. */
+.aurion-envelope-board {
+  max-width: 460px;
+}
+
+@media (min-width: 700px) {
+  .aurion-envelope-board {
+    max-width: 580px;
+  }
+}
+
+.aurion-envelope-tile {
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.aurion-envelope-board.dimmed .aurion-envelope-tile {
+  opacity: 0.1;
+}
+
+@media (max-width: 700px) {
+  .aurion-envelope-board {
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
+    gap: 16px;
+  }
+
+  .aurion-envelope-tile {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.aurion-credits-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-wrap;
+  margin: 12px 0 20px;
+  color: var(--aurion-text);
+  opacity: 0.9;
+}
+
+/* Chef's flip request (carried over from core-02): parrot2 and parrot3
+   face left in their source art but need to face right so the
+   boat/trail scenes read correctly — done in code (transform:
+   scaleX(-1)) rather than replacing the image files. aurion-core-03.js's
+   needsFlip() adds this class only to those two exact images, wherever
+   they render: the companion-select picker tile, and (since the
+   player's chosen companion is reused later) Scene 3's boat-companion
+   and Scene 6's road-companion.
+   .aurion-boat-companion and .aurion-road-companion already carry their
+   own transform (translate(-50%,-50%), for centering on their left/top
+   position) — a bare ".aurion-flip-x { transform: scaleX(-1) }" would
+   silently overwrite that instead of combining with it, so both get
+   their own combined-selector rule (defined alongside each element
+   above) instead of a generic reusable one here. This plain rule stays
+   for the companion-select picker tile, which has no transform of its
+   own. */
+.aurion-flip-x {
+  transform: scaleX(-1);
+}

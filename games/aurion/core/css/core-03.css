@@ -284,13 +284,23 @@ body {
    object-fit: contain) per Chef's explicit instruction — she flagged
    this one (along with the underwater and beach photos) as too large
    next to Scene 10's, which is "the right size". */
+/* Root cause of Chef's "subtitle is attached to the image" report: this
+   rule had margin-top: 0, so the ONLY gap between the subtitle text and
+   the image frame was the subtitle's own 14px margin-bottom. That went
+   unnoticed earlier in this same session because of the DOM-ordering bug
+   (this image used to render in the wrong spot, not actually adjacent to
+   the subtitle) — now that it correctly sits right after the subtitle,
+   the tight 14px reads as touching, especially on a narrower mobile
+   screen where the image is a bigger fraction of the width. Real
+   margin-top added so it has its own breathing room independent of
+   whatever the subtitle's spacing happens to be. */
 .aurion-scene-picture {
   display: block;
   width: 100%;
   max-width: var(--aurion-scene-frame-width);
   aspect-ratio: 4 / 3;
   object-fit: contain;
-  margin: 0 auto 16px;
+  margin: 18px auto 16px;
 }
 
 .aurion-overlay-center { align-self: center; }
@@ -1078,9 +1088,20 @@ body {
   transition: left 0.4s ease, top 0.4s ease, opacity 0.4s ease;
 }
 
+/* Confirmed via testing: opacity 0 already applies reliably and
+   instantly the moment the drag mechanic marks this element .arrived
+   (i.e. it does disappear). Two gaps closed here per Chef's "make sure
+   it vanishes" — it had no transition of its own, so it was a hard,
+   un-eased cut rather than an actual fade (the 500ms pause before the
+   Continue button appears, in aurion-core-03.js, was clearly meant for
+   a fade to be SEEN — this is what makes that fade actually happen);
+   and it was still pointer-events: auto, so the invisible button was
+   technically still clickable/draggable sitting there. */
 .aurion-road-companion.arrived {
   opacity: 0;
   cursor: default;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 
 .aurion-road-companion.aurion-flip-x {

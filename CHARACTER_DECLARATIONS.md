@@ -54,7 +54,7 @@ In practice: the moment a new game folder and its character assets are committed
 
 ## 5. Relationship to the Parent Declaration
 
-This document does not stand alone. It operates as a scoped extension of [`3c-brand-protection`'s DECLARATION_OF_ORIGIN.md](https://github.com/Anica-blip/3c-brand-protection/blob/main/DECLARATION_OF_ORIGIN.md), which remains the master record for the 3C Thread To Success™ brand, the A-Team (Anica, Caelum, Aurion), and the ATA methodology.
+This document does not stand alone. It operates as a scoped extension of [`3c-brand-protection`'s DECLARATION_OF_ORIGIN.md](https://github.com/Anica-blip/3c-brand-protection/blob/main/DECLARATION_OF_ORIGIN.md), which remains the master record for the 3C Thread To Success™ brand, the A-Team (Anica, Caelum, Jan, Aurion and Casey) and their Lifeline badge series, and the ATA methodology.
 
 Where this document is silent on a matter already covered in the parent declaration, brand-wide AI tool boundaries, platform data retention position, the governing statement on open source, the parent declaration's terms apply in full.
 

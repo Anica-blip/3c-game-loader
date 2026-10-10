@@ -143,10 +143,10 @@
       "mechanic": "select-crystal",
       "mechanicData": {
         "crystal": {
-          "Independence": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal1.png",
-          "Integrity": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal2.png",
-          "Courage": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal3.png",
-          "Connection": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal4.png"
+          "Devotion": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal1.png",
+          "Wonder": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal2.png",
+          "Healing": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal3.png",
+          "Service": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-crystal4.png"
         ]
       },
       "situation": "",
@@ -387,10 +387,10 @@
       "mechanic": "envelope-reveal",
       "mechanicData": {
         "envelopes": {
-          "Courage": "core-01.env1.png",
-          "Independence": "core-01.env2.png",
-          "Connection": "core-01.env3.png",
-          "Integrity": "core-01.env4.png"
+          "Devotion": "core-01.env1.png",
+          "Wonder": "core-01.env2.png",
+          "Healing": "core-01.env3.png",
+          "Service": "core-01.env4.png"
         }
       },
       "situation": "",

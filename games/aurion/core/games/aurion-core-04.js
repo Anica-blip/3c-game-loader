@@ -82,12 +82,22 @@ const CALIBRATE = typeof location !== 'undefined' && /[?&]calibrate=1/.test(loca
 
 // A bare filename lives in this game's own assets/ folder; anything with a
 // "/" (full URL, ../assets/...) is used exactly as given.
+// Version tag added to every picture URL. Changing "assetVersion" in the
+// JSON makes browsers (and Cloudflare, which caches by full URL including the
+// query string) fetch the picture fresh, so a replaced image shows up
+// straight away without renaming the file or purging any cache.
+let ASSET_VERSION = '';
+
 function resolveAssetUrl(url) {
   if (!url) return url;
-  if (/^https?:\/\//i.test(url) || url.startsWith('/') || url.includes('/')) {
-    return url;
+  let out = url;
+  if (!(/^https?:\/\//i.test(url) || url.startsWith('/') || url.includes('/'))) {
+    out = 'assets/' + url;
   }
-  return 'assets/' + url;
+  if (ASSET_VERSION && !/^data:/i.test(out) && !/[?&]v=/.test(out)) {
+    out += (out.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(ASSET_VERSION);
+  }
+  return out;
 }
 
 function applyStyledText(el, obj, prefix) {
@@ -436,6 +446,7 @@ function playKnock() {
 }
 
 export function startGame(config, container) {
+  ASSET_VERSION = config.assetVersion ? String(config.assetVersion) : '';
   let sceneIndex = 0;
   let ambientAudio = null;
   const preloadedVideos = new Map();

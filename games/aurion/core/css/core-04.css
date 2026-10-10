@@ -417,6 +417,13 @@ body {
   max-width: 720px;
 }
 
+/* Crystals, envelopes and the moon view sit in the middle of the free
+   space between the subtitle and the button, not hugging the subtitle. */
+.aurion-center-mechanic .aurion-mechanic-slot {
+  align-items: center;
+  padding: 12px 0;
+}
+
 /* The ONE scene frame: 1:1, same width everywhere. */
 .aurion-stage {
   position: relative;
@@ -610,14 +617,8 @@ body {
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   width: 100%;
-  max-width: 460px;
+  max-width: 400px;
   min-width: 240px;
-}
-
-@media (min-width: 700px) {
-  .aurion-crystal-board {
-    max-width: 580px;
-  }
 }
 
 .aurion-crystal-tile {
@@ -661,13 +662,13 @@ body {
 
 @media (max-width: 700px) {
   .aurion-crystal-board {
-    grid-template-columns: repeat(2, 150px);
+    grid-template-columns: repeat(2, 120px);
     max-width: none;
     gap: 16px;
   }
   .aurion-crystal-tile {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
   }
 }
 
@@ -688,7 +689,7 @@ body {
 .aurion-wand {
   position: absolute;
   z-index: 4;
-  width: 24%;
+  width: 50%;
   aspect-ratio: 1 / 1;
   padding: 0;
   border: none;
@@ -708,11 +709,12 @@ body {
 }
 
 .aurion-wand.ready {
+  width: 22%;
   cursor: grab;
 }
 
 .aurion-wand.moving {
-  transition: left 1s ease-in-out, top 1s ease-in-out;
+  transition: left 1s ease-in-out, top 1s ease-in-out, width 1s ease-in-out;
 }
 
 .aurion-wand.dragging {
@@ -733,7 +735,9 @@ body {
 .aurion-pz {
   position: relative;
   width: 100%;
-  max-width: 340px;
+  /* Smaller, and never taller than the screen can show above the button. */
+  max-width: min(290px, max(210px, calc((100vh - 330px) * 0.75)));
+  max-width: min(290px, max(210px, calc((100dvh - 330px) * 0.75)));
   margin: 0 auto;
   user-select: none;
   -webkit-user-select: none;
@@ -749,6 +753,10 @@ body {
 .aurion-pz-swatch {
   height: 12px;
   border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 55%),
+    var(--sq);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   opacity: 0.5;
   transition: opacity 0.4s ease, box-shadow 0.4s ease;
 }
@@ -792,11 +800,46 @@ body {
 }
 
 .aurion-pz-sq {
+  box-sizing: border-box;
+  position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 9px;
   cursor: grab;
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  /* Crystal / glass feel: a bright facet top left, a dark facet bottom
+     right, a clear edge and an inner glow in the square's own colour. */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.12) 36%, rgba(255, 255, 255, 0) 52%),
+    linear-gradient(315deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0) 46%),
+    var(--sq);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.35),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.2),
+    0 3px 8px rgba(0, 0, 0, 0.35),
+    0 0 9px var(--sq);
+}
+
+/* A slow glint that sweeps across, so the squares shimmer like crystals. */
+.aurion-pz-sq::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0) 62%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  animation: aurion-pz-glint 5s ease-in-out infinite;
+}
+
+.aurion-pz-cell:nth-child(3n) .aurion-pz-sq::after { animation-delay: -1.6s; }
+.aurion-pz-cell:nth-child(3n+1) .aurion-pz-sq::after { animation-delay: -3.2s; }
+
+@keyframes aurion-pz-glint {
+  0%, 55% { background-position: 130% 0; }
+  100%    { background-position: -30% 0; }
 }
 
 .aurion-pz-sq.lifted {
@@ -823,6 +866,15 @@ body {
 }
 
 /* ---- Scene 6: moon ---- */
+/* The artwork is a landscape picture sitting inside the 1800 x 1800 square
+   (dark bands top and bottom), so this frame crops to 4:3 and is wider than
+   the standard square. Percentages below are of THIS 4:3 frame. */
+.aurion-moon-stage {
+  aspect-ratio: 4 / 3;
+  max-width: min(560px, max(300px, calc((100vh - 330px) * 1.3333)));
+  max-width: min(560px, max(300px, calc((100dvh - 330px) * 1.3333)));
+}
+
 .aurion-twinkle {
   position: absolute;
   z-index: 2;
@@ -841,9 +893,9 @@ body {
 .aurion-moon {
   position: absolute;
   z-index: 3;
-  left: -12%;
-  top: 28%;
-  width: 22%;
+  left: -10%;
+  top: 22%;
+  width: 14%;
   aspect-ratio: 1 / 1;
   background-size: contain;
   background-repeat: no-repeat;
@@ -855,15 +907,15 @@ body {
 }
 
 .aurion-moon.crossing {
-  animation: aurion-moon-cross 12s linear forwards;
+  animation: aurion-moon-cross 22s linear forwards;
 }
 
 @keyframes aurion-moon-cross {
-  0%   { left: -12%; top: 30%; opacity: 0; }
-  6%   { opacity: 1; }
-  50%  { left: 50%;  top: 16%; opacity: 1; }
-  94%  { opacity: 1; }
-  100% { left: 112%; top: 30%; opacity: 0; }
+  0%   { left: -10%; top: 24%; opacity: 0; }
+  4%   { opacity: 1; }
+  50%  { left: 50%;  top: 10%; opacity: 1; }
+  96%  { opacity: 1; }
+  100% { left: 110%; top: 24%; opacity: 0; }
 }
 
 /* ---- Scene 7: find the 3C diamond ---- */
@@ -1050,7 +1102,7 @@ body {
   z-index: 3;
   left: -16%;
   top: 30%;
-  width: 22%;
+  width: 11%;
   aspect-ratio: 1 / 1;
   opacity: 0;
   pointer-events: none;
@@ -1118,9 +1170,9 @@ body {
   background-position: center;
   border: none;
   padding: 0;
-  box-shadow: 0 0 16px var(--aurion-neon-purple-glow-soft);
+  filter: drop-shadow(0 0 8px var(--aurion-neon-purple-glow-soft));
   opacity: 1;
-  transition: box-shadow 0.3s ease;
+  transition: filter 0.3s ease;
 }
 
 .aurion-reveal-tile {
@@ -1130,18 +1182,18 @@ body {
 .aurion-reveal-tile.dim {
   opacity: 0.2;
   cursor: default;
-  box-shadow: none;
+  filter: none;
 }
 
 .aurion-reveal-tile.flashing {
   opacity: 1;
-  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  filter: drop-shadow(0 0 14px var(--aurion-neon-purple-glow-bright)) drop-shadow(0 0 6px var(--aurion-neon-purple-glow-bright));
   transition: none;
 }
 
 .aurion-reveal-tile.opened {
   opacity: 1;
-  box-shadow: 0 0 24px var(--aurion-neon-purple-glow-bright);
+  filter: drop-shadow(0 0 14px var(--aurion-neon-purple-glow-bright)) drop-shadow(0 0 6px var(--aurion-neon-purple-glow-bright));
   animation: none;
 }
 

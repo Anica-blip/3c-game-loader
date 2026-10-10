@@ -373,7 +373,7 @@
       "mechanic": "castle-door",
       "mechanicData": {
         "doorway": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-doorway.png",
-        "peterpan": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-peterpan.png"
+        "flyingboy": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-flyingboy.png"
       },
       "situation": "",
       "image": {
@@ -410,7 +410,7 @@
       "mechanic": "tree-of-knowledge",
       "mechanicData": {
         "treeofknowledge": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-treeofknowledge.png",
-        "peterpan": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-peterpan.png"
+        "flyingboy": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-04/core.04-flyingboy.png"
       },
       "situation": "",
       "image": {

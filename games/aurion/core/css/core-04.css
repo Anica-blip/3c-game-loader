@@ -663,6 +663,7 @@ body {
 @media (max-width: 700px) {
   .aurion-crystal-board {
     grid-template-columns: repeat(2, 120px);
+    justify-content: center;
     max-width: none;
     gap: 16px;
   }

@@ -421,7 +421,11 @@ body {
 .aurion-stage {
   position: relative;
   width: 100%;
-  max-width: var(--aurion-scene-frame-width);
+  /* Never taller than the room left on screen under the title/subtitle, so
+     the button row is always visible without scrolling. 340px is the space
+     the title, subtitle, button and page padding use; 240px is the floor. */
+  max-width: min(var(--aurion-scene-frame-width), max(240px, calc(100vh - 340px)));
+  max-width: min(var(--aurion-scene-frame-width), max(240px, calc(100dvh - 340px)));
   aspect-ratio: 1 / 1;
   margin: 0 auto;
   user-select: none;
@@ -487,7 +491,6 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   transform-origin: 50% 50%;
-  filter: drop-shadow(0 0 8px rgba(230, 203, 255, 0.55));
   animation: aurion-flap-slow 1.8s ease-in-out infinite;
 }
 
@@ -510,11 +513,13 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 40%;
+  width: 62%;
   aspect-ratio: 1 / 1;
   padding: 0;
   border: none;
   background: transparent;
+  outline: none;
+  box-shadow: none;
   cursor: pointer;
   transform: translate(-50%, -50%);
   animation: aurion-bf-idle 3.2s ease-in-out infinite;

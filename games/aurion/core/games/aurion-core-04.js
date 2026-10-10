@@ -645,6 +645,11 @@ export function startGame(config, container) {
     if (scene.mechanic === 'select-crystal' || scene.mechanic === 'envelope-reveal') {
       wrap.classList.add('aurion-has-side-panel');
     }
+    // These three sit in the vertical middle of the free space instead of
+    // hugging the subtitle.
+    if (scene.mechanic === 'select-crystal' || scene.mechanic === 'envelope-reveal' || scene.mechanic === 'moon-watching') {
+      wrap.classList.add('aurion-center-mechanic');
+    }
     if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page') {
       wrap.classList.add('aurion-intro-scene');
     }
@@ -1035,7 +1040,7 @@ export function startGame(config, container) {
     const swatches = COLOURS.map((hex) => {
       const s = document.createElement('div');
       s.className = 'aurion-pz-swatch';
-      s.style.background = hex;
+      s.style.setProperty('--sq', hex);
       head.appendChild(s);
       return s;
     });
@@ -1061,7 +1066,7 @@ export function startGame(config, container) {
         if (state[i] >= 0) {
           const sq = document.createElement('div');
           sq.className = 'aurion-pz-sq';
-          sq.style.background = COLOURS[state[i]];
+          sq.style.setProperty('--sq', COLOURS[state[i]]);
           cell.appendChild(sq);
         }
       }
@@ -1184,8 +1189,8 @@ export function startGame(config, container) {
 
   // ==================================================================
   // Scene 6: "Just Enjoy The Scenery" (view + moon)
-  // The moon rises on the left, glides slowly over the view in a soft arc
-  // (12 seconds) while stars twinkle. Button appears when it arrives.
+  // The moon rises on the left, glides very slowly over the view in a soft
+  // arc (22 seconds) while stars twinkle. Button appears when it arrives.
   // ==================================================================
   function buildMoonMechanic(slot, scene, onComplete) {
     const md = scene.mechanicData || {};
@@ -1197,7 +1202,7 @@ export function startGame(config, container) {
       star.className = 'aurion-twinkle';
       star.textContent = '✦';
       star.style.left = (4 + Math.random() * 92).toFixed(1) + '%';
-      star.style.top = (3 + Math.random() * 50).toFixed(1) + '%';
+      star.style.top = (4 + Math.random() * 36).toFixed(1) + '%';
       star.style.fontSize = (6 + Math.random() * 8).toFixed(0) + 'px';
       star.style.animationDuration = (2 + Math.random() * 3).toFixed(1) + 's';
       star.style.animationDelay = (Math.random() * 3).toFixed(1) + 's';

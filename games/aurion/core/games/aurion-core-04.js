@@ -97,6 +97,82 @@ function applyStyledText(el, obj, prefix) {
   if (obj[prefix + 'Bold']) el.style.fontWeight = '700';
 }
 
+// Some sprite PNGs arrive with a solid dark background instead of a
+// transparent one, which shows up as a visible box. This removes any
+// background that is connected to the picture edge and has the same colour
+// as the top-left corner, with a one pixel soft edge. It only works when the
+// image host allows cross-origin pixel reads (CORS); if it does not, or the
+// picture is already transparent, the original is used untouched.
+function cutoutImage(url) {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (u) => { if (!settled) { settled = true; resolve(u); } };
+    setTimeout(() => finish(url), 6000);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onerror = () => finish(url);
+    img.onload = () => {
+      try {
+        const scale = Math.min(1, 512 / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.max(1, Math.round(img.naturalWidth * scale));
+        const h = Math.max(1, Math.round(img.naturalHeight * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, w, h);
+        const data = ctx.getImageData(0, 0, w, h);
+        const px = data.data;
+        if (px[3] < 250) { finish(url); return; }   // corner already transparent
+        const br = px[0], bg = px[1], bb = px[2];
+        const diff = (i) => Math.max(Math.abs(px[i] - br), Math.abs(px[i + 1] - bg), Math.abs(px[i + 2] - bb));
+        const TOL = 28, SOFT = 60;
+        const removed = new Uint8Array(w * h);
+        const stack = [];
+        const push = (x, y) => {
+          if (x < 0 || y < 0 || x >= w || y >= h) return;
+          const p = y * w + x;
+          if (removed[p] || diff(p * 4) > TOL) return;
+          removed[p] = 1;
+          stack.push(p);
+        };
+        for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+        for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+        while (stack.length) {
+          const p = stack.pop();
+          const x = p % w, y = (p - x) / w;
+          push(x + 1, y); push(x - 1, y); push(x, y + 1); push(x, y - 1);
+        }
+        for (let p = 0; p < w * h; p++) {
+          if (removed[p]) { px[p * 4 + 3] = 0; continue; }
+          const x = p % w, y = (p - x) / w;
+          const nearGone = (x > 0 && removed[p - 1]) || (x < w - 1 && removed[p + 1]) ||
+                           (y > 0 && removed[p - w]) || (y < h - 1 && removed[p + w]);
+          if (nearGone) {
+            const d = diff(p * 4);
+            if (d < SOFT) px[p * 4 + 3] = Math.round(255 * Math.max(0, (d - TOL)) / (SOFT - TOL));
+          }
+        }
+        ctx.putImageData(data, 0, 0);
+        finish(canvas.toDataURL('image/png'));
+      } catch (_) {
+        finish(url);
+      }
+    };
+    img.src = url;
+  });
+}
+
+// Puts a (cut out) sprite picture on an element as its background.
+function setSprite(el, url) {
+  if (!url) return;
+  el.style.visibility = 'hidden';
+  cutoutImage(resolveAssetUrl(url)).then((u) => {
+    el.style.backgroundImage = `url('${u}')`;
+    el.style.visibility = '';
+  });
+}
+
 // Flags button labels that wrap to 2 lines so the CSS can nudge them.
 function markWrappedButtonLabels(row) {
   row.querySelectorAll('.aurion-btn-label').forEach((label) => {
@@ -740,7 +816,7 @@ export function startGame(config, container) {
     btn.setAttribute('aria-label', 'Tap the butterfly');
     const flap = document.createElement('span');
     flap.className = 'aurion-bf-flap';
-    if (md.butterfly) flap.style.backgroundImage = `url('${resolveAssetUrl(md.butterfly)}')`;
+    setSprite(flap, md.butterfly);
     btn.appendChild(flap);
 
     let tapped = false;
@@ -781,7 +857,7 @@ export function startGame(config, container) {
     lander.className = 'aurion-bf-lander';
     const flap = document.createElement('span');
     flap.className = 'aurion-bf-flap';
-    if (md.butterfly) flap.style.backgroundImage = `url('${resolveAssetUrl(md.butterfly)}')`;
+    setSprite(flap, md.butterfly);
     lander.appendChild(flap);
     stage.appendChild(lander);
     slot.appendChild(stage);

@@ -364,9 +364,8 @@ export function startGame(config, container) {
   let ambientAudio = null;
   const preloadedVideos = new Map();
 
-  // core-04's ONE choice that carries forward: the crystal picked on
-  // "Find Your Favourite" decides which card the envelope scene shows.
-  // No companion in this game.
+  // The crystal pick is remembered but does NOT decide the card: the
+  // envelope tapped does (envelope N = card N). No companion in this game.
   let chosenCrystal = null;
 
   // Voice + timers belong to the scene that started them. Both are cleared
@@ -1306,13 +1305,15 @@ export function startGame(config, container) {
   // Scene 11: "What Else Can You Find Here?" (envelopes)
   // The four envelopes light up in a quick left-to-right sweep that loops
   // (a light moment of urgency: no countdown, no buzzer) until one is
-  // tapped. The card shown is the one for the crystal picked on "Find Your
-  // Favourite". Close the card, Aurion speaks, button appears at the end
+  // tapped. The card shown is the one matching the envelope tapped (N = N), not the crystal pick.
+  // Close the card, Aurion speaks, button appears at the end
   // of the mp3.
   // ==================================================================
   function buildEnvelopeMechanic(slot, scene, onComplete) {
     const envelopes = (scene.mechanicData && scene.mechanicData.envelopes) || {};
-    const cardKey = chosenCrystal || Object.keys(CRYSTAL_MESSAGES)[0];
+    // Envelope N always shows card N (crystal 1 = envelope 1, and so on).
+    // The crystal picked earlier does NOT decide the card: the envelope does.
+    const cardKeys = Object.keys(CRYSTAL_MESSAGES);
 
     const stage = document.createElement('div');
     stage.className = 'aurion-sort-stage';
@@ -1332,7 +1333,7 @@ export function startGame(config, container) {
       tiles[sweepIndex].classList.add('flashing');
     }
 
-    Object.entries(envelopes).forEach(([value, imageUrl]) => {
+    Object.entries(envelopes).forEach(([value, imageUrl], envIndex) => {
       const tile = document.createElement('button');
       tile.className = 'aurion-sort-tile aurion-reveal-tile aurion-envelope-tile';
       if (imageUrl) tile.style.backgroundImage = `url('${resolveAssetUrl(imageUrl)}')`;
@@ -1350,7 +1351,7 @@ export function startGame(config, container) {
 
         popup.innerHTML = '';
         popup.classList.add('open');
-        const msg = CRYSTAL_MESSAGES[cardKey];
+        const msg = CRYSTAL_MESSAGES[cardKeys[envIndex % cardKeys.length]];
 
         const title = document.createElement('h2');
         title.textContent = msg.title;

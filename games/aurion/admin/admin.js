@@ -50,6 +50,31 @@ const BUTTON_TEXT_COLORS = [
   { value: '#1a0f2e', label: 'Dark Purple' }
 ];
 
+// Default credits for every NEW theme made with "New theme". Existing
+// themes keep whatever credits are already saved in their own JSON.
+const DEFAULT_CREDITS = [
+  'Design and development',
+  'Claude (Anthropic)',
+  '',
+  'Hosting',
+  'GitHub Pages',
+  '',
+  'Artwork',
+  'Animated Text Design',
+  'Aurion hero image, ChatGPT & Canva Create',
+  'Background + images, Canva Create',
+  '',
+  'Voice',
+  'ElevenLabs, voiceover',
+  'Magic Hour, Aurion lip sync',
+  '',
+  'Creative direction',
+  'Casey, Creative Director',
+  '',
+  'Producer & Creator',
+  'Anica'
+].join('\n');
+
 const POSITION_OPTIONS = [
   { value: 'center', label: 'Center' },
   { value: 'top', label: 'Top' },
@@ -686,8 +711,13 @@ function renderSceneTabs() {
   addTab.className = 'admin-tab admin-tab-add';
   addTab.textContent = '+ Add scene';
   addTab.addEventListener('click', () => {
-    state.decisions.push(blankScene(state.decisions.length + 1));
-    activeSceneIndex = state.decisions.length - 1;
+    // New scenes go directly in front of Send-off (so they continue the
+    // numbered run), never after Send-off / final page. If this theme has
+    // no Send-off page, falls back to the end of the list.
+    const sendOffIndex = state.decisions.findIndex(d => d.adminLabel === 'Send-off');
+    const insertAt = sendOffIndex === -1 ? state.decisions.length : sendOffIndex;
+    state.decisions.splice(insertAt, 0, blankScene(state.decisions.length + 1));
+    activeSceneIndex = insertAt;
     renderForm();
   });
   sceneTabs.appendChild(addTab);
@@ -1018,6 +1048,7 @@ newThemeBtn.addEventListener('click', () => {
     return;
   }
   state = JSON.parse(JSON.stringify(state));
+  state.credits = DEFAULT_CREDITS;
   currentSha = null;
   currentTheme = slug;
   activeSceneIndex = 0;

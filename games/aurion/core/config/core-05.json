@@ -125,8 +125,8 @@
         "leaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
         "leafSize": 19,
         "land": {
-          "left": 65,
-          "top": 53
+          "left": 62,
+          "top": 48
         },
         "start": {
           "left": -10,
@@ -294,18 +294,24 @@
             "top": 22
           },
           {
-            "left": 41,
-            "top": 14
+            "left": 42,
+            "top": 33
           },
           {
             "left": 62,
-            "top": 22
+            "top": 28
           },
           {
-            "left": 83,
-            "top": 14
+            "left": 82,
+            "top": 35
           }
-        ]
+        ],
+        "itemSizes": {
+          "pumpkin": 22,
+          "apple": 15,
+          "pear": 15,
+          "berries": 15
+        }
       },
       "situation": "",
       "image": {

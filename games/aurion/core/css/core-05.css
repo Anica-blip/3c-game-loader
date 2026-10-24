@@ -1114,6 +1114,9 @@ body {
   cursor: pointer;
 }
 
+/* Cup scene: no container, no border, no counter. */
+.aurion-cups-stage { touch-action: none; }
+
 /* Basket scene: no container, no border, text only. */
 .aurion-basket-stage { touch-action: none; }
 .aurion-basket-stage .aurion-count-pill {

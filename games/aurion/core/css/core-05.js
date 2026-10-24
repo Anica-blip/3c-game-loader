@@ -1,0 +1,1318 @@
+/* Repo path: games/aurion/core/css/core-05.css */
+
+/* ============================================================
+   PER-GAME CODE INDEPENDENCE
+   ============================================================
+   Cloned from games/aurion/core/css/core-03.css and trimmed to only what
+   core-05 renders (same rule as aurion-core-05.js). core-03's bottle,
+   shell, boat, wheel, wrong-map and casey rules were NOT carried over.
+   Every scene picture in core-05 is a 1:1 frame (art is 1800 x 1800), so a
+   percentage position inside .aurion-stage lands on the same spot of the
+   artwork. If a new mechanic is needed, its CSS is built in here, never
+   borrowed from another game's file.
+   ============================================================ */
+
+
+:root {
+  --aurion-dark: #1a0f2e;
+  --aurion-gold: #f0b429;
+  --aurion-text: #ffffff;
+  --aurion-neon-purple: #c07df4;
+  --aurion-neon-purple-fill: rgba(140, 90, 220, 0.16);
+  --aurion-neon-purple-glow: rgba(192, 125, 244, 0.4);
+  --aurion-neon-purple-glow-soft: rgba(192, 125, 244, 0.22);
+  --aurion-neon-purple-bright: #e6cbff;
+  --aurion-neon-purple-glow-bright: rgba(230, 203, 255, 0.65);
+  --aurion-neon-purple-glow-bright-soft: rgba(230, 203, 255, 0.35);
+
+  /* ONE shared "scene picture" frame width, used by every mechanic that
+     shows a single main scene image (Scene 7's cove picture, the spin-
+     wheel/shell-find beach image, the wrongmap ship+island canvas, the
+     road/trail drag canvas, the casey undersea photo). Before this,
+     each of these had picked its own number independently across
+     rounds of "make this one bigger" fixes (340px, 480px, 260px, 300px,
+     ...), which is why the scenes visibly looked like different-sized
+     containers next to each other. Everything below now reads from
+     this one value instead of hardcoding its own. Deliberately NOT
+     applied to .aurion-bottle-stage (a small single tappable prop
+     icon, not a full scene picture) or .aurion-boat-box (shares its
+     row with the flanking item tiles, so it's sized to fit alongside
+     them) — flagged in the reply, not silently decided. */
+  --aurion-scene-frame-width: 420px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins';
+  background-color: var(--aurion-dark);
+  color: var(--aurion-text);
+}
+
+.aurion-page-card {
+  background: rgba(20, 20, 26, 0.72);
+  border: 2px solid var(--aurion-gold);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.aurion-page-card h1 {
+  font-family: 'Luckiest Guy';
+  font-size: 1.4rem;
+  margin: 8px 0;
+  color: var(--aurion-gold);
+}
+
+.aurion-page-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.aurion-page-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.aurion-page-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.aurion-page-btn-primary {
+  background: var(--aurion-gold);
+  color: var(--aurion-dark);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .aurion-page-card {
+    padding: 18px;
+  }
+}
+
+/* Loading screen */
+.aurion-screen.aurion-loading {
+  text-align: center;
+}
+
+.aurion-hourglass-illustration {
+  width: 50px;
+  margin: 0 auto 16px;
+}
+
+.aurion-hourglass-illustration svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aurion-loading-greeting {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 20px;
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.aurion-loading .aurion-body-text {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* ---- In-game engine styles (aurion-core-05.js) ---- */
+
+#game-container.aurion-game {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.aurion-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.aurion-bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aurion-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+.aurion-watermark {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  z-index: 5;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  padding: 0 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aurion-exit-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.aurion-exit-btn:hover {
+  opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .aurion-exit-btn {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.aurion-scene-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+}
+
+@media (min-width: 700px) {
+  .aurion-scene-wrap {
+    max-width: 720px;
+  }
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-mechanic-slot {
+  display: none;
+}
+
+.aurion-scene-wrap.aurion-no-mechanic .aurion-scene-textblock {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-wrap.aurion-mobile-hero-image {
+  justify-content: center;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-scene-textblock {
+  flex: none;
+}
+.aurion-scene-wrap.aurion-mobile-hero-image .aurion-button-row {
+  margin-top: 24px;
+}
+
+/* Mobile-only per Chef's "the sub-title shouldn't be centered like a
+   page scene, it's a sub-title" — see aurion-core-05.js for exactly
+   which scenes get this class. Desktop is untouched: this only
+   overrides the no-mechanic textblock's justify-content inside the
+   max-width:700px query below, so the subtitle (and the image under
+   it) sit right under the title instead of floating centered in the
+   leftover page space. */
+@media (max-width: 700px) {
+  .aurion-scene-wrap.aurion-mobile-subtitle-top .aurion-scene-textblock {
+    justify-content: flex-start;
+  }
+}
+
+.aurion-overlay-img {
+  max-width: 260px;
+  width: 60%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.aurion-intro-scene .aurion-overlay-img {
+  max-width: 170px;
+  width: 45%;
+}
+
+@media (max-width: 480px) {
+  .aurion-mobile-hero-image .aurion-overlay-img {
+    max-width: 300px;
+    width: 82%;
+  }
+}
+
+.aurion-overlay-center { align-self: center; }
+.aurion-overlay-top { align-self: flex-start; margin-top: -10vh; }
+.aurion-overlay-bottom { align-self: flex-end; margin-bottom: -4vh; }
+
+.aurion-scene-title {
+  font-family: 'Luckiest Guy';
+  color: var(--aurion-gold);
+  font-size: 28px;
+  margin: 6px 0 20px;
+}
+
+.aurion-scene-subtitle {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.aurion-scene-desc {
+  font-family: 'Poppins';
+  color: var(--aurion-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  white-space: pre-wrap;
+}
+
+.aurion-mechanic-slot {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurion-scene-video {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 16px;
+  display: block;
+  background: transparent;
+  margin: 0 auto;
+}
+
+.aurion-scene-video::-webkit-media-controls,
+.aurion-scene-video::-webkit-media-controls-enclosure,
+.aurion-scene-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.aurion-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  width: 100%;
+}
+
+.aurion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: 'Poppins';
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--aurion-text);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  max-width: 220px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+  height: auto;
+}
+
+.aurion-btn:hover {
+  transform: translateY(-2px);
+}
+
+.aurion-btn-imaged {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border-radius: 0;
+  min-width: 140px;
+  max-width: 220px;
+  min-height: 48px;
+  padding: 20px 20px 7px;
+  color: #3b2855;
+}
+
+.aurion-btn-label {
+  display: block;
+  max-width: 90px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.05;
+}
+
+.aurion-btn-label-wrapped {
+  margin-top: 0;
+}
+
+/* ============================================================
+   core-05 : new rules
+   ============================================================ */
+
+/* Top-aligned, never vertically centred (the scene art sits right under the
+   subtitle on every in-game scene). */
+.aurion-mechanic-slot {
+  align-items: flex-start;
+}
+
+.aurion-scene-wrap.aurion-has-side-panel {
+  max-width: 720px;
+}
+
+/* Items and envelopes sit in the middle of the free
+   space between the subtitle and the button, not hugging the subtitle. */
+.aurion-center-mechanic .aurion-mechanic-slot {
+  align-items: center;
+  padding: 12px 0;
+}
+
+/* The ONE scene frame: 1:1, same width everywhere. */
+.aurion-stage {
+  position: relative;
+  width: 100%;
+  /* Never taller than the room left on screen under the title/subtitle, so
+     the button row is always visible without scrolling. 340px is the space
+     the title, subtitle, button and page padding use; 240px is the floor. */
+  max-width: min(var(--aurion-scene-frame-width), max(240px, calc(100vh - 340px)));
+  max-width: min(var(--aurion-scene-frame-width), max(240px, calc(100dvh - 340px)));
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.aurion-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* Button fade-in once a scene reveals it. */
+.aurion-button-row-in {
+  animation: aurion-row-in 0.6s ease both;
+}
+
+@keyframes aurion-row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- sparkles (spawned by JS, removed on animationend) ---- */
+.aurion-spark {
+  position: absolute;
+  z-index: 8;
+  font-size: var(--s, 12px);
+  line-height: 1;
+  color: #ffe9a8;
+  text-shadow: 0 0 6px rgba(255, 214, 102, 0.95), 0 0 14px rgba(255, 190, 60, 0.7);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: aurion-spark-fly 0.95s ease-out forwards;
+}
+
+@keyframes aurion-spark-fly {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(0deg); }
+  15%  { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px))) scale(1.1) rotate(var(--rot, 0deg));
+  }
+}
+
+/* ============================================================
+   core-05 : scene rules
+   ============================================================ */
+
+/* Pictures ease in rather than pop. */
+.aurion-art-in {
+  animation: aurion-art-in 0.9s ease both;
+}
+@keyframes aurion-art-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Soft glass play area behind scenes that have no background picture. */
+.aurion-glass-stage {
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 190, 110, 0.10), rgba(60, 20, 10, 0.28));
+  border: 1px solid rgba(255, 200, 130, 0.35);
+  box-shadow: 0 0 24px rgba(255, 160, 70, 0.12) inset;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* ---- autumn leaves drifting down the page ---- */
+.aurion-drift-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurion-drift {
+  position: absolute;
+  top: -40px;
+  font-size: var(--size, 18px);
+  opacity: 0;
+  filter: drop-shadow(0 0 5px rgba(255, 170, 60, 0.6));
+  animation: aurion-drift var(--dur, 12s) linear forwards;
+}
+@keyframes aurion-drift {
+  0%   { opacity: 0;    transform: translate(0, 0) rotate(0deg); }
+  8%   { opacity: 0.75; }
+  25%  { transform: translate(var(--sway, 40px), 25vh) rotate(calc(var(--spin, 240deg) * 0.25)); }
+  50%  { transform: translate(calc(var(--sway, 40px) * -0.6), 52vh) rotate(calc(var(--spin, 240deg) * 0.5)); }
+  75%  { transform: translate(calc(var(--sway, 40px) * 0.8), 78vh) rotate(calc(var(--spin, 240deg) * 0.75)); }
+  92%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(0, 108vh) rotate(var(--spin, 240deg)); }
+}
+
+/* ---- the autumn leaf (scenes 3, 4 and 6) ---- */
+.aurion-leaf {
+  position: absolute;
+  z-index: 6;
+  aspect-ratio: 1 / 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 8px rgba(255, 170, 60, 0.85)) drop-shadow(0 0 18px rgba(255, 120, 30, 0.45));
+  pointer-events: none;
+}
+.aurion-leaf-hidden { opacity: 0; }
+
+.aurion-leaf.appear {
+  animation: aurion-leaf-appear 1.6s ease-out both;
+}
+@keyframes aurion-leaf-appear {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2) rotate(-40deg); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.12) rotate(8deg); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+}
+
+.aurion-leaf.landed {
+  animation: aurion-leaf-rest 3.4s ease-in-out infinite;
+}
+@keyframes aurion-leaf-rest {
+  0%, 100% { transform: translate(-50%, -50%) rotate(var(--end-rot, -14deg)) scale(1);
+             filter: drop-shadow(0 0 6px rgba(255, 190, 80, 0.7)) drop-shadow(0 0 14px rgba(255, 130, 40, 0.35)); }
+  50%      { transform: translate(-50%, -50%) rotate(calc(var(--end-rot, -14deg) + 3deg)) scale(1.05);
+             filter: drop-shadow(0 0 12px rgba(255, 220, 120, 1)) drop-shadow(0 0 26px rgba(255, 160, 50, 0.7)); }
+}
+
+.aurion-land-ring {
+  position: absolute;
+  z-index: 5;
+  width: 10%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 224, 140, 0.95);
+  box-shadow: 0 0 16px rgba(255, 190, 80, 0.9);
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+  pointer-events: none;
+  animation: aurion-land-ring 1.3s ease-out forwards;
+}
+@keyframes aurion-land-ring {
+  0%   { opacity: 0.95; transform: translate(-50%, -50%) scale(0.3); }
+  100% { opacity: 0;    transform: translate(-50%, -50%) scale(2.6); }
+}
+
+/* ---- Scene 3: curtain ---- */
+.aurion-curtain-stage {
+  overflow: hidden;
+  border-radius: 14px;
+}
+.aurion-curtain-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 190, 90, 0.55) 0%, rgba(255, 120, 40, 0.18) 38%, rgba(255, 120, 40, 0) 68%);
+  opacity: 0;
+  transition: opacity 1.4s ease 0.5s;
+  pointer-events: none;
+}
+.aurion-curtain-stage.opened .aurion-curtain-glow { opacity: 1; }
+
+.aurion-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 1.5s cubic-bezier(0.55, 0.05, 0.25, 1);
+  animation: aurion-curtain-sway 4.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.45));
+}
+.aurion-curtain-left  { clip-path: inset(0 50% 0 0); transform-origin: 50% 0; }
+.aurion-curtain-right { clip-path: inset(0 0 0 50%); transform-origin: 50% 0; animation-delay: -2s; }
+
+@keyframes aurion-curtain-sway {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.45)) brightness(1); }
+  50%      { filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.45)) brightness(1.1); }
+}
+.aurion-curtain-stage.hint .aurion-curtain {
+  animation: aurion-curtain-hint 1.3s ease-in-out infinite;
+}
+@keyframes aurion-curtain-hint {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 220, 140, 0)) brightness(1); }
+  50%      { filter: drop-shadow(0 0 22px rgba(255, 220, 140, 0.95)) brightness(1.22); }
+}
+.aurion-curtain.open { animation: none; cursor: default; pointer-events: none; }
+.aurion-curtain-left.open  { transform: translateX(-62%); }
+.aurion-curtain-right.open { transform: translateX(62%); }
+
+/* ---- Scenes 4 / 6: art with a leaf landing on it ---- */
+.aurion-book-stage,
+.aurion-fire-stage,
+.aurion-forest-stage,
+.aurion-diamond-stage,
+.aurion-bird-stage,
+.aurion-pie-stage {
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+/* ---- Scene 5: choose your favourite ---- */
+.aurion-item-stage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.aurion-item-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 460px;
+  min-width: 240px;
+}
+.aurion-item-tile {
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  animation: aurion-item-float 3.6s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+.aurion-item-tile:nth-child(2) { animation-delay: -0.9s; }
+.aurion-item-tile:nth-child(3) { animation-delay: -1.8s; }
+.aurion-item-tile:nth-child(4) { animation-delay: -2.7s; }
+@keyframes aurion-item-float {
+  0%, 100% { transform: translateY(0);    filter: drop-shadow(0 0 6px rgba(255, 170, 70, 0.35)); }
+  50%      { transform: translateY(-6px); filter: drop-shadow(0 0 14px rgba(255, 214, 140, 0.85)); }
+}
+.aurion-item-tile.opened {
+  animation: aurion-item-chosen 1.2s ease-in-out infinite;
+  cursor: default;
+}
+@keyframes aurion-item-chosen {
+  0%, 100% { transform: scale(1.12); filter: drop-shadow(0 0 18px rgba(255, 214, 140, 0.95)); }
+  50%      { transform: scale(1.18); filter: drop-shadow(0 0 32px rgba(255, 233, 168, 1)); }
+}
+.aurion-item-tile.dim {
+  animation: none;
+  opacity: 0.22;
+  filter: none;
+  cursor: default;
+}
+@media (max-width: 700px) and (min-height: 640px) {
+  .aurion-item-board {
+    grid-template-columns: repeat(2, 140px);
+    justify-content: center;
+    max-width: none;
+    gap: 16px;
+  }
+  .aurion-item-tile { width: 140px; height: 140px; }
+}
+
+/* ---- Scene 6: fireplace ---- */
+.aurion-fire-glow {
+  position: absolute;
+  z-index: 2;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 190, 80, 0.75) 0%, rgba(255, 110, 20, 0.35) 40%, rgba(255, 90, 0, 0) 70%);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: aurion-fire-flicker 1.7s ease-in-out infinite;
+}
+@keyframes aurion-fire-flicker {
+  0%   { opacity: 0.55; transform: translate(-50%, -50%) scale(0.94); }
+  18%  { opacity: 0.9;  transform: translate(-50%, -52%) scale(1.04); }
+  37%  { opacity: 0.6;  transform: translate(-50%, -50%) scale(0.97); }
+  60%  { opacity: 1;    transform: translate(-50%, -53%) scale(1.08); }
+  82%  { opacity: 0.65; transform: translate(-50%, -50%) scale(0.95); }
+  100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.94); }
+}
+.aurion-candle-glow {
+  position: absolute;
+  z-index: 2;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 225, 140, 0.85) 0%, rgba(255, 170, 60, 0.25) 45%, rgba(255, 150, 40, 0) 70%);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: aurion-candle 2.3s ease-in-out infinite;
+}
+@keyframes aurion-candle {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+  40%      { opacity: 0.95; transform: translate(-50%, -52%) scale(1.1); }
+  70%      { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
+}
+.aurion-ember {
+  position: absolute;
+  z-index: 3;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffb347;
+  box-shadow: 0 0 6px 2px rgba(255, 140, 30, 0.9);
+  pointer-events: none;
+  opacity: 0;
+  animation: aurion-ember var(--d, 3s) ease-out forwards;
+}
+@keyframes aurion-ember {
+  0%   { opacity: 0;   transform: translate(0, 0) scale(1); }
+  15%  { opacity: 1; }
+  100% { opacity: 0;   transform: translate(var(--dx, 0px), calc(var(--rise, 100px) * -1)) scale(0.2); }
+}
+
+/* ---- Scene 7: basket ---- */
+.aurion-count-pill {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(40, 14, 8, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 200, 130, 0.5);
+  pointer-events: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.aurion-count-pill.bump { transform: translateX(-50%) scale(1.18); }
+.aurion-count-pill.go {
+  color: #ffe9a8;
+  box-shadow: 0 0 14px rgba(255, 200, 100, 0.8);
+}
+
+.aurion-basket {
+  position: absolute;
+  z-index: 3;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+.aurion-basket.pop    { animation: aurion-basket-pop 0.45s ease-out; }
+.aurion-basket.nudge  { animation: aurion-basket-nudge 0.4s ease-in-out; }
+.aurion-basket.ready  { animation: aurion-basket-ready 1.2s ease-in-out infinite; }
+.aurion-basket.lift {
+  animation: none;
+  transform: translate(-50%, -150%) scale(1.15);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes aurion-basket-pop {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  40%  { transform: translate(-50%, -52%) scale(1.1, 0.94); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes aurion-basket-nudge {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0); }
+  25%      { transform: translate(-50%, -50%) rotate(-3deg); }
+  75%      { transform: translate(-50%, -50%) rotate(3deg); }
+}
+@keyframes aurion-basket-ready {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.5)); }
+  50%      { transform: translate(-50%, -53%) scale(1.07); filter: drop-shadow(0 0 26px rgba(255, 224, 140, 1)); }
+}
+
+.aurion-fruit {
+  position: absolute;
+  z-index: 4;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  touch-action: none;
+  animation: aurion-fruit-bob 3.2s ease-in-out infinite;
+}
+@keyframes aurion-fruit-bob {
+  0%, 100% { transform: translate(-50%, -50%);    filter: drop-shadow(0 0 4px rgba(255, 190, 90, 0.3)); }
+  50%      { transform: translate(-50%, -56%);    filter: drop-shadow(0 0 14px rgba(255, 224, 150, 0.9)); }
+}
+.aurion-fruit.dragging {
+  animation: none;
+  cursor: grabbing;
+  z-index: 9;
+  transform: translate(-50%, -50%) scale(1.12);
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 14px rgba(255, 224, 150, 0.9));
+}
+.aurion-fruit.flying {
+  animation: none;
+  pointer-events: none;
+  z-index: 9;
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0.2;
+  transition: left 0.5s cubic-bezier(0.3, 0.7, 0.4, 1), top 0.5s cubic-bezier(0.3, 0.7, 0.4, 1), transform 0.5s ease-in, opacity 0.5s ease-in;
+}
+
+/* ---- Scenes 8 / 9: hotspots ---- */
+.aurion-hotspot {
+  position: absolute;
+  z-index: 3;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+.aurion-hotspot.hint { animation: aurion-diamond-hint 1.4s ease-in-out infinite; }
+.aurion-hotspot.found {
+  pointer-events: none;
+  animation: none;
+  border: 2px solid rgba(255, 233, 168, 0.95);
+  box-shadow: 0 0 20px 6px rgba(255, 233, 168, 0.8), 0 0 8px 2px rgba(255, 255, 255, 0.7) inset;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 70%);
+}
+.aurion-hotspot.found::after {
+  content: '✦';
+  position: absolute;
+  right: -4px;
+  top: -8px;
+  font-size: 14px;
+  color: #ffe9a8;
+  text-shadow: 0 0 6px rgba(255, 190, 60, 0.95);
+}
+.aurion-calibrating .aurion-hotspot,
+.aurion-calibrating .aurion-diamond-hotspot {
+  outline: 2px dashed rgba(60, 255, 120, 0.9);
+  background: rgba(60, 255, 120, 0.12);
+}
+
+.aurion-diamond-hotspot {
+  position: absolute;
+  z-index: 3;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+.aurion-diamond-hotspot.hint { animation: aurion-diamond-hint 1.4s ease-in-out infinite; }
+@keyframes aurion-diamond-hint {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 233, 168, 0); background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 100%); }
+  50%      { box-shadow: 0 0 22px 8px rgba(255, 233, 168, 0.75); background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%); }
+}
+.aurion-diamond-hotspot.found {
+  pointer-events: none;
+  animation: aurion-diamond-found 1s ease-in-out infinite;
+  box-shadow: 0 0 30px 12px rgba(180, 235, 255, 0.9);
+  background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 70%);
+}
+@keyframes aurion-diamond-found {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.35); }
+}
+
+.aurion-ripple {
+  position: absolute;
+  z-index: 6;
+  width: 7%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  transform: translate(-50%, -50%) scale(0.2);
+  pointer-events: none;
+  animation: aurion-ripple 0.7s ease-out forwards;
+}
+@keyframes aurion-ripple {
+  0%   { opacity: 0.8; transform: translate(-50%, -50%) scale(0.2); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.6); }
+}
+
+/* ---- Scene 10: bluebird ---- */
+.aurion-bird {
+  position: absolute;
+  z-index: 6;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(160, 210, 255, 0.7));
+}
+.aurion-bird-hidden { opacity: 0; }
+.aurion-bird.perched { pointer-events: auto; cursor: pointer; animation: aurion-bird-bob 2.4s ease-in-out infinite; }
+.aurion-bird.hop { animation: aurion-bird-hop 0.5s ease-out; }
+.aurion-bird-dir { display: block; width: 100%; height: 100%; }
+.aurion-bird-dir.flip { transform: scaleX(-1); }
+.aurion-bird-flap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.aurion-bird.flying .aurion-bird-flap { animation: aurion-wingbeat 0.22s ease-in-out infinite; transform-origin: 50% 60%; }
+@keyframes aurion-wingbeat {
+  0%, 100% { transform: scaleY(1)    rotate(-3deg); }
+  50%      { transform: scaleY(0.72) rotate(3deg); }
+}
+@keyframes aurion-bird-bob {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  30%      { transform: translate(-50%, -53%) rotate(-3deg); }
+  60%      { transform: translate(-50%, -50%) rotate(2deg); }
+}
+@keyframes aurion-bird-hop {
+  0%   { transform: translate(-50%, -50%); }
+  40%  { transform: translate(-50%, -80%) rotate(-6deg); }
+  100% { transform: translate(-50%, -50%); }
+}
+
+/* ---- Scene 11: cherry pie ---- */
+.aurion-pie-glow {
+  position: absolute;
+  z-index: 0;
+  width: 70%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 190, 90, 0.5) 0%, rgba(255, 120, 40, 0.18) 45%, rgba(255, 120, 40, 0) 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: aurion-pie-glow 3.4s ease-in-out infinite;
+}
+@keyframes aurion-pie-glow {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.95); }
+  50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
+}
+.aurion-steam {
+  position: absolute;
+  z-index: 3;
+  width: 5%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(4px);
+  transform: translate(-50%, 0);
+  opacity: 0;
+  pointer-events: none;
+  animation: aurion-steam 5.7s ease-in-out infinite;
+}
+@keyframes aurion-steam {
+  0%   { opacity: 0;    transform: translate(-50%, 0) scale(0.6); }
+  20%  { opacity: 0.8; }
+  50%  { transform: translate(calc(-50% + var(--sway, 10px)), -90%) scale(1.2); }
+  100% { opacity: 0;    transform: translate(calc(-50% - var(--sway, 10px)), -230%) scale(1.8); }
+}
+
+/* ---- Scene 12: cups ---- */
+.aurion-cup {
+  position: absolute;
+  z-index: 4;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  touch-action: none;
+  transition: left 0.3s ease, top 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(255, 190, 90, 0.3));
+  animation: aurion-cup-wait 3.4s ease-in-out infinite;
+}
+@keyframes aurion-cup-wait {
+  0%, 100% { transform: translate(-50%, -50%);      }
+  50%      { transform: translate(-50%, -53%);      }
+}
+.aurion-cup.dragging {
+  transition: none;
+  animation: none;
+  cursor: grabbing;
+  z-index: 30;
+  transform: translate(-50%, -50%) scale(1.08) rotate(-4deg);
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 14px rgba(255, 224, 150, 0.8));
+}
+.aurion-cup.placed {
+  animation: none;
+  cursor: default;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+}
+.aurion-cup.shake { animation: aurion-cup-shake 0.4s ease-in-out; }
+@keyframes aurion-cup-shake {
+  0%, 100% { transform: translate(-50%, -50%); }
+  25%      { transform: translate(calc(-50% - 5px), -50%) rotate(-5deg); }
+  75%      { transform: translate(calc(-50% + 5px), -50%) rotate(5deg); }
+}
+.aurion-cup.cheer {
+  animation: aurion-cup-cheer 0.8s ease-in-out 2;
+  animation-delay: calc(var(--row, 0) * 0.12s);
+  filter: drop-shadow(0 0 16px rgba(255, 224, 150, 1));
+}
+@keyframes aurion-cup-cheer {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  40%      { transform: translate(-50%, -62%) scale(1.1); }
+}
+
+.aurion-cup-slot {
+  position: absolute;
+  z-index: 1;
+  aspect-ratio: 1 / 1.25;
+  border-radius: 10px 10px 14px 14px;
+  border: 2px dashed rgba(255, 224, 150, 0.7);
+  background: rgba(255, 224, 150, 0.08);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.4s ease, border-color 0.4s ease;
+}
+.aurion-cup-slot.locked { opacity: 0.25; border-color: rgba(255, 255, 255, 0.35); }
+.aurion-cup-slot.filled { opacity: 0; }
+
+/* ---- Scene 13: the matching envelope ---- */
+.aurion-reveal-tile.chosen-pulse {
+  opacity: 1;
+  animation: aurion-env-pulse 1.1s ease-in-out infinite;
+}
+@keyframes aurion-env-pulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 10px rgba(255, 214, 140, 0.7)); }
+  50%      { transform: scale(1.08); filter: drop-shadow(0 0 26px rgba(255, 233, 168, 1)); }
+}
+
+/* ---- calibration list ---- */
+.aurion-calibrate-list {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 4px;
+  z-index: 9;
+  font: 11px/1.3 monospace;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 6px;
+  resize: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurion-drift { display: none; }
+}
+
+/* ---- Envelopes ---- */
+.aurion-sort-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.aurion-sort-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 460px;
+  min-width: 240px;
+}
+
+.aurion-sort-tile {
+  position: relative;
+  border-radius: 10px;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  padding: 0;
+  filter: drop-shadow(0 0 8px var(--aurion-neon-purple-glow-soft));
+  opacity: 1;
+  transition: filter 0.3s ease;
+}
+
+.aurion-reveal-tile {
+  cursor: pointer;
+}
+
+.aurion-reveal-tile.dim {
+  opacity: 0.2;
+  cursor: default;
+  filter: none;
+}
+
+.aurion-reveal-tile.flashing {
+  opacity: 1;
+  filter: drop-shadow(0 0 14px var(--aurion-neon-purple-glow-bright)) drop-shadow(0 0 6px var(--aurion-neon-purple-glow-bright));
+  transition: none;
+}
+
+.aurion-reveal-tile.opened {
+  opacity: 1;
+  filter: drop-shadow(0 0 14px var(--aurion-neon-purple-glow-bright)) drop-shadow(0 0 6px var(--aurion-neon-purple-glow-bright));
+  animation: none;
+}
+
+.aurion-envelope-board {
+  max-width: 460px;
+}
+
+@media (min-width: 700px) {
+  .aurion-envelope-board {
+    max-width: 580px;
+  }
+}
+
+.aurion-envelope-tile {
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.aurion-envelope-board.dimmed .aurion-envelope-tile {
+  opacity: 0.1;
+}
+
+@media (max-width: 700px) and (min-height: 640px) {
+  .aurion-envelope-board {
+    grid-template-columns: repeat(2, 150px);
+    max-width: none;
+    gap: 16px;
+  }
+  .aurion-envelope-tile {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.aurion-reveal-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 48px);
+  max-width: 280px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: rgba(20, 40, 90, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 170, 255, 0.4);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 25;
+}
+
+.aurion-reveal-popup.open {
+  display: block;
+}
+
+.aurion-reveal-popup h2 {
+  font-family: 'Luckiest Guy';
+  color: #ffbd59;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0 0 6px;
+}
+
+.aurion-reveal-subtitle {
+  font-family: 'Poppins';
+  color: var(--aurion-neon-purple-bright);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.aurion-reveal-body {
+  font-family: 'Poppins';
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.aurion-reveal-popup .aurion-btn {
+  margin: 0 auto;
+}
+
+/* ---- Calibration overlay (only with ?calibrate=1) ---- */
+.aurion-calibrate-checkpoint {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255, 60, 60, 0.25);
+  border: 2px solid rgba(255, 60, 60, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.aurion-calibrate-target {
+  position: absolute;
+  border: 2px dashed rgba(60, 255, 120, 0.9);
+  background: rgba(60, 255, 120, 0.12);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  padding-top: 4px;
+  box-sizing: border-box;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.aurion-calibrate-readout {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.aurion-calibrate-click-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: #ffe45c;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+  z-index: 9;
+  pointer-events: none;
+}
+
+.aurion-credits-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-wrap;
+  margin: 12px 0 20px;
+  color: var(--aurion-text);
+  opacity: 0.9;
+}

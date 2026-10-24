@@ -1531,8 +1531,7 @@ export function startGame(config, container) {
     const stepX = size * (md.spacingX || 0.7);
     const stepY = size * (md.spacingY || 0.8);
     const total = rows.reduce((a, b) => a + b, 0);
-    const stage = makeStage('aurion-cups-stage aurion-glass-stage');
-    const pill = makeCountPill(stage, '0 / ' + total);
+    const stage = makeStage('aurion-cups-stage');
 
     // Slots, bottom row first.
     const slots = [];
@@ -1600,7 +1599,6 @@ export function startGame(config, container) {
         el.style.setProperty('--row', s.row);
         el.dataset.row = String(s.row);
         placed += 1;
-        pill.textContent = placed + ' / ' + total;
         rowFilled[s.row] += 1;
         playPlop();
         later(() => burstSparks(stage, s.left, s.top, 8, 46), 200);
@@ -1672,8 +1670,6 @@ export function startGame(config, container) {
     function finish() {
       if (finished) return;
       finished = true;
-      pill.textContent = 'All sorted';
-      pill.classList.add('go');
       for (let n = 0; n < 6; n++) playChimeLater(n);
       cups.forEach((c) => c.classList.add('cheer'));
       for (let n = 0; n < 5; n++) {

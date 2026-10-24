@@ -989,7 +989,25 @@ export function startGame(config, container) {
     buildLeafLanding(slot, scene, onComplete, {
       stageClass: 'aurion-book-stage',
       imageKey: 'book',
-      pause: 600
+      pause: 600,
+      decorate(stage, md) {
+        // A warm glow on the candle flame and a light twinkle over the hot tea.
+        const candle = md.candle || { left: 12, top: 40, size: 10 };
+        const cg = document.createElement('div');
+        cg.className = 'aurion-candle-glow';
+        cg.style.left = candle.left + '%';
+        cg.style.top = candle.top + '%';
+        cg.style.width = candle.size + '%';
+        stage.appendChild(cg);
+        const tea = md.tea || { left: 49, top: 12 };
+        const id = setInterval(() => {
+          spawnSpark(stage, tea.left + (Math.random() - 0.5) * 10, tea.top + (Math.random() - 0.5) * 4, 26, 7 + Math.random() * 6);
+          if (Math.random() < 0.6) {
+            spawnSpark(stage, candle.left + (Math.random() - 0.5) * 3, candle.top - 1 + (Math.random() - 0.5) * 3, 18, 6 + Math.random() * 5);
+          }
+        }, 420);
+        onSceneExit(() => clearInterval(id));
+      }
     });
   }
 
@@ -1099,7 +1117,7 @@ export function startGame(config, container) {
     const spots = md.itemSpots || [
       { left: 20, top: 20 }, { left: 42, top: 14 }, { left: 64, top: 20 }, { left: 84, top: 14 }
     ];
-    const stage = makeStage('aurion-basket-stage aurion-glass-stage');
+    const stage = makeStage('aurion-basket-stage');
     const pill = makeCountPill(stage, '0 / ' + keys.length);
 
     const basket = makeSpriteEl('aurion-basket', md.basket, basketSize, 'button');
@@ -1222,10 +1240,68 @@ export function startGame(config, container) {
     const animals = md.animals || [];
     const stage = makeStage('aurion-forest-stage');
     if (CALIBRATE) stage.classList.add('aurion-calibrating');
+
+    // Everything that belongs to the picture lives in one layer so the
+    // picture, the hotspots and the sparkles zoom and pan together.
+    const layer = document.createElement('div');
+    layer.className = 'aurion-zoom-layer';
+    stage.appendChild(layer);
     const art = makeFillImage(md.forest);
     art.classList.add('aurion-art-in');
-    stage.appendChild(art);
+    layer.appendChild(art);
     const pill = makeCountPill(stage, '0 / ' + animals.length);
+
+    // Zoom: one button toggles in and out, drag to move around when zoomed.
+    const ZOOM = md.zoom || 2.2;
+    let z = 1, tx = 0, ty = 0;
+    function clampPan() {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      tx = Math.min(0, Math.max(-(z - 1) * w, tx));
+      ty = Math.min(0, Math.max(-(z - 1) * h, ty));
+    }
+    function applyZoom() {
+      clampPan();
+      layer.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`;
+      stage.classList.toggle('zoomed', z > 1);
+      zoomBtn.textContent = z > 1 ? 'Zoom Out' : 'Zoom In';
+    }
+    const zoomBtn = document.createElement('button');
+    zoomBtn.className = 'aurion-zoom-btn';
+    zoomBtn.setAttribute('aria-label', 'Zoom the picture');
+    zoomBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+    zoomBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const w = stage.clientWidth, h = stage.clientHeight;
+      if (z === 1) { z = ZOOM; tx = -(z - 1) * w / 2; ty = -(z - 1) * h / 2; }
+      else { z = 1; tx = 0; ty = 0; }
+      applyZoom();
+    });
+    stage.appendChild(zoomBtn);
+    zoomBtn.textContent = 'Zoom In';
+
+    let panning = false, panMoved = false, px = 0, py = 0, suppressClick = false;
+    stage.addEventListener('pointerdown', (e) => {
+      if (z === 1) return;
+      panning = true; panMoved = false; px = e.clientX; py = e.clientY;
+    });
+    stage.addEventListener('pointermove', (e) => {
+      if (!panning) return;
+      const dx = e.clientX - px, dy = e.clientY - py;
+      if (!panMoved && Math.abs(dx) + Math.abs(dy) < 7) return;
+      if (!panMoved) { panMoved = true; try { stage.setPointerCapture(e.pointerId); } catch (_) {} }
+      tx += dx; ty += dy; px = e.clientX; py = e.clientY;
+      applyZoom();
+    });
+    const endPan = () => {
+      if (panning && panMoved) suppressClick = true;
+      panning = false;
+    };
+    stage.addEventListener('pointerup', endPan);
+    stage.addEventListener('pointercancel', endPan);
+    // A drag to move the picture must never count as a tap on an animal.
+    stage.addEventListener('click', (e) => {
+      if (suppressClick) { e.stopPropagation(); e.preventDefault(); suppressClick = false; }
+    }, true);
 
     let found = 0;
     let hintTimer = null;
@@ -1244,7 +1320,7 @@ export function startGame(config, container) {
     }
     onSceneExit(() => clearTimeout(hintTimer));
 
-    animals.forEach((a, i) => {
+    animals.forEach((a) => {
       const el = document.createElement('button');
       el.className = 'aurion-hotspot';
       el.setAttribute('aria-label', 'Something is hiding here');
@@ -1260,7 +1336,7 @@ export function startGame(config, container) {
         found += 1;
         el.classList.remove('hint');
         el.classList.add('found');
-        burstSparks(stage, a.left, a.top, 18, 80);
+        burstSparks(layer, a.left, a.top, 18, 80 / z);
         playChime(found - 1);
         pill.textContent = found + ' / ' + animals.length;
         pill.classList.add('bump');
@@ -1273,13 +1349,13 @@ export function startGame(config, container) {
           later(onComplete, 1100);
         }
       });
-      stage.appendChild(el);
+      layer.appendChild(el);
     });
 
     stage.addEventListener('click', (e) => {
-      if (e.target.closest && e.target.closest('.aurion-hotspot')) return;
-      const pos = pointerPercent(stage, e.clientX, e.clientY);
-      if (pos) tapRipple(stage, pos.left, pos.top);
+      if (e.target.closest && (e.target.closest('.aurion-hotspot') || e.target.closest('.aurion-zoom-btn'))) return;
+      const pos = pointerPercent(layer, e.clientX, e.clientY);
+      if (pos) tapRipple(layer, pos.left, pos.top);
     });
 
     slot.appendChild(stage);

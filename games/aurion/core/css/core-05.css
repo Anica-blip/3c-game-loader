@@ -1083,6 +1083,55 @@ body {
   50%      { transform: scale(1.08); filter: drop-shadow(0 0 26px rgba(255, 233, 168, 1)); }
 }
 
+/* ---- core-05 round two: forest zoom, plain basket scene ---- */
+.aurion-forest-stage {
+  max-width: min(600px, max(280px, calc(100vh - 270px)));
+  max-width: min(600px, max(280px, calc(100dvh - 270px)));
+  touch-action: manipulation;
+}
+.aurion-forest-stage.zoomed { touch-action: none; cursor: grab; }
+.aurion-zoom-layer {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.aurion-zoom-btn {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 9;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(40, 14, 8, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 200, 130, 0.5);
+  cursor: pointer;
+}
+
+/* Basket scene: no container, no border, text only. */
+.aurion-basket-stage { touch-action: none; }
+.aurion-basket-stage .aurion-count-pill {
+  background: none;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0;
+  font-size: 14px;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.85), 0 0 3px rgba(0, 0, 0, 0.8);
+}
+.aurion-basket-stage .aurion-count-pill.go {
+  color: #ffe9a8;
+  box-shadow: none;
+  text-shadow: 0 0 12px rgba(255, 190, 70, 0.95), 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
 /* ---- calibration list ---- */
 .aurion-calibrate-list {
   position: absolute;

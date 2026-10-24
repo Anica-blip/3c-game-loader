@@ -448,7 +448,7 @@
       "id": 10,
       "mechanic": "bluebird",
       "mechanicData": {
-        "bench": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-bench.png",
+        "bench": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-bench..png",
         "bluebird": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-bluebird.png",
         "birdSize": 12,
         "start": {
@@ -497,8 +497,12 @@
       "mechanicData": {
         "pie": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-cherrypie.png",
         "steam": {
-          "left": 50,
-          "top": 46
+          "left": 42,
+          "top": 64
+        },
+        "glow": {
+          "left": 43,
+          "top": 76
         }
       },
       "situation": "",

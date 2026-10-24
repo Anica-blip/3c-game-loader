@@ -10,7 +10,7 @@
   },
   "ambientSound": "",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground + images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCasey, Creative Director\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
   "characterImages": [],
   "decisions": [
     {
@@ -76,9 +76,9 @@
     },
     {
       "id": 3,
-      "mechanic": "curtain",
+      "mechanic": "compass",
       "mechanicData": {
-        "image": "core.05-curtain.png"
+        "image": "core-01.compass.png"
       },
       "situation": "",
       "image": {
@@ -106,27 +106,29 @@
           "text": "Show Me The Way"
         }
       ],
-      "adminLabel": "Scene 1 — pull curtain open to reveal the autumnleaf",
+      "adminLabel": "Scene 1 — compass (interactive drag-to-rotate dial)",
       "subtitleText": "Pull The Curtain, Click On It"
     },
     {
       "id": 4,
-      "mechanic": "curtain",
-      "mechanicData": {
-        "image": "core.05-curtain.png"
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
       },
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
-      "curtain": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-curtain.png",
-"autumnleaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-01/04%20The%20Map%20And%20Your%20Compass.mp3",
       "background": {
         "type": "image",
         "url": ""
       },
       "options": [],
       "overlayImage": {
-        "url": "core.05-autumnleaf.png",
+        "url": "core-01.map.png",
         "position": "center"
       },
       "titleText": "The Changing Season",
@@ -438,7 +440,7 @@
       "subtitleText": "Let's Finish This With A Nice Game"
     },
     {
-      "id": 10,
+      "id": 15,
       "mechanic": "envelope-reveal",
       "mechanicData": {
         "envelopes": {
@@ -478,6 +480,35 @@
       "adminLabel": "Scene 11",
       "subtitleText": "You've Made Part Of The Journey",
       "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 10,
+      "mechanic": "none",
+      "mechanicData": {},
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 4,
+      "verticalPosition": 40,
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "titleText": "We're Done Here",
+      "descText": "",
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "Take It With You"
         }
       ],
       "adminLabel": "Send-off",
@@ -528,6 +559,5 @@
       "adminLabel": "final page"
     }
   ],
-  "results": [],
-  "fileName": "core-05"
+  "results": []
 }

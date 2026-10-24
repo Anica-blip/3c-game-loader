@@ -123,16 +123,25 @@
       "mechanicData": {
         "book": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-book1.png",
         "leaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
-        "leafSize": 14,
+        "leafSize": 19,
         "land": {
-          "left": 46,
-          "top": 52
+          "left": 65,
+          "top": 53
         },
         "start": {
           "left": -10,
           "top": -8
         },
-        "landRot": -20
+        "landRot": -28,
+        "candle": {
+          "left": 12,
+          "top": 40,
+          "size": 10
+        },
+        "tea": {
+          "left": 49,
+          "top": 12
+        }
       },
       "situation": "",
       "image": {
@@ -211,9 +220,9 @@
       "mechanicData": {
         "fireplace": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-fireplace.png",
         "leaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
-        "leafSize": 7,
+        "leafSize": 5.5,
         "land": {
-          "left": 32.5,
+          "left": 31,
           "top": 88.5
         },
         "start": {

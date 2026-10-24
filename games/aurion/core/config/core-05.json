@@ -1,5 +1,6 @@
 {
-  "gameType": "aurion",
+  "gameType": "aurion-core-05",
+  "assetVersion": "2026-10-24-1",
   "theme": "starlight",
   "title": "Aurion Core Values Challenge",
   "introImage": "../assets/aurion-intro.png",
@@ -10,7 +11,7 @@
   },
   "ambientSound": "",
   "ambientVolume": 3,
-  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCaelum, Chief Advisor and PR Manager\n\nProducer & Creator\nAnica",
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground + images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCasey, Creative Director\n\nProducer & Creator\nAnica",
   "characterImages": [],
   "decisions": [
     {
@@ -76,9 +77,15 @@
     },
     {
       "id": 3,
-      "mechanic": "compass",
+      "mechanic": "curtain-leaf",
       "mechanicData": {
-        "image": "core-01.compass.png"
+        "curtain": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-curtain.png",
+        "leaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
+        "leafSize": 26,
+        "leafAt": {
+          "left": 50,
+          "top": 52
+        }
       },
       "situation": "",
       "image": {
@@ -106,13 +113,27 @@
           "text": "Show Me The Way"
         }
       ],
-      "adminLabel": "Scene 1 — compass (interactive drag-to-rotate dial)",
-      "subtitleText": "Pull The Curtain, Click On It"
+      "adminLabel": "Scene 1",
+      "subtitleText": "Pull The Curtain, Click On It",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 4,
-      "mechanic": "none",
-      "mechanicData": {},
+      "mechanic": "leaf-book",
+      "mechanicData": {
+        "book": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-book1.png",
+        "leaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
+        "leafSize": 14,
+        "land": {
+          "left": 46,
+          "top": 52
+        },
+        "start": {
+          "left": -10,
+          "top": -8
+        },
+        "landRot": -20
+      },
       "situation": "",
       "image": {
         "label": "",
@@ -121,14 +142,14 @@
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-01/04%20The%20Map%20And%20Your%20Compass.mp3",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/04%20The%20Changing%20Season.mp3",
       "background": {
         "type": "image",
         "url": ""
       },
       "options": [],
       "overlayImage": {
-        "url": "core-01.map.png",
+        "url": "",
         "position": "center"
       },
       "titleText": "The Changing Season",
@@ -139,27 +160,20 @@
           "text": "Curious To Know"
         }
       ],
-      "adminLabel": "Scene 2 — map, image-left/text-right layout",
-      "descBold": true,
-      "layout": "image-left",
-      "subtitleText": "Let's Unfold The Story Together"
+      "adminLabel": "Scene 2",
+      "subtitleText": "Let's Unfold The Story Together",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 5,
-      "mechanic": "gear-select",
+      "mechanic": "select-item",
       "mechanicData": {
-        "gear": {
-          "Independence": "core-01.gear1.png",
-          "Integrity": "core-01.gear2.png",
-          "Courage": "core-01.gear3.png",
-          "Connection": "core-01.gear4.png"
-        },
-        "pirates": [
-          "core-01.pirate1.png",
-          "core-01.pirate2.png",
-          "core-01.pirate3.png",
-          "core-01.pirate4.png"
-        ]
+        "items": {
+          "armchair": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-armchair.png",
+          "boxchocolate": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-boxchocolate.png",
+          "catonblanket": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-catonblanket.png",
+          "book2": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-book2.png"
+        }
       },
       "situation": "",
       "image": {
@@ -187,14 +201,36 @@
           "text": "Got My Favourite"
         }
       ],
-      "adminLabel": "Scene 3 — gear select (top row scores, pirate row decorative only)",
-      "subtitleText": "Just One"
+      "adminLabel": "Scene 3",
+      "subtitleText": "Just One",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 6,
-      "mechanic": "maze",
+      "mechanic": "leaf-fireplace",
       "mechanicData": {
-        "goalImage": "../../../shared/favicon.png"
+        "fireplace": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-fireplace.png",
+        "leaf": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnleaf.png",
+        "leafSize": 7,
+        "land": {
+          "left": 32.5,
+          "top": 88.5
+        },
+        "start": {
+          "left": -8,
+          "top": 6
+        },
+        "landRot": -18,
+        "fire": {
+          "left": 50.5,
+          "top": 46,
+          "size": 32
+        },
+        "candle": {
+          "left": 64.2,
+          "top": 13,
+          "size": 9
+        }
       },
       "situation": "",
       "image": {
@@ -222,19 +258,45 @@
           "text": "Cosy Spot"
         }
       ],
-      "adminLabel": "Scene 4 — hand-built maze, 4 unlabeled entrances, first entry scores",
-      "subtitleText": "Enjoy This Warm Place"
+      "adminLabel": "Scene 4",
+      "subtitleText": "Enjoy This Warm Place",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 7,
-      "mechanic": "companion-select",
+      "mechanic": "gather-basket",
       "mechanicData": {
-        "parrots": {
-          "Courage": "core-01.parrot1.png",
-          "Independence": "core-01.parrot2.png",
-          "Connection": "core-01.parrot3.png",
-          "Integrity": "core-01.parrot4.png"
-        }
+        "items": {
+          "pumpkin": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-pumpkin.png",
+          "apple": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-apple.png",
+          "pear": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-pear.png",
+          "berries": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-berries.png"
+        },
+        "basket": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-foodbasket.png",
+        "basketAt": {
+          "left": 50,
+          "top": 72
+        },
+        "basketSize": 38,
+        "itemSize": 22,
+        "itemSpots": [
+          {
+            "left": 20,
+            "top": 22
+          },
+          {
+            "left": 41,
+            "top": 14
+          },
+          {
+            "left": 62,
+            "top": 22
+          },
+          {
+            "left": 83,
+            "top": 14
+          }
+        ]
       },
       "situation": "",
       "image": {
@@ -244,7 +306,7 @@
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-01/07%20Choose%20Your%20Companion.mp3",
+      "soundEffect": "",
       "background": {
         "type": "image",
         "url": ""
@@ -262,14 +324,54 @@
           "text": "Grabbed The Basket"
         }
       ],
-      "adminLabel": "Scene 5 — companion select",
-      "subtitleText": "Add Them & Take The Basket"
+      "adminLabel": "Scene 5",
+      "subtitleText": "Add Them & Take The Basket",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 8,
-      "mechanic": "key-grab",
+      "mechanic": "find-animals",
       "mechanicData": {
-        "image": "core-01.key.png"
+        "forest": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-autumnforest.png",
+        "hintAfter": 14000,
+        "animals": [
+          {
+            "name": "owl",
+            "left": 42.3,
+            "top": 17.1,
+            "r": 6
+          },
+          {
+            "name": "bluebird",
+            "left": 51.9,
+            "top": 30.4,
+            "r": 5
+          },
+          {
+            "name": "robin",
+            "left": 72.9,
+            "top": 35.6,
+            "r": 5
+          },
+          {
+            "name": "fox",
+            "left": 28.7,
+            "top": 60.6,
+            "r": 7
+          },
+          {
+            "name": "hedgehog",
+            "left": 19.0,
+            "top": 84.7,
+            "r": 7
+          },
+          {
+            "name": "rabbit",
+            "left": 89.6,
+            "top": 84.7,
+            "r": 6
+          }
+        ]
       },
       "situation": "",
       "image": {
@@ -279,7 +381,7 @@
       "motion": "",
       "duration": 2,
       "verticalPosition": 0,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-01/08%20Grab%20The%20Key.mp3",
+      "soundEffect": "",
       "background": {
         "type": "image",
         "url": ""
@@ -297,20 +399,20 @@
           "text": "Found Them"
         }
       ],
-      "adminLabel": "Scene 6 — key grab (click, glow, vanish)",
-      "subtitleText": "Look Closely, Can You Find Six Friendly Faces?"
+      "adminLabel": "Scene 6",
+      "subtitleText": "Look Closely, Can You Find Six Friendly Faces?",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 9,
-      "adminLabel": "Scene 7 — envelope reveal (highest-scoring Core Value only)",
-      "mechanic": "envelope-reveal",
+      "mechanic": "find-diamond",
       "mechanicData": {
-        "envelopes": {
-          "Courage": "core-01.env1.png",
-          "Independence": "core-01.env2.png",
-          "Connection": "core-01.env3.png",
-          "Integrity": "core-01.env4.png"
-        }
+        "oaktree": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-oaktree.png",
+        "diamond": {
+          "left": 79.5,
+          "top": 85.6
+        },
+        "size": 9
       },
       "situation": "",
       "image": {
@@ -318,136 +420,179 @@
         "url": ""
       },
       "motion": "",
-      "duration": 4,
-      "verticalPosition": 40,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-01/09%20Let's%20Check%20How%20Far%20You%20Got.mp3",
-      "video": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
       "background": {
         "type": "image",
         "url": ""
       },
+      "options": [],
       "overlayImage": {
         "url": "",
         "position": "center"
       },
+      "titleText": "Going Home",
+      "descText": "",
       "buttons": [
         {
           "image": "../assets/goal.01.button.png",
           "text": "Spotted It"
         }
       ],
+      "adminLabel": "Scene 7",
+      "subtitleText": "Can You Spot The 3C Diamond",
+      "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 10,
+      "mechanic": "bluebird",
+      "mechanicData": {
+        "bench": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-bench.png",
+        "bluebird": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-bluebird.png",
+        "birdSize": 12,
+        "start": {
+          "left": -12,
+          "top": 12
+        },
+        "perch": {
+          "left": 62,
+          "top": 47
+        },
+        "flip": false
+      },
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
       "options": [],
-      "titleText": "Going Home",
-      "subtitleText": "Can You Spot The 3C Diamond"
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "titleText": "Time To Enjoy The View",
+      "descText": "",
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "Ready For Home"
+        }
+      ],
+      "adminLabel": "Scene 8",
+      "subtitleText": "Small Pleasures To Capture",
+      "subtitleColor": "#ffffff"
+    },
+    {
+      "id": 11,
+      "mechanic": "cherry-pie",
+      "mechanicData": {
+        "pie": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-cherrypie.png",
+        "steam": {
+          "left": 50,
+          "top": 46
+        }
+      },
+      "situation": "",
+      "image": {
+        "label": "",
+        "url": ""
+      },
+      "motion": "",
+      "duration": 2,
+      "verticalPosition": 0,
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/11%20The%20House%20Smells%20Wonderful.mp3",
+      "background": {
+        "type": "image",
+        "url": ""
+      },
+      "options": [],
+      "overlayImage": {
+        "url": "",
+        "position": "center"
+      },
+      "titleText": "The House Smells Wonderful",
+      "descText": "",
+      "buttons": [
+        {
+          "image": "../assets/goal.01.button.png",
+          "text": "Now We Talking"
+        }
+      ],
+      "adminLabel": "Scene 9",
+      "subtitleText": "The Season For Warm Delights",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 12,
-      "adminLabel": "",
-      "mechanic": "none",
-      "mechanicData": {},
+      "mechanic": "cup-pyramid",
+      "mechanicData": {
+        "cup": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/core.05-plasticcup.png",
+        "rows": [
+          4,
+          3,
+          2,
+          1
+        ],
+        "cupSize": 20,
+        "base": {
+          "left": 50,
+          "top": 80
+        },
+        "trayX": [
+          9,
+          91
+        ],
+        "trayTop": 14,
+        "trayStep": 18
+      },
       "situation": "",
       "image": {
         "label": "",
         "url": ""
       },
       "motion": "",
-      "duration": 4,
-      "verticalPosition": 40,
+      "duration": 2,
+      "verticalPosition": 0,
       "soundEffect": "",
-      "video": "",
       "background": {
         "type": "image",
         "url": ""
       },
+      "options": [],
       "overlayImage": {
         "url": "",
         "position": "center"
       },
+      "titleText": "Your Journey Continues",
+      "descText": "",
       "buttons": [
         {
-          "text": "Ready For Home",
-          "image": "../assets/goal-01.button.png"
+          "image": "../assets/goal.01.button.png",
+          "text": "All Sorted"
         }
       ],
-      "options": [],
-      "titleText": "Time To Enjoy The View",
-      "subtitleText": "Small Pleasures To Capture"
+      "adminLabel": "Scene 10",
+      "subtitleText": "Let's Finish This With A Nice Game",
+      "subtitleColor": "#ffffff"
     },
     {
       "id": 13,
-      "adminLabel": "",
-      "mechanic": "none",
-      "mechanicData": {},
-      "situation": "",
-      "image": {
-        "label": "",
-        "url": ""
-      },
-      "motion": "",
-      "duration": 4,
-      "verticalPosition": 40,
-      "soundEffect": "",
-      "video": "",
-      "background": {
-        "type": "image",
-        "url": ""
-      },
-      "overlayImage": {
-        "url": "",
-        "position": "center"
-      },
-      "buttons": [
-        {
-          "text": "Now We Talking",
-          "image": "../assets/goal-01.button.png"
-        }
-      ],
-      "options": [],
-      "titleText": "The House Smells Wonderful",
-      "subtitleText": "The Season For Warm Delights"
-    },
-    {
-      "id": 14,
-      "adminLabel": "",
-      "mechanic": "none",
-      "mechanicData": {},
-      "situation": "",
-      "image": {
-        "label": "",
-        "url": ""
-      },
-      "motion": "",
-      "duration": 4,
-      "verticalPosition": 40,
-      "soundEffect": "",
-      "video": "",
-      "background": {
-        "type": "image",
-        "url": ""
-      },
-      "overlayImage": {
-        "url": "",
-        "position": "center"
-      },
-      "buttons": [
-        {
-          "text": "All Sorted",
-          "image": "../assets/goal-01.button.png"
-        }
-      ],
-      "options": [],
-      "titleText": "Your Journey Continues",
-      "subtitleText": "Let's Finish This With A Nice Game"
-    },
-    {
-      "id": 15,
       "mechanic": "envelope-reveal",
       "mechanicData": {
         "envelopes": {
-          "Protection": "core-01.env1.png",
-          "Calm": "core-01.env2.png",
-          "Carer": "core-01.env3.png",
-          "Planner": "core-01.env4.png"
+          "armchair": "core-01.env1.png",
+          "boxchocolate": "core-01.env2.png",
+          "catonblanket": "core-01.env3.png",
+          "book2": "core-01.env4.png"
         }
       },
       "situation": "",
@@ -458,8 +603,7 @@
       "motion": "",
       "duration": 4,
       "verticalPosition": 40,
-      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-03/13%20Let's%20Check%20How%20Far%20You%20Got.mp3",
-      "video": "",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/core/core-05/13%20Let's%20Check%20How%20Far%20You%20Got.mp3",
       "background": {
         "type": "image",
         "url": ""
@@ -479,10 +623,11 @@
       ],
       "adminLabel": "Scene 11",
       "subtitleText": "You've Made Part Of The Journey",
-      "subtitleColor": "#ffffff"
+      "subtitleColor": "#ffffff",
+      "video": ""
     },
     {
-      "id": 10,
+      "id": 14,
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",
@@ -515,7 +660,7 @@
       "video": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2001/09%20We're%20Done%20Here%20-%20goal.01.mp4"
     },
     {
-      "id": 11,
+      "id": 15,
       "mechanic": "none",
       "mechanicData": {},
       "situation": "",

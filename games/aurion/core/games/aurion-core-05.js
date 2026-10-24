@@ -1163,7 +1163,7 @@ export function startGame(config, container) {
 
     keys.forEach((key, i) => {
       const spot = spots[i % spots.length];
-      const el = makeSpriteEl('aurion-fruit', items[key], itemSize, 'button');
+      const el = makeSpriteEl('aurion-fruit', items[key], (md.itemSizes && md.itemSizes[key]) || itemSize, 'button');
       el.setAttribute('aria-label', 'Pick it up');
       el.dataset.key = key;
       el.style.left = spot.left + '%';

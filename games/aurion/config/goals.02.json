@@ -1,0 +1,573 @@
+{
+  "_repoPath": "Repo path: games/aurion/config/goals.02.json (JSON has no comments, so this first line is a label only)",
+  "gameType": "aurion-goal02",
+  "inheritFrom": "goals.01",
+  "inheritGlobals": [
+    "background",
+    "ambientSound",
+    "ambientVolume"
+  ],
+  "sfxVolume": 0.8,
+  "sfx": {},
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground and images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCasey, Creative Director\n\nProducer & Creator\nAnica",
+  "decisions": [
+    {
+      "inherit": {
+        "match": "landing page",
+        "orIndex": 0
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "match": "consent page",
+        "orIndex": 1
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Step In"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "mechanic": "door",
+        "orIndex": 2
+      },
+      "override": {
+        "titleText": "Open The Door",
+        "subtitleText": "",
+        "mechanicData": {
+          "revealImage": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.makeplan.png"
+        },
+        "buttons": [
+          {
+            "text": "Show Me The Way"
+          }
+        ]
+      }
+    },
+    {
+      "g2": true,
+      "adminLabel": "04 time to make a plan",
+      "mechanic": "none",
+      "titleText": "Time To Make A Plan",
+      "buttons": [
+        {
+          "text": "Let's Explore"
+        }
+      ],
+      "descText": "Five For The Long Road.\nFive Around The Corner.\nLet's Practise On One.",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/04%20TIME%20TO%20MAKE%20A%20PLAN.mp3"
+    },
+    {
+      "g2": true,
+      "adminLabel": "05 pick your first goal",
+      "mechanic": "g2-football",
+      "titleText": "Pick Your First Goal",
+      "buttons": [
+        {
+          "text": "Goal!"
+        }
+      ],
+      "subtitleText": "Start From Your Short Term List",
+      "mechanicData": {
+        "lay": {
+          "x0": 690,
+          "y0": 515,
+          "w": 661.5,
+          "h": 287
+        },
+        "post": {
+          "x": 931.6,
+          "y": 515.1,
+          "w": 419.4,
+          "h": 258,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.footballpost.png"
+        },
+        "ball": {
+          "x": 700,
+          "y": 739.9,
+          "w": 61.4,
+          "h": 62.3,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.football.png"
+        },
+        "netTarget": [
+          0.5,
+          0.6
+        ],
+        "bounceFrom": 420,
+        "bounceHeight": 150
+      }
+    },
+    {
+      "g2": true,
+      "adminLabel": "06 aim for your goal",
+      "mechanic": "g2-calendar",
+      "titleText": "Aim For Your Goal",
+      "buttons": [
+        {
+          "text": "Ready For Action"
+        }
+      ],
+      "subtitleText": "Set A Date From Start To Finish, Press The Bell",
+      "mechanicData": {
+        "lay": {
+          "x0": 747.4,
+          "y0": 422.2,
+          "w": 425.3,
+          "h": 452.4
+        },
+        "calendar": {
+          "x": 747.4,
+          "y": 422.2,
+          "w": 425.3,
+          "h": 452.4,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.calendarpage.png"
+        },
+        "bell": {
+          "x": 808.9,
+          "y": 562.6,
+          "w": 314.8,
+          "h": 258.2,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.bell.png"
+        },
+        "grid": {
+          "cols": [
+            806,
+            883,
+            960,
+            1037,
+            1114
+          ],
+          "rows": [
+            586,
+            666,
+            746,
+            826
+          ],
+          "cell": 64,
+          "endRow": 3,
+          "endCol": 1
+        }
+      }
+    },
+    {
+      "g2": true,
+      "adminLabel": "07 write down steps of action",
+      "mechanic": "g2-write",
+      "titleText": "Write Down Steps Of Action",
+      "buttons": [
+        {
+          "text": "Wrote My List"
+        }
+      ],
+      "subtitleText": "Make A Simple List Of What You Need To Do",
+      "mechanicData": {
+        "lay": {
+          "x0": 816.4,
+          "y0": 451.5,
+          "w": 354.2,
+          "h": 432
+        },
+        "board": {
+          "x": 816.4,
+          "y": 451.5,
+          "w": 287.3,
+          "h": 432,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.writingboard.png"
+        },
+        "pen": {
+          "x": 1006.6,
+          "y": 587.8,
+          "w": 164,
+          "h": 168.2,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.pen.png",
+          "crop": [
+            84,
+            35,
+            1032,
+            1012,
+            1080,
+            1080
+          ]
+        },
+        "penTip": [
+          0.1,
+          0.88
+        ],
+        "lines": [
+          {
+            "y": 576,
+            "x1": 874,
+            "x2": 1058
+          },
+          {
+            "y": 637,
+            "x1": 874,
+            "x2": 1052
+          },
+          {
+            "y": 698,
+            "x1": 874,
+            "x2": 1058
+          },
+          {
+            "y": 758,
+            "x1": 874,
+            "x2": 990
+          }
+        ]
+      }
+    },
+    {
+      "g2": true,
+      "adminLabel": "08 keep track of each step",
+      "mechanic": "g2-image",
+      "titleText": "Keep Track Of Each Step",
+      "buttons": [
+        {
+          "text": "Getting Good"
+        }
+      ],
+      "subtitleText": "Tick Them Off, One By One",
+      "mechanicData": {
+        "lay": {
+          "x0": 781.6,
+          "y0": 464.8,
+          "w": 356.8,
+          "h": 356.8
+        },
+        "items": [
+          {
+            "x": 781.6,
+            "y": 464.8,
+            "w": 356.8,
+            "h": 356.8,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.todolist.png"
+          }
+        ]
+      },
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/08%20KEEP%20TRACK%20OF%20EACH%20STEP.mp3"
+    },
+    {
+      "g2": true,
+      "adminLabel": "09 handle hurdles with courage",
+      "mechanic": "g2-cube",
+      "titleText": "Handle Hurdles With Courage",
+      "buttons": [
+        {
+          "text": "Found Options"
+        }
+      ],
+      "subtitleText": "Find Solutions, Adjust Plans",
+      "mechanicData": {
+        "lay": {
+          "x0": 780.8,
+          "y0": 487.8,
+          "w": 358.4,
+          "h": 329.7
+        },
+        "moves": 9
+      },
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/09%20HANDLE%20HURDLES%20WITH%20COURAGE.mp3"
+    },
+    {
+      "g2": true,
+      "adminLabel": "10 build your support team",
+      "mechanic": "g2-blocks",
+      "titleText": "Build Your Support Team",
+      "buttons": [
+        {
+          "text": "Network Is A Win"
+        }
+      ],
+      "subtitleText": "Ask For Ideas, Ask For Help",
+      "mechanicData": {
+        "lay": {
+          "x0": 757,
+          "y0": 460.7,
+          "w": 383.4,
+          "h": 401.8
+        },
+        "stackOrigin": "50% 92%",
+        "blocks": [
+          {
+            "x": 883.9,
+            "y": 725.2,
+            "w": 122.2,
+            "h": 122.2,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal1.png",
+            "crop": [
+              0,
+              0,
+              1053,
+              1080,
+              1080,
+              1080
+            ]
+          },
+          {
+            "x": 905,
+            "y": 640.2,
+            "w": 118.6,
+            "h": 118.6,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal2.png",
+            "crop": [
+              0,
+              0,
+              1053,
+              1080,
+              1080,
+              1080
+            ]
+          },
+          {
+            "x": 900.6,
+            "y": 551.9,
+            "w": 115,
+            "h": 115,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal3.png",
+            "crop": [
+              0,
+              0,
+              1053,
+              1080,
+              1080,
+              1080
+            ]
+          },
+          {
+            "x": 921.1,
+            "y": 460.7,
+            "w": 114.3,
+            "h": 114.3,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal4.png",
+            "crop": [
+              0,
+              0,
+              1053,
+              1080,
+              1080,
+              1080
+            ]
+          }
+        ],
+        "figLeft": {
+          "x": 757,
+          "y": 492.8,
+          "w": 173.5,
+          "h": 340.5,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.leftfigure.png",
+          "crop": [
+            283,
+            28,
+            824,
+            1072,
+            1080,
+            1080
+          ]
+        },
+        "figRight": {
+          "x": 967.6,
+          "y": 562.3,
+          "w": 172.8,
+          "h": 300.2,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.rightfigure.png",
+          "crop": [
+            253,
+            23,
+            838,
+            1077,
+            1080,
+            1080
+          ],
+          "rot": 9.1
+        }
+      }
+    },
+    {
+      "g2": true,
+      "adminLabel": "11 celebrate all your wins",
+      "mechanic": "g2-cup",
+      "titleText": "Celebrate All Your Wins",
+      "buttons": [
+        {
+          "text": "Feels Great"
+        }
+      ],
+      "subtitleText": "Press The 3C Diamond",
+      "mechanicData": {
+        "lay": {
+          "x0": 797.5,
+          "y0": 540,
+          "w": 325,
+          "h": 300.6
+        },
+        "cup": {
+          "x": 797.5,
+          "y": 540,
+          "w": 325,
+          "h": 300.6,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.cup.png",
+          "crop": [
+            15,
+            40,
+            1065,
+            1034,
+            1080,
+            1080
+          ]
+        },
+        "diamond": {
+          "x": 941.6,
+          "y": 598.7,
+          "w": 34.9,
+          "h": 34.9,
+          "src": "../../shared/diamond.png"
+        },
+        "mouth": {
+          "x": 960,
+          "y": 556
+        }
+      }
+    },
+    {
+      "g2": true,
+      "adminLabel": "12 something to remember",
+      "mechanic": "g2-notes",
+      "titleText": "Something To Remember",
+      "buttons": [
+        {
+          "text": "Ready To Fly"
+        }
+      ],
+      "subtitleText": "Tap To Receive Your Eight Messages",
+      "mechanicData": {
+        "lay": {
+          "x0": 476.5,
+          "y0": 465,
+          "w": 1263.4,
+          "h": 460.7
+        },
+        "pad": {
+          "x": 1475.1,
+          "y": 656.9,
+          "w": 264.8,
+          "h": 268.8,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynotepad.png"
+        },
+        "padStart": {
+          "x": 976,
+          "y": 575
+        },
+        "padGlowAt": 0.62,
+        "notes": [
+          {
+            "x": 494.7,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote1.png",
+            "text": "GIVE YOUR GOAL A NAME"
+          },
+          {
+            "x": 731.9,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote2.png",
+            "text": "WORK ON IT EVERY DAY"
+          },
+          {
+            "x": 969.1,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote3.png",
+            "text": "KEEP NOTES OF YOUR SUCCESSES"
+          },
+          {
+            "x": 1206.3,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote4.png",
+            "text": "THINK ABOUT YOUR STEPS"
+          },
+          {
+            "x": 476.5,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote4.png",
+            "text": "GIVE IT TIME TO WORK"
+          },
+          {
+            "x": 713.7,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote3.png",
+            "text": "REWARD YOURSELF"
+          },
+          {
+            "x": 950.9,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote2.png",
+            "text": "HAVE FUN WITH IT"
+          },
+          {
+            "x": 1188.1,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote1.png",
+            "text": "KEEP PLANNING"
+          }
+        ]
+      },
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/12%20SOMETHING%20TO%20REMEMBER.mp3"
+    },
+    {
+      "inherit": {
+        "find": "done"
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Take It With You"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "find": "last"
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Another Round"
+          },
+          {
+            "text": "The Team"
+          },
+          {
+            "text": "Over & Out"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+/* Repo path: games/aurion/goal-02.css
+   Goal 02 only. Loaded by games/aurion-goal02.js. Every rule is scoped to
+   .g2-* classes, so goal 01 (style.css) and core are not affected. */
+
+.g2-scene {
+  /* screen px per Canva px: one scale for every scene, so the main picture
+     is the same size on every page, as on the Canva pages */
+  --g2-k: 0.8px;
+}
+@supports (height: 1dvh) {
+  .g2-scene { --g2-k: min(0.8px, 0.105dvh); }
+}
+
+.g2-scene .aurion-scene-title { margin-bottom: 10px; }
+.aurion-scene-subtitle.g2-subtitle { color: #fff; margin-bottom: 8px; }
+.g2-scene .aurion-scene-desc { color: #fff; font-size: 24px; font-weight: 700; line-height: 1.45; white-space: pre-line; text-align: center; }
+.g2-scene .aurion-scene-textblock { width: 100%; }
+.g2-wide { max-width: 940px; }
+.g2-scene .aurion-mechanic-slot { min-height: 0; }
+
+.g2-stage {
+  position: relative;
+  flex: none;
+  container-type: inline-size;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+}
+.g2-item, .g2-overlay { position: absolute; display: block; user-select: none; -webkit-user-drag: none; }
+.g2-overlay { left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.g2-stack { position: absolute; inset: 0; }
+.g2-hit { position: absolute; cursor: pointer; z-index: 5; border-radius: 12px; }
+
+.g2-pop-in { animation: g2-pop .6s cubic-bezier(.2,1.3,.4,1) both; }
+@keyframes g2-pop { from { opacity: 0; scale: .85; } to { opacity: 1; scale: 1; } }
+
+.g2-glow { filter: drop-shadow(0 0 10px rgba(255,214,120,.95)) drop-shadow(0 0 22px rgba(255,189,89,.6)); }
+.g2-pulse { animation: g2-pulse 1.1s ease-in-out infinite; }
+@keyframes g2-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+.g2-ring { transform-box: fill-box; transform-origin: center; }
+
+.g2-diamond { filter: drop-shadow(0 0 6px rgba(150,220,255,.9)) drop-shadow(0 0 14px rgba(190,150,255,.7)); }
+.g2-diamond.g2-glow { filter: drop-shadow(0 0 12px rgba(190,240,255,1)) drop-shadow(0 0 28px rgba(190,150,255,.9)); }
+
+.g2-confetti { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.g2-confetti i { position: absolute; left: 0; top: 0; display: block; will-change: transform; }
+
+/* puzzle cube: built from divs, no image */
+.g2-cube-stage { display: flex; align-items: center; justify-content: center; }
+.g2-cube-holder { position: absolute; left: 50%; top: 50%; width: 0; height: 0; perspective: 1400px; }
+.g2-cube { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+.g2-cubie { position: absolute; left: -50px; top: -50px; width: 100px; height: 100px; transform-style: preserve-3d; }
+.g2-face { position: absolute; left: 0; top: 0; width: 100px; height: 100px; box-sizing: border-box; background: #111; border: 1px solid #000; border-radius: 9px; backface-visibility: hidden; }
+.g2-face::after { content: ''; position: absolute; inset: 9px; border-radius: 9px; background: var(--c, transparent); box-shadow: inset 0 -5px 0 rgba(0,0,0,.18), inset 0 4px 0 rgba(255,255,255,.28); }
+
+/* sticky notes */
+.g2-note { position: absolute; container-type: inline-size; transform-origin: 50% 40%; }
+.g2-note-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+.g2-note-text {
+  position: absolute; left: 20%; top: 20%; width: 60%; height: 56%;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive; font-weight: 400;
+  font-size: 11.5cqw; line-height: 1.12; color: #2b2438; rotate: 12.77deg; overflow: hidden; pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g2-pulse { animation: none; }
+}

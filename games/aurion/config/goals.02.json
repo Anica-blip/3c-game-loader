@@ -176,7 +176,8 @@
           "x0": 816.4,
           "y0": 451.5,
           "w": 354.2,
-          "h": 432
+          "h": 432,
+          "size": 1.3
         },
         "board": {
           "x": 816.4,
@@ -305,7 +306,7 @@
             "y": 725.2,
             "w": 122.2,
             "h": 122.2,
-            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal1.png",
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal4.png",
             "crop": [
               0,
               0,
@@ -320,7 +321,7 @@
             "y": 640.2,
             "w": 118.6,
             "h": 118.6,
-            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal2.png",
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal3.png",
             "crop": [
               0,
               0,
@@ -335,7 +336,7 @@
             "y": 551.9,
             "w": 115,
             "h": 115,
-            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal3.png",
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal2.png",
             "crop": [
               0,
               0,
@@ -350,7 +351,7 @@
             "y": 460.7,
             "w": 114.3,
             "h": 114.3,
-            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal4.png",
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.goal1.png",
             "crop": [
               0,
               0,
@@ -362,11 +363,11 @@
           }
         ],
         "figLeft": {
-          "x": 757,
-          "y": 492.8,
-          "w": 173.5,
-          "h": 340.5,
-          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.leftfigure.png",
+          "x": 775,
+          "y": 533.3,
+          "w": 155.4,
+          "h": 300,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.rightfigure.png",
           "crop": [
             283,
             28,
@@ -381,7 +382,7 @@
           "y": 562.3,
           "w": 172.8,
           "h": 300.2,
-          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.rightfigure.png",
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.leftfigure.png",
           "crop": [
             253,
             23,
@@ -477,7 +478,8 @@
             "w": 237.2,
             "h": 190.7,
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote1.png",
-            "text": "GIVE YOUR GOAL A NAME"
+            "text": "GIVE YOUR GOAL A NAME",
+            "dy": 7
           },
           {
             "x": 731.9,
@@ -493,7 +495,8 @@
             "w": 237.2,
             "h": 190.7,
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote3.png",
-            "text": "KEEP NOTES OF YOUR SUCCESSES"
+            "text": "KEEP NOTES OF YOUR SUCCESSES",
+            "dy": 7
           },
           {
             "x": 1206.3,
@@ -501,7 +504,8 @@
             "w": 237.2,
             "h": 190.7,
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote4.png",
-            "text": "THINK ABOUT YOUR STEPS"
+            "text": "THINK ABOUT YOUR STEPS",
+            "dy": 7
           },
           {
             "x": 476.5,

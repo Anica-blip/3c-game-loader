@@ -1387,6 +1387,7 @@ export function startGame(config, container) {
       im.src = resolveAssetUrl(n.src); im.alt = ''; im.draggable = false;
       const t = el('div', 'g2-note-text', wrapN);
       t.textContent = n.text;
+      if (n.dy) t.style.top = (20 + n.dy) + '%';
       if (n.tx != null) { t.style.left = n.tx + '%'; t.style.top = n.ty + '%'; t.style.width = n.tw + '%'; t.style.height = n.th + '%'; }
       return wrapN;
     });

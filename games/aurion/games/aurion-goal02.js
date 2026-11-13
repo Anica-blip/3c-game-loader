@@ -1080,7 +1080,6 @@ export function startGame(config, container) {
         const yy = ln.y - 14 + (rnd() < 0.5 ? -amp : amp * 0.4);
         d += ` L ${x.toFixed(1)} ${yy.toFixed(1)}`;
         if (rnd() < 0.18) x += 10; // a gap, like a space between words
-        if (x < ln.x2 && rnd() < 0.18) d += ` M ${x.toFixed(1)} ${ln.y - 14}`;
       }
       const p = svgEl('path', { d, fill: 'none', stroke: '#1f2a6b', 'stroke-width': 3.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, svg);
       const len = p.getTotalLength();
@@ -1236,13 +1235,14 @@ export function startGame(config, container) {
     const stage = makeStage(c.slot, lay);
     const stack = el('div', 'g2-stack', stage);
     stack.style.transformOrigin = md.stackOrigin || '50% 90%';
+    stack.style.zIndex = '2';
     const blocks = md.blocks.map((b, i) => {
       const im = addImage(stack, lay, Object.assign({ z: 2 + i }, b));
       im.style.opacity = '0';
       return im;
     });
     // figures: the one on the left arrives first, then the one on the right
-    const figL = addImage(stage, lay, Object.assign({ z: 9 }, md.figLeft));
+    const figL = addImage(stage, lay, Object.assign({ z: 1 }, md.figLeft));
     const figR = addImage(stage, lay, Object.assign({ z: 9 }, md.figRight));
     figL.style.opacity = '0'; figR.style.opacity = '0';
     // keep the right figure's tilt on its own wrapper-free property

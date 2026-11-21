@@ -118,6 +118,20 @@
 }
 @keyframes g3-spin { to { rotate: 360deg; } }
 
+/* diamond shine (scene 11) */
+.g3-halo { position: absolute; z-index: 5; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.75) 0%, rgba(170,230,255,.45) 28%, rgba(170,200,255,0) 68%);
+  animation: g3-halo 1.8s ease-in-out infinite; }
+@keyframes g3-halo { 0%, 100% { scale: .85; opacity: .65; } 50% { scale: 1.12; opacity: 1; } }
+.g3-glint { position: absolute; z-index: 7; pointer-events: none; opacity: 0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0) 0, #fff 50%, rgba(255,255,255,0) 100%) center / 100% 7% no-repeat,
+    linear-gradient(0deg, rgba(255,255,255,0) 0, #fff 50%, rgba(255,255,255,0) 100%) center / 7% 100% no-repeat,
+    radial-gradient(circle, #fff 0, rgba(255,255,255,0) 22%);
+  animation: g3-glint 1.8s ease-in-out infinite; }
+@keyframes g3-glint { 0% { scale: .3; opacity: 0; rotate: 0deg; } 35% { scale: 1; opacity: 1; } 70% { scale: .55; opacity: 0; rotate: 45deg; } 100% { scale: .3; opacity: 0; rotate: 45deg; } }
+
 @media (prefers-reduced-motion: reduce) {
+  .g3-halo, .g3-glint { animation: none; opacity: .8; }
   .g3-puff, .g3-rays, .g3-twinkle, .g3-stoneglow.g3-soft { animation: none; }
 }

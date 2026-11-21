@@ -90,7 +90,7 @@
           "text": "First Step Taken"
         }
       ],
-      "descText": "Take The First Step Today, Press The Stone",
+      "subtitleText": "Take The First Step Today, Press The Stone",
       "mechanicData": {
         "lay": {
           "x0": 640.2,
@@ -463,7 +463,7 @@
           "x0": 587.3,
           "y0": 360,
           "w": 732.7,
-          "h": 587.2,
+          "h": 587.5,
           "size": 1
         },
         "road": {
@@ -618,59 +618,64 @@
             "rot": -4.1,
             "hide": [
               27.2,
-              85.5,
-              14.3,
-              7.7
+              84.0,
+              13.5,
+              7.3,
+              88.7
             ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path2.png",
-            "cx": 930.3,
-            "cy": 634.4,
+            "cx": 926.4,
+            "cy": 656.0,
             "size": 540,
             "rot": -6.4,
             "hide": [
               25.5,
-              86.8,
-              13.6,
-              7.2
+              85.3,
+              13.5,
+              7.2,
+              89.7
             ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path3.png",
-            "cx": 941.0,
-            "cy": 604.4,
+            "cx": 925.8,
+            "cy": 624.5,
             "size": 600,
             "rot": -8.6,
             "hide": [
               23.7,
-              87.7,
-              12.5,
-              6.8
+              86.2,
+              12.2,
+              6.7,
+              90.3
             ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path4.png",
-            "cx": 959.3,
-            "cy": 660.1,
+            "cx": 957.8,
+            "cy": 660.7,
             "size": 600,
             "hide": [
               24.0,
-              87.5,
-              12.5,
-              6.9
+              86.0,
+              13.3,
+              7.4,
+              90.2
             ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path5.png",
-            "cx": 972.3,
-            "cy": 670.0,
+            "cx": 968.3,
+            "cy": 670.3,
             "size": 600,
             "hide": [
               23.8,
-              87.3,
-              12.2,
-              7.2
+              85.8,
+              13.0,
+              7.7,
+              90.2
             ]
           }
         ]

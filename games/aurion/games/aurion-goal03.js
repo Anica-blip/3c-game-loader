@@ -1031,16 +1031,34 @@ export function startGame(config, container) {
     cleanups.push(() => clearInterval(iv));
   });
 
+  // A spoken "press it" for the pulsing item: first after a few quiet seconds, then now and
+  // then, only while the player has not tapped yet. The sound effects stay as they are.
+  // The clip comes from config.pressVoice; if it is not set (or fails to load) nothing plays.
+  function nudge(c, isWaiting) {
+    const url = config && config.pressVoice;
+    if (!url) return;
+    const go = (ms) => c.later(() => {
+      if (!isWaiting()) return;
+      const a = new Audio(resolveAssetUrl(url));
+      voices.push(a);
+      a.addEventListener('ended', () => go(5500));
+      a.addEventListener('error', () => {});
+      a.play().catch(() => {});
+    }, ms);
+    go(4200);
+  }
+
   // 04 THE ROAD AHEAD: the voice, then the figure looks far, stands, and walks across
   async function mWalk(c) {
     const md = c.md;
     const k = kPx(c.slot);
     const F = md.size || 232.8;
     const avail = Math.min(md.maxW || 1100, (window.innerWidth * 0.94) / k);
-    const lay = { x0: 0, y0: 0, w: avail, h: F * 1.1 };
+    const DOWN = 46;
+    const lay = { x0: 0, y0: 0, w: avail, h: F * 1.1 + DOWN };
     const stage = makeStage(c.slot, lay);
     const mk = (n) => {
-      const im = placeFull(stage, lay, { src: md.poses[n], cx: F / 2, cy: F / 2 + F * 0.03, size: F, z: 2 });
+      const im = placeFull(stage, lay, { src: md.poses[n], cx: F / 2, cy: F / 2 + F * 0.03 + DOWN, size: F, z: 2 });
       im.style.opacity = '0';
       return im;
     };
@@ -1111,6 +1129,7 @@ export function startGame(config, container) {
     let waiting = true;
     const ping = () => { if (!waiting || !c.alive()) return; sfx.play('stonePulse'); c.later(ping, 2200); };
     ping();
+    nudge(c, () => waiting);
     const hit = addHit(R.stage, R.lay, { x: s0.x - s0.w / 2, y: s0.y - s0.h, w: s0.w, h: s0.h * 2.2 }, 0.4);
     hit.style.zIndex = '9';
     await c.tap(hit);
@@ -1125,10 +1144,11 @@ export function startGame(config, container) {
 
     // the figure swaps to walking and goes almost to the middle, then dims away
     const upTo = md.walkTo || 8;
+    const turn5 = md.turnAt || 5;
     fig.show('sidewalk');
     fig.put('sidewalk', R.ground(0), 0);
     await c.sleep(250);
-    await R.walk(fig, () => 'sidewalk', 0, upTo, md.msPerStone || 640);
+    await R.walk(fig, (u) => (u < turn5 ? 'sidewalk' : 'walkaway'), 0, upTo, md.msPerStone || 640);
     await new Promise((res) => {
       fig.fade(2200);
       fig.hideAll();
@@ -1203,6 +1223,13 @@ export function startGame(config, container) {
     const paths = md.paths.map((p, i) => {
       const im = placeFull(R.stage, R.lay, Object.assign({ z: 2 + i }, p));
       im.style.opacity = '0';
+      // from the second path on, the big starting stone is faded out of the picture, so the
+      // stones of the five images never clash; path 1 keeps the one big stone
+      if (i > 0 && p.hide) {
+        const h = p.hide;
+        const m = `radial-gradient(ellipse ${h[2]}% ${h[3]}% at ${h[0]}% ${h[1]}%, transparent 0, transparent 85%, #000 100%)`;
+        im.style.webkitMaskImage = m; im.style.maskImage = m;
+      }
       return im;
     });
     await c.ready();
@@ -1240,11 +1267,13 @@ export function startGame(config, container) {
   async function mGift(c) {
     const R = roadKit(c), md = c.md;
     const fig = R.makeFigure(md.poses);
-    const fogAt = { x: md.gift.cx, y: md.gift.cy };
-    const fog = R.makeFog(fogAt, md.fogSize || 380);
+    // the box floats right where the figure will stop, just in front of it
+    const to = md.walkTo || 5;
+    const stop = R.along(to);
     const gs = md.gift.size || 100;
-    const giftStone = { x: md.gift.cx, y: md.gift.cy + gs * 0.85 };
-    const gift = placeFull(R.stage, R.lay, { src: md.gift.src, cx: md.gift.cx, cy: md.gift.cy, size: gs, z: 7 });
+    const gx = stop.x + stop.w * 1.2, gy = stop.y - stop.w * 1.45;
+    const fog = R.makeFog({ x: gx, y: gy }, md.fogSize || 380);
+    const gift = placeFull(R.stage, R.lay, { src: md.gift.src, cx: gx, cy: gy, size: gs, z: 7 });
     gift.style.opacity = '0';
     await R.boot();
     if (!c.alive()) return;
@@ -1268,13 +1297,12 @@ export function startGame(config, container) {
     sfx.play('gift');
     c.anim(gift, [{ opacity: 0, scale: '0.5' }, { opacity: 1, scale: '1' }], { duration: 700, easing: 'cubic-bezier(.2,1.4,.4,1)', fill: 'forwards' });
     gift.style.opacity = '1';
-    R.sparkles({ x: giftStone.x, y: giftStone.y - gs * 0.85 }, 12, 70, false);
+    R.sparkles({ x: gx, y: gy }, 12, 70, false);
     const bob = gift.animate([{ translate: '0px 0px' }, { translate: `0px ${-6 * R.kk()}px` }, { translate: '0px 0px' }], { duration: 2200, iterations: Infinity, easing: 'ease-in-out' });
     cleanups.push(() => bob.cancel());
     await c.sleep(900);
 
     // the figure walks towards it; the cloud around it thins and glows warm
-    const to = md.walkTo || 5;
     fog.classList.add('g3-warm');
     c.anim(fog, [{ opacity: 0.88 }, { opacity: 0.35 }], { duration: (to * (md.msPerStone || 640)) + 1200, fill: 'forwards' });
     await R.walk(fig, () => 'sidewalk', 0, to, md.msPerStone || 640);
@@ -1285,10 +1313,10 @@ export function startGame(config, container) {
     glowOn(gift, true);
     await c.anim(gift, [{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 650 });
     await c.sleep(250);
-    const hand = R.along(to);
+    const hand = stop;
     const k = R.kk();
-    const dx = hand.x - md.gift.cx, dy = hand.y - hand.w * 1.3 - md.gift.cy;
-    R.sparkles({ x: hand.x, y: hand.y - hand.w * 1.2 }, 16, 90, true);
+    const dx = (hand.x + hand.w * 0.5) - gx, dy = (hand.y - hand.w * 1.35) - gy;
+    R.sparkles({ x: hand.x + hand.w * 0.5, y: hand.y - hand.w * 1.35 }, 16, 90, true);
     sfx.play('gift');
     await c.anim(gift, [{ translate: '0px 0px', scale: '1', opacity: 1 }, { translate: `${dx * k}px ${dy * k}px`, scale: '0.3', opacity: 0 }], { duration: 800, easing: 'ease-in', fill: 'forwards' });
     gift.style.opacity = '0';
@@ -1411,6 +1439,7 @@ export function startGame(config, container) {
     let tick = true;
     const loosePing = () => { if (!tick || !c.alive()) return; sfx.play('needle'); c.later(loosePing, 2400); };
     loosePing();
+    nudge(c, () => tick);
     const hit = addHit(stage, lay, md.compass.hit || { x: md.compass.cx - 130, y: md.compass.cy - 90, w: 260, h: 200 }, 0.25);
     hit.style.zIndex = '9';
     await c.tap(hit);
@@ -1455,13 +1484,17 @@ export function startGame(config, container) {
     let waiting = true;
     const ping = () => { if (!waiting || !c.alive()) return; sfx.play('glint'); c.later(ping, 1800); };
     ping();
+    nudge(c, () => waiting);
     const hit = addHit(stage, lay, md.diamond, 1.4);
     hit.style.zIndex = '9';
     await c.tap(hit);
     waiting = false;
     hit.remove();
-    pulseOn(dia, false);
+    pulseOn(dia, false); glowOn(dia, false);
     sfx.play('pop');
+    // the diamond vanishes, so the figure has the whole space (placed in the config) to jump in
+    c.anim(dia, [{ opacity: 1, scale: '1' }, { opacity: 0, scale: '1.5' }], { duration: 250, fill: 'forwards' });
+    dia.style.opacity = '0';
 
     // the figure appears, first standing
     c.anim(stand, [{ opacity: 0, scale: '0.9' }, { opacity: 1, scale: '1' }], { duration: 600, fill: 'forwards' });
@@ -1490,21 +1523,21 @@ export function startGame(config, container) {
     };
     await c.sleep(500);
     const jumps = md.jumps || 4;
-    const H = md.jumpHeight || 130;
+    const H = md.jumpHeight || 90;
     const swap = (on, off, ms) => Promise.all([
       c.anim(off, [{ opacity: 1 }, { opacity: 0 }], { duration: ms, fill: 'forwards' }),
       c.anim(on, [{ opacity: 0 }, { opacity: 1 }], { duration: ms, fill: 'forwards' })
     ]).then(() => { off.style.opacity = '0'; on.style.opacity = '1'; });
     // one figure: standing fades out, the jump pose fades in and leaps, then back to standing
     for (let i = 0; i < jumps; i++) {
-      await swap(jump, stand, 160);
+      await swap(jump, stand, 70);
       sfx.play('boing');
       rays.animate([{ opacity: 0.55, scale: '1' }, { opacity: 1, scale: '1.12' }, { opacity: 0.6, scale: '1' }], { duration: 1000 });
       burst(14);
-      await c.tween(760, (t) => { jump.style.translate = `0px ${-H * k * Math.sin(Math.PI * t)}px`; });
+      await c.tween(620, (t) => { jump.style.translate = `0px ${-H * k * Math.sin(Math.PI * t)}px`; });
       jump.style.translate = '0px 0px';
       sfx.play('land');
-      await swap(stand, jump, 140);
+      await swap(stand, jump, 70);
       c.anim(stand, [{ transform: 'scale(1,1)' }, { transform: 'scale(1.05,.94)' }, { transform: 'scale(1,1)' }], { duration: 260 });
       await c.sleep(i === jumps - 1 ? 500 : 420);
     }
@@ -1563,9 +1596,12 @@ export function startGame(config, container) {
     await c.anim(pad, [{ opacity: 0, scale: '0.8' }, { opacity: 1, scale: '1' }], { duration: 600, fill: 'forwards' });
     pad.style.opacity = '1';
     glowOn(pad, true); pulseOn(pad, true);
+    let padWait = true;
+    nudge(c, () => padWait);
     const hit = addHit(stage, lay, Object.assign({}, md.pad, { x: mid.x, y: mid.y }), 0.2);
     hit.style.zIndex = '30';
     await c.tap(hit);
+    padWait = false;
     hit.remove();
     pulseOn(pad, false); glowOn(pad, false);
 

@@ -1228,7 +1228,9 @@ export function startGame(config, container) {
   // 07 SHRINK THE MIDDLE
   async function mShrink(c) {
     const R = roadKit(c), md = c.md;
-    const fog = R.makeFog(R.ground(md.fogStone || 10), md.fogSize || 360);
+    // the cloud starts clearly above the figure, then drifts along with the paths to the far end, fading
+    const fog = R.makeFog(md.fogFrom, md.fogSize || 250);
+    fog.style.zIndex = '30';
     const think = placeFull(R.stage, R.lay, Object.assign({ z: 5 }, md.thinking));
     think.style.opacity = '0';
     const paths = md.paths.map((p, i) => {
@@ -1255,12 +1257,17 @@ export function startGame(config, container) {
     think.style.opacity = '1';
     await c.sleep(1400);
 
-    // the cloud slightly vanishes
+    // path 1, then 2 to 5, fanning out from the first stone with a soft heartbeat;
+    // the cloud moves slowly along as each path starts and gets fainter and fainter
+    const STEP = 1700;
+    const kf = R.kk();
     sfx.play('fog');
-    c.anim(fog, [{ opacity: 0.9 }, { opacity: 0.25 }], { duration: 2600, fill: 'forwards' });
-    await c.sleep(1800);
-
-    // path 1, then 2 to 5, fanning out from the first stone with a soft heartbeat
+    const drift = c.tween(STEP * paths.length + 600, (t) => {
+      const e = t * t * (3 - 2 * t);
+      fog.style.translate = `${(md.fogTo.x - md.fogFrom.x) * e * kf}px ${(md.fogTo.y - md.fogFrom.y) * e * kf}px`;
+      fog.style.scale = String(1 + 0.25 * e);
+      fog.style.opacity = String(0.92 - 0.76 * e);   // clearly there at the start, faint at the last path
+    });
     for (let i = 0; i < paths.length; i++) {
       const im = paths[i];
       if (i === 0) c.anim(R.road, [{ opacity: 0.55 }, { opacity: 0 }], { duration: 900, fill: 'forwards' });
@@ -1269,11 +1276,10 @@ export function startGame(config, container) {
       c.anim(im, [{ transform: 'scale(1)' }, { transform: 'scale(1.035)', offset: 0.25 }, { transform: 'scale(1)', offset: 0.45 }, { transform: 'scale(1.025)', offset: 0.65 }, { transform: 'scale(1)' }], { duration: 1500, delay: 500, iterations: 2 });
       sfx.play('heartbeat'); c.later(() => sfx.play('heartbeat'), 1500);
       sfx.play('gift');
-      await c.sleep(1400);
+      await c.sleep(STEP);
     }
-    await c.sleep(1800);   // the last heartbeat settles; everything is calm
-    c.anim(fog, [{ opacity: 0.25 }, { opacity: 0 }], { duration: 1200, fill: 'forwards' });
-    await c.sleep(900);
+    await drift;
+    await c.sleep(1200);   // the last heartbeat settles; everything is calm
     c.reveal();
   }
 
@@ -1494,6 +1500,32 @@ export function startGame(config, container) {
     c.anim(dia, [{ opacity: 0, scale: '0.6' }, { opacity: 1, scale: '1' }], { duration: 600, fill: 'forwards' });
     dia.style.opacity = '1';
     glowOn(dia, true); pulseOn(dia, true);
+    // shining bright: a soft halo, two crossing glints and little sparkles, all by code
+    const dcx = md.diamond.x + md.diamond.w / 2, dcy = md.diamond.y + md.diamond.h / 2;
+    const halo = el('div', 'g3-halo', stage);
+    placeBox(halo, { x: dcx - md.diamond.w * 1.5, y: dcy - md.diamond.w * 1.5, w: md.diamond.w * 3, h: md.diamond.w * 3 }, lay);
+    const glints = [0, 0.9].map((dl) => {
+      const gl = el('div', 'g3-glint', stage);
+      placeBox(gl, { x: dcx - md.diamond.w * 0.95, y: dcy - md.diamond.w * 0.95, w: md.diamond.w * 1.9, h: md.diamond.w * 1.9 }, lay);
+      gl.style.animationDelay = dl + 's';
+      return gl;
+    });
+    let shining = true;
+    const dsparkle = () => {
+      if (!shining || !c.alive()) return;
+      for (let j = 0; j < 3; j++) {
+        const sp = el('i', 'g3-spark', stage);
+        const ang = Math.random() * Math.PI * 2, rad = md.diamond.w * (0.2 + Math.random() * 0.45);
+        sp.style.left = ((dcx + Math.cos(ang) * rad - lay.x0) / lay.w * 100) + '%';
+        sp.style.top = ((dcy + Math.sin(ang) * rad - lay.y0) / lay.h * 100) + '%';
+        const sz = (5 + Math.random() * 6) * k;
+        sp.style.width = sp.style.height = sz + 'px';
+        const an = sp.animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.2)' }, { opacity: 1, transform: 'translate(-50%,-50%) scale(1)', offset: 0.4 }, { opacity: 0, transform: 'translate(-50%,-50%) scale(.2)' }], { duration: 800 + Math.random() * 400, fill: 'both' });
+        an.onfinish = () => sp.remove();
+      }
+      c.later(dsparkle, 260);
+    };
+    dsparkle();
     await c.sleep(700);
     let waiting = true;
     const ping = () => { if (!waiting || !c.alive()) return; sfx.play('glint'); c.later(ping, 1800); };
@@ -1509,6 +1541,8 @@ export function startGame(config, container) {
     // the diamond vanishes, so the figure has the whole space (placed in the config) to jump in
     c.anim(dia, [{ opacity: 1, scale: '1' }, { opacity: 0, scale: '1.5' }], { duration: 250, fill: 'forwards' });
     dia.style.opacity = '0';
+    shining = false;
+    [halo].concat(glints).forEach((n) => { n.remove(); });
 
     // the figure appears, first standing
     c.anim(stand, [{ opacity: 0, scale: '0.9' }, { opacity: 1, scale: '1' }], { duration: 600, fill: 'forwards' });
@@ -1594,9 +1628,6 @@ export function startGame(config, container) {
       im.src = resolveAssetUrl(n.src); im.alt = ''; im.draggable = false;
       const t = el('div', 'g3-note-text', wrapN);
       t.textContent = n.text;
-      // a long word (CELEBRATE) gets a slightly smaller size so it never clips
-      const longest = Math.max.apply(null, n.text.split(/\s+/).map((w) => w.length));
-      if (longest >= 9) t.style.fontSize = (11.5 * 7.6 / longest).toFixed(2) + 'cqw';
       if (n.dy) t.style.top = (20 + n.dy) + '%';
       if (n.tx != null) { t.style.left = n.tx + '%'; t.style.top = n.ty + '%'; t.style.width = n.tw + '%'; t.style.height = n.th + '%'; }
       return wrapN;

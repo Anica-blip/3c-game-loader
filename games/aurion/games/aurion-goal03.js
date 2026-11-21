@@ -1068,10 +1068,20 @@ export function startGame(config, container) {
     if (!c.alive()) return;
     const kk = px(stage, lay);
 
+    // like goal 02's "Time To Make A Plan": the description starts lower on the page while
+    // Aurion speaks, and moves up a little when the figure comes in
+    const tb = c.slot.parentNode && c.slot.parentNode.querySelector('.aurion-scene-textblock');
+    const drop = md.descDrop == null ? 120 : md.descDrop;
+    if (tb) tb.style.translate = '0px ' + drop + 'px';
     await c.sleep(1500);
-    // Aurion speaks first; the figure comes in when the voice ends
     if (c.scene.soundEffect) await new Promise((res) => playVoice(c.scene.soundEffect, res));
     if (!c.alive()) return;
+    if (tb) {
+      // only moves up as far as the figure needs, not up to where a subtitle would sit
+      const endY = window.innerWidth < 600 ? 14 : (md.descEnd == null ? 56 : md.descEnd);
+      c.anim(tb, [{ translate: '0px ' + drop + 'px' }, { translate: '0px ' + endY + 'px' }], { duration: 1000, easing: 'ease-in-out', fill: 'forwards' });
+      tb.style.translate = '0px ' + endY + 'px';
+    }
 
     sfx.play('pop');
     await c.anim(look, [{ opacity: 0, translate: `${-30 * kk}px 0px` }, { opacity: 1, translate: '0px 0px' }], { duration: 700, fill: 'forwards' });
@@ -1229,8 +1239,10 @@ export function startGame(config, container) {
       // stones of the five images never clash; path 1 keeps the one big stone
       if (i > 0 && p.hide) {
         const h = p.hide;
-        const m = `radial-gradient(ellipse ${h[2]}% ${h[3]}% at ${h[0]}% ${h[1]}%, transparent 0, transparent 85%, #000 100%)`;
+        // the ellipse removes the stone; the second layer removes any stray rim just below it
+        const m = `radial-gradient(ellipse ${h[2]}% ${h[3]}% at ${h[0]}% ${h[1]}%, transparent 0, transparent 90%, #000 100%), linear-gradient(to bottom, #000 ${h[4]}%, transparent ${h[4]}%)`;
         im.style.webkitMaskImage = m; im.style.maskImage = m;
+        im.style.webkitMaskComposite = 'source-in'; im.style.maskComposite = 'intersect';
       }
       return im;
     });

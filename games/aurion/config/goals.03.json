@@ -701,10 +701,10 @@
       "subtitleText": "Plan One Small Reward Halfway",
       "mechanicData": {
         "lay": {
-          "x0": 613.5,
-          "y0": 474.9,
-          "w": 656.5,
-          "h": 467.9,
+          "x0": 641.1,
+          "y0": 482.9,
+          "w": 744.5,
+          "h": 438.9,
           "size": 1
         },
         "road": {

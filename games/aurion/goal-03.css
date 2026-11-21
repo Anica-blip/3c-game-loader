@@ -13,7 +13,9 @@
 
 .g3-scene .aurion-scene-title { margin-bottom: 10px; }
 .aurion-scene-subtitle.g3-subtitle { color: #fff; margin-bottom: 8px; }
-.g3-scene .aurion-scene-desc { color: #fff; font-size: 24px; font-weight: 700; line-height: 1.45; white-space: pre-line; text-align: center; }
+.g3-scene .aurion-scene-desc { color: #fff; white-space: pre-line; text-align: center; margin-bottom: 10px; }
+/* the big three-line text is only for The Road Ahead (like goal 02's Time To Make A Plan) */
+.g3-bigdesc .aurion-scene-desc { font-size: 24px; font-weight: 700; line-height: 1.45; }
 .g3-scene .aurion-scene-textblock { width: 100%; }
 .g3-wide { max-width: 940px; }
 .g3-scene .aurion-mechanic-slot { min-height: 0; }

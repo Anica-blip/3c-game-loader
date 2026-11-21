@@ -1515,6 +1515,7 @@ export function startGame(config, container) {
       if (!shining || !c.alive()) return;
       for (let j = 0; j < 3; j++) {
         const sp = el('i', 'g3-spark', stage);
+        sp.style.zIndex = '5';   // behind the diamond picture
         const ang = Math.random() * Math.PI * 2, rad = md.diamond.w * (0.2 + Math.random() * 0.45);
         sp.style.left = ((dcx + Math.cos(ang) * rad - lay.x0) / lay.w * 100) + '%';
         sp.style.top = ((dcy + Math.sin(ang) * rad - lay.y0) / lay.h * 100) + '%';

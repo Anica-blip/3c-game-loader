@@ -521,6 +521,7 @@ export function startGame(config, container) {
     if (mech === 'sorting' || mech === 'reveal-cards' || mech === 'word-picker') wrap.classList.add('aurion-has-side-panel');
     if (scene.g3) wrap.classList.add('g3-scene');
     if (scene.g3) wrap.classList.add('g3-wide');
+    if (mech === 'g3-walk') wrap.classList.add('g3-bigdesc');
     if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page') wrap.classList.add('aurion-intro-scene');
     if (scene.adminLabel === 'landing page' || scene.adminLabel === 'consent page' || scene.adminLabel === 'final page') wrap.classList.add('aurion-mobile-hero-image');
 

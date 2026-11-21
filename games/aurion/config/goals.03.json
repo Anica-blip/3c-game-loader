@@ -8,6 +8,7 @@
     "ambientVolume"
   ],
   "sfxVolume": 0.8,
+  "pressVoice": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/press-it.mp3",
   "sfx": {},
   "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground and images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCasey, Creative Director\n\nProducer & Creator\nAnica",
   "decisions": [
@@ -234,6 +235,7 @@
         ],
         "ratio": 2.6,
         "walkTo": 8,
+        "turnAt": 5,
         "msPerStone": 640,
         "poses": {
           "firststep": {
@@ -241,14 +243,20 @@
             "foot": [
               438,
               1051
-            ],
-            "flip": true
+            ]
           },
           "sidewalk": {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-sidewalk.png",
             "foot": [
               550,
               1064
+            ]
+          },
+          "walkaway": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-walkaway.png",
+            "foot": [
+              559,
+              1044
             ]
           }
         }
@@ -420,8 +428,7 @@
             "foot": [
               438,
               1051
-            ],
-            "flip": true
+            ]
           },
           "sidewalk": {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-sidewalk.png",
@@ -608,33 +615,63 @@
             "cx": 921.7,
             "cy": 669.7,
             "size": 520,
-            "rot": -4.1
+            "rot": -4.1,
+            "hide": [
+              27.2,
+              84.5,
+              13.2,
+              8.1
+            ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path2.png",
             "cx": 930.3,
             "cy": 634.4,
             "size": 540,
-            "rot": -6.4
+            "rot": -6.4,
+            "hide": [
+              25.5,
+              85.8,
+              12.5,
+              7.6
+            ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path3.png",
             "cx": 941.0,
             "cy": 604.4,
             "size": 600,
-            "rot": -8.6
+            "rot": -8.6,
+            "hide": [
+              23.7,
+              86.7,
+              11.5,
+              7.2
+            ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path4.png",
             "cx": 959.3,
             "cy": 660.1,
-            "size": 600
+            "size": 600,
+            "hide": [
+              24.0,
+              86.5,
+              11.5,
+              7.3
+            ]
           },
           {
             "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path5.png",
             "cx": 972.3,
             "cy": 670.0,
-            "size": 600
+            "size": 600,
+            "hide": [
+              23.8,
+              86.3,
+              11.2,
+              7.6
+            ]
           }
         ]
       }
@@ -834,7 +871,7 @@
       "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/09%20COLOUR%20IN%20EVERY%20STEP.mp3",
       "mechanicData": {
         "lay": {
-          "x0": 494.7,
+          "x0": 494.8,
           "y0": 484.5,
           "w": 738.5,
           "h": 419.1,
@@ -848,10 +885,9 @@
         },
         "pointer": {
           "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-point.png",
-          "cx": 621.8,
+          "cx": 594.9,
           "cy": 740.9,
-          "size": 300,
-          "flip": true
+          "size": 300
         },
         "cells": [
           [
@@ -926,10 +962,10 @@
       "subtitleText": "Press The 3C Diamond",
       "mechanicData": {
         "lay": {
-          "x0": 690,
-          "y0": 320,
-          "w": 620,
-          "h": 690,
+          "x0": 760,
+          "y0": 420,
+          "w": 480,
+          "h": 380,
           "size": 1
         },
         "diamond": {
@@ -942,22 +978,22 @@
         "stand": {
           "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-standing.png",
           "cx": 960.0,
-          "cy": 739.2,
+          "cy": 639.2,
           "size": 295.5
         },
         "jump": {
           "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-jump.png",
-          "cy": 739.2,
+          "cy": 639.2,
           "size": 295.5,
           "cx": 969.3
         },
         "rays": {
           "x": 1000,
-          "y": 700,
-          "r": 300
+          "y": 600,
+          "r": 230
         },
         "jumps": 4,
-        "jumpHeight": 130
+        "jumpHeight": 90
       }
     },
     {

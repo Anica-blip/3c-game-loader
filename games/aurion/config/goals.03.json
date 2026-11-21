@@ -1,0 +1,1096 @@
+{
+  "_repoPath": "Repo path: games/aurion/config/goals.03.json (JSON has no comments, so this first line is a label only)",
+  "gameType": "aurion-goal03",
+  "inheritFrom": "goals.01",
+  "inheritGlobals": [
+    "background",
+    "ambientSound",
+    "ambientVolume"
+  ],
+  "sfxVolume": 0.8,
+  "sfx": {},
+  "credits": "Design and development\nClaude (Anthropic)\n\nHosting\nGitHub Pages\n\nArtwork\nAnimated Text Design\nAurion hero image, ChatGPT & Canva Create\nBackground and images, Canva Create\n\nVoice\nElevenLabs, voiceover\nMagic Hour, Aurion lip sync\n\nCreative direction\nCasey, Creative Director\n\nProducer & Creator\nAnica",
+  "decisions": [
+    {
+      "inherit": {
+        "match": "landing page",
+        "orIndex": 0
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "match": "consent page",
+        "orIndex": 1
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Step In"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "mechanic": "door",
+        "orIndex": 2
+      },
+      "override": {
+        "titleText": "Open The Door",
+        "subtitleText": "",
+        "mechanicData": {
+          "revealImage": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.gettowork.png"
+        },
+        "buttons": [
+          {
+            "text": "Show Me The Way"
+          }
+        ]
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "04 the road ahead",
+      "mechanic": "g3-walk",
+      "titleText": "The Road Ahead",
+      "buttons": [
+        {
+          "text": "Let's Walk"
+        }
+      ],
+      "descText": "Your Plan Is Ready.\nThe Middle Can Feel Quiet.\nLet's Walk It Together.",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/04%20THE%20ROAD%20AHEAD.mp3",
+      "mechanicData": {
+        "poses": {
+          "lookingfar": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-lookingfar.png",
+          "standing": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-standing.png",
+          "sidewalk": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-sidewalk.png"
+        },
+        "size": 232.8,
+        "maxW": 1100,
+        "stepMs": 620,
+        "crossMs": 7600
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "05 mark your start",
+      "mechanic": "g3-mark",
+      "titleText": "Mark Your Start",
+      "buttons": [
+        {
+          "text": "First Step Taken"
+        }
+      ],
+      "subtitleText": "Take The First Step Today",
+      "mechanicData": {
+        "lay": {
+          "x0": 640.2,
+          "y0": 422.7,
+          "w": 581.7,
+          "h": 513.9,
+          "size": 1
+        },
+        "road": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.road.png",
+          "cx": 933.6,
+          "cy": 667.5,
+          "size": 610
+        },
+        "stones": [
+          [
+            133,
+            932,
+            158,
+            97
+          ],
+          [
+            302,
+            882,
+            148,
+            88
+          ],
+          [
+            484,
+            844,
+            144,
+            81
+          ],
+          [
+            645,
+            792,
+            140,
+            74
+          ],
+          [
+            784,
+            726,
+            130,
+            65
+          ],
+          [
+            891,
+            668,
+            119,
+            56
+          ],
+          [
+            920,
+            605,
+            104,
+            45
+          ],
+          [
+            880,
+            551,
+            97,
+            41
+          ],
+          [
+            819,
+            507,
+            90,
+            36
+          ],
+          [
+            809,
+            464,
+            79,
+            31
+          ],
+          [
+            837,
+            428,
+            74,
+            27
+          ],
+          [
+            900,
+            401,
+            70,
+            25
+          ],
+          [
+            956,
+            377,
+            67,
+            22
+          ],
+          [
+            983,
+            352,
+            63,
+            20
+          ],
+          [
+            959,
+            309,
+            103,
+            56
+          ],
+          [
+            873,
+            239,
+            86,
+            85
+          ],
+          [
+            929,
+            188,
+            31,
+            7
+          ],
+          [
+            958,
+            178,
+            29,
+            5
+          ],
+          [
+            979,
+            168,
+            25,
+            5
+          ],
+          [
+            993,
+            158,
+            23,
+            5
+          ],
+          [
+            991,
+            146,
+            14,
+            9
+          ]
+        ],
+        "ratio": 2.6,
+        "walkTo": 8,
+        "msPerStone": 640,
+        "poses": {
+          "firststep": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-firststep.png",
+            "foot": [
+              438,
+              1051
+            ],
+            "flip": true
+          },
+          "sidewalk": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-sidewalk.png",
+            "foot": [
+              550,
+              1064
+            ]
+          }
+        }
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "06 spot the quiet middle",
+      "mechanic": "g3-quiet",
+      "titleText": "Spot The Quiet Middle",
+      "buttons": [
+        {
+          "text": "I'm On A Roll"
+        }
+      ],
+      "subtitleText": "Every Road Has A Quiet Stretch",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/06%20SPOT%20THE%20QUIET%20MIDDLE.mp3",
+      "mechanicData": {
+        "lay": {
+          "x0": 671.1,
+          "y0": 310,
+          "w": 608.9,
+          "h": 585.0,
+          "size": 1
+        },
+        "road": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.road.png",
+          "cx": 960,
+          "cy": 630,
+          "size": 600
+        },
+        "stones": [
+          [
+            133,
+            932,
+            158,
+            97
+          ],
+          [
+            302,
+            882,
+            148,
+            88
+          ],
+          [
+            484,
+            844,
+            144,
+            81
+          ],
+          [
+            645,
+            792,
+            140,
+            74
+          ],
+          [
+            784,
+            726,
+            130,
+            65
+          ],
+          [
+            891,
+            668,
+            119,
+            56
+          ],
+          [
+            920,
+            605,
+            104,
+            45
+          ],
+          [
+            880,
+            551,
+            97,
+            41
+          ],
+          [
+            819,
+            507,
+            90,
+            36
+          ],
+          [
+            809,
+            464,
+            79,
+            31
+          ],
+          [
+            837,
+            428,
+            74,
+            27
+          ],
+          [
+            900,
+            401,
+            70,
+            25
+          ],
+          [
+            956,
+            377,
+            67,
+            22
+          ],
+          [
+            983,
+            352,
+            63,
+            20
+          ],
+          [
+            959,
+            309,
+            103,
+            56
+          ],
+          [
+            873,
+            239,
+            86,
+            85
+          ],
+          [
+            929,
+            188,
+            31,
+            7
+          ],
+          [
+            958,
+            178,
+            29,
+            5
+          ],
+          [
+            979,
+            168,
+            25,
+            5
+          ],
+          [
+            993,
+            158,
+            23,
+            5
+          ],
+          [
+            991,
+            146,
+            14,
+            9
+          ]
+        ],
+        "ratio": 2.6,
+        "walkTo": 10,
+        "turnAt": 5,
+        "fogStone": 10,
+        "fogSize": 300,
+        "msPerStone": 620,
+        "poses": {
+          "firststep": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-firststep.png",
+            "foot": [
+              438,
+              1051
+            ],
+            "flip": true
+          },
+          "sidewalk": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-sidewalk.png",
+            "foot": [
+              550,
+              1064
+            ]
+          },
+          "walkaway": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-walkaway.png",
+            "foot": [
+              559,
+              1044
+            ]
+          }
+        }
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "07 shrink the middle",
+      "mechanic": "g3-shrink",
+      "titleText": "Shrink The Middle",
+      "buttons": [
+        {
+          "text": "Feels Lighter"
+        }
+      ],
+      "subtitleText": "Break It Into Small Stretches",
+      "mechanicData": {
+        "lay": {
+          "x0": 587.3,
+          "y0": 360,
+          "w": 732.7,
+          "h": 587.2,
+          "size": 1
+        },
+        "road": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.road.png",
+          "cx": 960,
+          "cy": 630,
+          "size": 600
+        },
+        "stones": [
+          [
+            133,
+            932,
+            158,
+            97
+          ],
+          [
+            302,
+            882,
+            148,
+            88
+          ],
+          [
+            484,
+            844,
+            144,
+            81
+          ],
+          [
+            645,
+            792,
+            140,
+            74
+          ],
+          [
+            784,
+            726,
+            130,
+            65
+          ],
+          [
+            891,
+            668,
+            119,
+            56
+          ],
+          [
+            920,
+            605,
+            104,
+            45
+          ],
+          [
+            880,
+            551,
+            97,
+            41
+          ],
+          [
+            819,
+            507,
+            90,
+            36
+          ],
+          [
+            809,
+            464,
+            79,
+            31
+          ],
+          [
+            837,
+            428,
+            74,
+            27
+          ],
+          [
+            900,
+            401,
+            70,
+            25
+          ],
+          [
+            956,
+            377,
+            67,
+            22
+          ],
+          [
+            983,
+            352,
+            63,
+            20
+          ],
+          [
+            959,
+            309,
+            103,
+            56
+          ],
+          [
+            873,
+            239,
+            86,
+            85
+          ],
+          [
+            929,
+            188,
+            31,
+            7
+          ],
+          [
+            958,
+            178,
+            29,
+            5
+          ],
+          [
+            979,
+            168,
+            25,
+            5
+          ],
+          [
+            993,
+            158,
+            23,
+            5
+          ],
+          [
+            991,
+            146,
+            14,
+            9
+          ]
+        ],
+        "ratio": 2.6,
+        "fogStone": 10,
+        "fogSize": 300,
+        "thinking": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-thinking.png",
+          "cx": 645.8,
+          "cy": 776.7,
+          "size": 260
+        },
+        "paths": [
+          {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path1.png",
+            "cx": 921.7,
+            "cy": 669.7,
+            "size": 520,
+            "rot": -4.1
+          },
+          {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path2.png",
+            "cx": 930.3,
+            "cy": 634.4,
+            "size": 540,
+            "rot": -6.4
+          },
+          {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path3.png",
+            "cx": 941.0,
+            "cy": 604.4,
+            "size": 600,
+            "rot": -8.6
+          },
+          {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path4.png",
+            "cx": 959.3,
+            "cy": 660.1,
+            "size": 600
+          },
+          {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.path5.png",
+            "cx": 972.3,
+            "cy": 670.0,
+            "size": 600
+          }
+        ]
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "08 put a treat in the fog",
+      "mechanic": "g3-gift",
+      "titleText": "Put A Treat In The Fog",
+      "buttons": [
+        {
+          "text": "Treating Myself"
+        }
+      ],
+      "subtitleText": "Plan One Small Reward Halfway",
+      "mechanicData": {
+        "lay": {
+          "x0": 613.5,
+          "y0": 474.9,
+          "w": 656.5,
+          "h": 467.9,
+          "size": 1
+        },
+        "road": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.road.png",
+          "cx": 979.4,
+          "cy": 691.7,
+          "size": 534.1
+        },
+        "stones": [
+          [
+            133,
+            932,
+            158,
+            97
+          ],
+          [
+            302,
+            882,
+            148,
+            88
+          ],
+          [
+            484,
+            844,
+            144,
+            81
+          ],
+          [
+            645,
+            792,
+            140,
+            74
+          ],
+          [
+            784,
+            726,
+            130,
+            65
+          ],
+          [
+            891,
+            668,
+            119,
+            56
+          ],
+          [
+            920,
+            605,
+            104,
+            45
+          ],
+          [
+            880,
+            551,
+            97,
+            41
+          ],
+          [
+            819,
+            507,
+            90,
+            36
+          ],
+          [
+            809,
+            464,
+            79,
+            31
+          ],
+          [
+            837,
+            428,
+            74,
+            27
+          ],
+          [
+            900,
+            401,
+            70,
+            25
+          ],
+          [
+            956,
+            377,
+            67,
+            22
+          ],
+          [
+            983,
+            352,
+            63,
+            20
+          ],
+          [
+            959,
+            309,
+            103,
+            56
+          ],
+          [
+            873,
+            239,
+            86,
+            85
+          ],
+          [
+            929,
+            188,
+            31,
+            7
+          ],
+          [
+            958,
+            178,
+            29,
+            5
+          ],
+          [
+            979,
+            168,
+            25,
+            5
+          ],
+          [
+            993,
+            158,
+            23,
+            5
+          ],
+          [
+            991,
+            146,
+            14,
+            9
+          ]
+        ],
+        "ratio": 3.0,
+        "walkTo": 5,
+        "fogSize": 300,
+        "msPerStone": 640,
+        "gift": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.giftbox.png",
+          "cx": 1101.5,
+          "cy": 741.6,
+          "size": 100
+        },
+        "poses": {
+          "standing": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-standing.png",
+            "foot": [
+              536,
+              1048
+            ]
+          },
+          "sidewalk": {
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-sidewalk.png",
+            "foot": [
+              550,
+              1064
+            ]
+          }
+        }
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "09 colour in every step",
+      "mechanic": "g3-stamps",
+      "titleText": "Colour In Every Step",
+      "buttons": [
+        {
+          "text": "Progress Is Good"
+        }
+      ],
+      "subtitleText": "Tick Them Off And Watch It Fill",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/09%20COLOUR%20IN%20EVERY%20STEP.mp3",
+      "mechanicData": {
+        "lay": {
+          "x0": 494.7,
+          "y0": 484.5,
+          "w": 738.5,
+          "h": 419.1,
+          "size": 1
+        },
+        "card": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.stampcard.png",
+          "cx": 960.1,
+          "cy": 629.1,
+          "size": 531.8
+        },
+        "pointer": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-point.png",
+          "cx": 621.8,
+          "cy": 740.9,
+          "size": 300,
+          "flip": true
+        },
+        "cells": [
+          [
+            166,
+            437
+          ],
+          [
+            353,
+            437
+          ]
+        ],
+        "starSize": 60.7
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "10 check your compass",
+      "mechanic": "g3-compass",
+      "titleText": "Check Your Compass",
+      "buttons": [
+        {
+          "text": "Sight Is Solid"
+        }
+      ],
+      "subtitleText": "Adjust The Plan, Stick To The Goal",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/10%20CHECK%20YOUR%20COMPASS.mp3",
+      "mechanicData": {
+        "lay": {
+          "x0": 719.6,
+          "y0": 381.3,
+          "w": 434.5,
+          "h": 542.7,
+          "size": 1
+        },
+        "flag": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.flagpath.png",
+          "cx": 1006.5,
+          "cy": 597.2,
+          "size": 400,
+          "flip": true
+        },
+        "figure": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-lookingfar.png",
+          "cx": 788.0,
+          "cy": 772.2,
+          "size": 263.7
+        },
+        "compass": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.compass.png",
+          "cx": 974.1,
+          "cy": 756.8,
+          "size": 343.7,
+          "hit": {
+            "x": 817.2,
+            "y": 641.0,
+            "w": 312.8,
+            "h": 259.0
+          }
+        }
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "11 celebrate the halfway mark",
+      "mechanic": "g3-celebrate",
+      "titleText": "Celebrate The Halfway Mark",
+      "buttons": [
+        {
+          "text": "I'm A Winner"
+        }
+      ],
+      "subtitleText": "Press The 3C Diamond",
+      "mechanicData": {
+        "lay": {
+          "x0": 690,
+          "y0": 320,
+          "w": 620,
+          "h": 690,
+          "size": 1
+        },
+        "diamond": {
+          "x": 939.2,
+          "y": 479.5,
+          "w": 41.6,
+          "h": 41.6,
+          "src": "../../shared/diamond.png"
+        },
+        "stand": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-standing.png",
+          "cx": 960.0,
+          "cy": 739.2,
+          "size": 295.5
+        },
+        "jump": {
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/goal-03.figure-jump.png",
+          "cy": 739.2,
+          "size": 295.5,
+          "cx": 969.3
+        },
+        "rays": {
+          "x": 1000,
+          "y": 700,
+          "r": 300
+        },
+        "jumps": 4,
+        "jumpHeight": 130
+      }
+    },
+    {
+      "g3": true,
+      "adminLabel": "12 something to remember",
+      "mechanic": "g3-notes",
+      "titleText": "Something To Remember",
+      "buttons": [
+        {
+          "text": "Staying Steady"
+        }
+      ],
+      "subtitleText": "Tap To Receive Your Eight Messages",
+      "soundEffect": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2003/12%20SOMETHING%20TO%20REMEMBER.mp3",
+      "mechanicData": {
+        "lay": {
+          "x0": 476.5,
+          "y0": 465,
+          "w": 1263.4,
+          "h": 460.7
+        },
+        "pad": {
+          "x": 1475.1,
+          "y": 656.9,
+          "w": 264.8,
+          "h": 268.8,
+          "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynotepad.png"
+        },
+        "padStart": {
+          "x": 976,
+          "y": 575
+        },
+        "padGlowAt": 0.62,
+        "notes": [
+          {
+            "x": 494.7,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote1.png",
+            "text": "EXPECT A QUIET STRETCH",
+            "dy": 7
+          },
+          {
+            "x": 731.9,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote2.png",
+            "text": "SHRINK THE MIDDLE"
+          },
+          {
+            "x": 969.1,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote3.png",
+            "text": "PUT A TREAT IN THE FOG",
+            "dy": 7
+          },
+          {
+            "x": 1206.3,
+            "y": 465,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote4.png",
+            "text": "COLOUR IN EVERY STEP",
+            "dy": 7
+          },
+          {
+            "x": 476.5,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote4.png",
+            "text": "LOOK AT THE NEXT STONE"
+          },
+          {
+            "x": 713.7,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote3.png",
+            "text": "CHECK YOUR COMPASS"
+          },
+          {
+            "x": 950.9,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote2.png",
+            "text": "SLOW IS STILL MOVING"
+          },
+          {
+            "x": 1188.1,
+            "y": 679.1,
+            "w": 237.2,
+            "h": 190.7,
+            "src": "https://games.3c-public-library.org/interactive%20games/aurion%20games/goals%2002/goal-02.stickynote1.png",
+            "text": "CELEBRATE HALFWAY"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "find": "done"
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Take It With You"
+          }
+        ]
+      }
+    },
+    {
+      "inherit": {
+        "find": "last"
+      },
+      "override": {
+        "buttons": [
+          {
+            "text": "Another Round"
+          },
+          {
+            "text": "The Team"
+          },
+          {
+            "text": "Over & Out"
+          }
+        ]
+      }
+    }
+  ]
+}

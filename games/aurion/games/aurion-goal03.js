@@ -1221,8 +1221,9 @@ export function startGame(config, container) {
     const think = placeFull(R.stage, R.lay, Object.assign({ z: 5 }, md.thinking));
     think.style.opacity = '0';
     const paths = md.paths.map((p, i) => {
-      const im = placeFull(R.stage, R.lay, Object.assign({ z: 2 + i }, p));
+      const im = placeFull(R.stage, R.lay, Object.assign({}, p, { z: i === 0 ? 20 : 2 + i }));
       im.style.opacity = '0';
+      // path 1 sits in front, so its big stone is never covered by the small stones of the others
       // from the second path on, the big starting stone is faded out of the picture, so the
       // stones of the five images never clash; path 1 keeps the one big stone
       if (i > 0 && p.hide) {

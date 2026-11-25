@@ -167,47 +167,54 @@ const MECHANIC_OPTIONS = [
 
 function renderMechanicFields(decision) {
   const wrap = document.createElement('div');
-  if (!decision.mechanicData) decision.mechanicData = {};
+  // Looking at a scene never writes anything into it. mechanicData is only
+  // created on the first real edit, so mechanics Champ already built are
+  // exported exactly as they were loaded.
+  const md = () => (decision.mechanicData = decision.mechanicData || {});
+  const mdv = decision.mechanicData || {};
+  const CATS = ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'];
+  const categoryField = cat => textField(
+    cat + ' container image URL',
+    (mdv.categoryImages || {})[cat],
+    v => {
+      const m = md();
+      const ci = m.categoryImages || (m.categoryImages = {});
+      CATS.forEach(c => { if (ci[c] === undefined) ci[c] = ''; });
+      ci[cat] = v;
+    }
+  );
 
   if (decision.mechanic === 'door') {
     const label = document.createElement('span');
     label.className = 'admin-small-label';
-    label.textContent = 'Door mechanic — closed door lives in the regular "Duck / character image" field above';
+    label.textContent = 'Door mechanic \u2014 closed door lives in the regular "Duck / character image" field above';
     wrap.appendChild(label);
-    wrap.appendChild(textField('Open door image URL (repo or Cloudflare)', decision.mechanicData.openImage, v => { decision.mechanicData.openImage = v; }));
-    wrap.appendChild(textField('Reveal image URL, e.g. the sticky note (repo or Cloudflare)', decision.mechanicData.revealImage, v => { decision.mechanicData.revealImage = v; }));
+    wrap.appendChild(textField('Open door image URL (repo or Cloudflare)', mdv.openImage, v => { md().openImage = v; }));
+    wrap.appendChild(textField('Reveal image URL, e.g. the sticky note (repo or Cloudflare)', mdv.revealImage, v => { md().revealImage = v; }));
   }
 
   if (decision.mechanic === 'sorting') {
     const label = document.createElement('span');
     label.className = 'admin-small-label';
-    label.textContent = 'Sorting mechanic — one cover image per category container';
+    label.textContent = 'Sorting mechanic \u2014 one cover image per category container';
     wrap.appendChild(label);
-    if (!decision.mechanicData.categoryImages) decision.mechanicData.categoryImages = {};
-    ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'].forEach(cat => {
-      if (!decision.mechanicData.categoryImages[cat]) decision.mechanicData.categoryImages[cat] = '';
-      wrap.appendChild(textField(cat + ' container image URL', decision.mechanicData.categoryImages[cat], v => { decision.mechanicData.categoryImages[cat] = v; }));
-    });
+    CATS.forEach(cat => wrap.appendChild(categoryField(cat)));
   }
 
   if (decision.mechanic === 'spin-wheel') {
     const label = document.createElement('span');
     label.className = 'admin-small-label';
-    label.textContent = 'Spin wheel — decorative only, tap to spin, button appears once it stops';
+    label.textContent = 'Spin wheel \u2014 decorative only, tap to spin, button appears once it stops';
     wrap.appendChild(label);
-    wrap.appendChild(textField('Wheel image URL, full wheel graphic (repo or Cloudflare)', decision.mechanicData.wheelImage, v => { decision.mechanicData.wheelImage = v; }));
+    wrap.appendChild(textField('Wheel image URL, full wheel graphic (repo or Cloudflare)', mdv.wheelImage, v => { md().wheelImage = v; }));
   }
 
   if (decision.mechanic === 'reveal-cards') {
     const label = document.createElement('span');
     label.className = 'admin-small-label';
-    label.textContent = 'Reveal cards — same 8 container images as the Sorting scene, only the ones the player actually picked will flash and open; wording is fixed and built in, nothing to type here';
+    label.textContent = 'Reveal cards \u2014 same 8 container images as the Sorting scene, only the ones the player actually picked will flash and open; wording is fixed and built in, nothing to type here';
     wrap.appendChild(label);
-    if (!decision.mechanicData.categoryImages) decision.mechanicData.categoryImages = {};
-    ['YOU', 'PEOPLE', 'BODY', 'WORK', 'LIFE', 'HOME', 'CREATE', 'GIVE'].forEach(cat => {
-      if (!decision.mechanicData.categoryImages[cat]) decision.mechanicData.categoryImages[cat] = '';
-      wrap.appendChild(textField(cat + ' container image URL', decision.mechanicData.categoryImages[cat], v => { decision.mechanicData.categoryImages[cat] = v; }));
-    });
+    CATS.forEach(cat => wrap.appendChild(categoryField(cat)));
   }
 
   return wrap;
@@ -437,7 +444,9 @@ function styledTextGroup(prefix, obj, fontOptions, defaults, sectionLabel, useTe
   return wrap;
 }
 
-function styledButtonGroup(obj, sectionLabel) {
+function styledButtonGroup(obj, sectionLabel, onTouch) {
+  // onTouch attaches a not-yet-saved placeholder button to the scene on the first real edit.
+  const set = (k, v) => { if (onTouch) onTouch(); obj[k] = v; };
   const wrap = document.createElement('div');
   wrap.className = 'admin-styled-group';
 
@@ -446,7 +455,7 @@ function styledButtonGroup(obj, sectionLabel) {
   label.textContent = sectionLabel;
   wrap.appendChild(label);
 
-  wrap.appendChild(textField('Button image URL, optional (repo or Cloudflare)', obj.image, v => { obj.image = v; }));
+  wrap.appendChild(textField('Button image URL, optional (repo or Cloudflare)', obj.image, v => { set('image', v); }));
 
   const row = document.createElement('div');
   row.className = 'admin-item-row';
@@ -457,7 +466,7 @@ function styledButtonGroup(obj, sectionLabel) {
   textInput.style.flex = '1';
   textInput.placeholder = 'Button text';
   textInput.value = obj.text || '';
-  textInput.addEventListener('input', () => { obj.text = textInput.value; });
+  textInput.addEventListener('input', () => { set('text', textInput.value); });
 
   const styleBtn = document.createElement('button');
   styleBtn.type = 'button';
@@ -465,9 +474,9 @@ function styledButtonGroup(obj, sectionLabel) {
   styleBtn.textContent = 'Style';
 
   const drawer = makeDrawer(sectionLabel + ' style');
-  drawer.appendChild(selectField('Font', obj.font || 'Poppins', BODY_FONTS, v => { obj.font = v; }));
-  drawer.appendChild(selectField('Text color', obj.color || '#ffffff', BUTTON_TEXT_COLORS, v => { obj.color = v; }));
-  drawer.appendChild(sliderField('Size (px)', obj.size ?? 16, 12, 28, v => { obj.size = v; }));
+  drawer.appendChild(selectField('Font', obj.font || 'Poppins', BODY_FONTS, v => { set('font', v); }));
+  drawer.appendChild(selectField('Text color', obj.color || '#ffffff', BUTTON_TEXT_COLORS, v => { set('color', v); }));
+  drawer.appendChild(sliderField('Size (px)', obj.size ?? 16, 12, 28, v => { set('size', v); }));
   // Fine-tune only — most buttons never need this touched. The button
   // graphic is a 3D pill (top highlight, flat face, bottom shadow rim),
   // and the code already nudges every button's text down by default to
@@ -475,7 +484,7 @@ function styledButtonGroup(obj, sectionLabel) {
   // wrapped one) still needs its own small correction — positive moves
   // the text down, negative moves it up. Read by aurion.js as
   // btn.textNudge; leave at 0 unless a specific button looks off.
-  drawer.appendChild(sliderField('Text vertical nudge (px, fine-tune only)', obj.textNudge ?? 0, -15, 15, v => { obj.textNudge = v; }));
+  drawer.appendChild(sliderField('Text vertical nudge (px, fine-tune only)', obj.textNudge ?? 0, -15, 15, v => { set('textNudge', v); }));
 
   styleBtn.addEventListener('click', () => drawer.classList.add('open'));
 
@@ -505,14 +514,14 @@ function drawerTextField(buttonLabel, drawerTitleText, value, onChange) {
   return wrap;
 }
 
-function overlayImageField(obj, labelText) {
+function overlayImageField(obj, ensure, labelText) {
   const wrap = document.createElement('div');
   const label = document.createElement('span');
   label.className = 'admin-small-label';
   label.textContent = labelText;
   wrap.appendChild(label);
-  wrap.appendChild(textField('Image URL (repo or Cloudflare)', obj.url, v => { obj.url = v; }));
-  wrap.appendChild(selectField('Position', obj.position || 'center', POSITION_OPTIONS, v => { obj.position = v; }));
+  wrap.appendChild(textField('Image URL (repo or Cloudflare)', obj.url, v => { ensure().url = v; }));
+  wrap.appendChild(selectField('Position', obj.position || 'center', POSITION_OPTIONS, v => { ensure().position = v; }));
   return wrap;
 }
 
@@ -523,13 +532,20 @@ function renderButtonsList(decision) {
   label.textContent = 'Buttons — always centered, whether there\u2019s one, two, or three';
   wrap.appendChild(label);
 
-  if (!decision.buttons || !decision.buttons.length) decision.buttons = [{}];
+  // A scene with no buttons shows one empty row, but nothing is written into
+  // the scene until something is actually typed into it.
+  const hasButtons = !!(decision.buttons && decision.buttons.length);
+  const buttonList = hasButtons ? decision.buttons : [{}];
+  const attachButtons = () => {
+    if (!decision.buttons || !decision.buttons.length) decision.buttons = [buttonList[0]];
+    return decision.buttons;
+  };
 
-  decision.buttons.forEach((btn, i) => {
+  buttonList.forEach((btn, i) => {
     const card = document.createElement('div');
     card.className = 'admin-item-card';
 
-    if (decision.buttons.length > 1) {
+    if (buttonList.length > 1) {
       const header = document.createElement('div');
       header.className = 'admin-row-header';
       const heading = document.createElement('span');
@@ -546,16 +562,16 @@ function renderButtonsList(decision) {
       card.appendChild(header);
     }
 
-    card.appendChild(styledButtonGroup(btn, `Button ${i + 1}`));
+    card.appendChild(styledButtonGroup(btn, `Button ${i + 1}`, hasButtons ? null : attachButtons));
     wrap.appendChild(card);
   });
 
-  if (decision.buttons.length < 3) {
+  if (buttonList.length < 3) {
     const addBtn = document.createElement('button');
     addBtn.className = 'admin-btn';
     addBtn.textContent = 'Add another button';
     addBtn.addEventListener('click', () => {
-      decision.buttons.push({});
+      attachButtons().push({});
       renderForm();
     });
     wrap.appendChild(addBtn);
@@ -584,7 +600,7 @@ function renderGlobal() {
 
   const fileRow = document.createElement('div');
   fileRow.className = 'admin-item-row';
-  fileRow.appendChild(textField('File name for export, e.g. goals-01', state.fileName, v => { state.fileName = v; }));
+  fileRow.appendChild(textField('Reference name (the downloaded file always takes the name of the theme you are editing)', state.fileName, v => { state.fileName = v; }));
   fileRow.appendChild(textField('Ambient sound Cloudflare URL (.mp3, blank for silence)', state.ambientSound, v => { state.ambientSound = v; }));
   globalRoot.appendChild(fileRow);
 
@@ -597,14 +613,17 @@ function renderGlobal() {
   const bgSection = document.createElement('div');
   bgSection.className = 'admin-section';
   bgSection.appendChild(sectionTitle('Stage background (fallback default — used whenever a scene doesn\u2019t set its own)'));
-  if (!state.background) state.background = { type: 'image', url: '' };
+  // Shown from a stand-in; written into the file only when actually edited,
+  // so themes that inherit their background from another theme keep doing so.
+  const globalBg = state.background || { type: 'image', url: '' };
+  const ensureGlobalBg = () => (state.background = state.background || { type: 'image', url: '' });
   bgSection.appendChild(selectField(
     'Type',
-    state.background.type,
+    globalBg.type,
     [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
-    v => { state.background.type = v; }
+    v => { ensureGlobalBg().type = v; }
   ));
-  bgSection.appendChild(textField('Repo or Cloudflare URL', state.background.url, v => { state.background.url = v; }));
+  bgSection.appendChild(textField('Repo or Cloudflare URL', globalBg.url, v => { ensureGlobalBg().url = v; }));
   globalRoot.appendChild(bgSection);
 
   const creditsSection = document.createElement('div');
@@ -802,33 +821,42 @@ function renderActiveScene() {
     activeLeft.appendChild(removeSceneBtn);
   }
 
-  if (!decision.background) decision.background = { type: 'image', url: '' };
+  const bgView = decision.background || { type: 'image', url: '' };
+  const ensureBg = () => (decision.background = decision.background || { type: 'image', url: '' });
   const bgLabel = document.createElement('span');
   bgLabel.className = 'admin-small-label';
   bgLabel.textContent = 'Background image (leave URL blank to use the stage default — a full image here can act as a whole page background, e.g. the landing page)';
   activeLeft.appendChild(bgLabel);
   activeLeft.appendChild(selectField(
     'Type',
-    decision.background.type,
+    bgView.type,
     [{ value: 'image', label: 'Image' }, { value: 'video', label: 'Video' }],
-    v => { decision.background.type = v; }
+    v => { ensureBg().type = v; }
   ));
-  activeLeft.appendChild(textField('Repo or Cloudflare URL', decision.background.url, v => { decision.background.url = v; }));
+  activeLeft.appendChild(textField('Repo or Cloudflare URL', bgView.url, v => { ensureBg().url = v; }));
 
-  if (!decision.image) decision.image = { label: '', url: '' };
+  const imgView = decision.image || { label: '', url: '' };
+  const ensureImg = () => (decision.image = decision.image || { label: '', url: '' });
   const imgLabel = document.createElement('span');
   imgLabel.className = 'admin-small-label';
   imgLabel.textContent = 'Duck / character image';
   activeLeft.appendChild(imgLabel);
-  activeLeft.appendChild(textField('Name', decision.image.label, v => { decision.image.label = v; }));
-  activeLeft.appendChild(textField('Repo or Cloudflare URL', decision.image.url, v => { decision.image.url = v; }));
+  activeLeft.appendChild(textField('Name', imgView.label, v => { ensureImg().label = v; }));
+  activeLeft.appendChild(textField('Repo or Cloudflare URL', imgView.url, v => { ensureImg().url = v; }));
 
-  if (!decision.overlayImage) decision.overlayImage = { url: '', position: 'center' };
-  activeLeft.appendChild(overlayImageField(decision.overlayImage,
+  activeLeft.appendChild(overlayImageField(
+    decision.overlayImage || { url: '', position: 'center' },
+    () => (decision.overlayImage = decision.overlayImage || { url: '', position: 'center' }),
     'Overlay image — flat, no container, portrait, medium size (this is where Chef adds the landing/consent/etc image if using the stage default background)'
   ));
 
-  activeLeft.appendChild(selectField('Mechanic', decision.mechanic || 'none', MECHANIC_OPTIONS, v => { decision.mechanic = v; renderForm(); }));
+  // A mechanic Champ built (e.g. g3-walk, maze, castle-door) is not in the
+  // short list above. Show it by name so the scene is not mislabelled "None";
+  // it stays in the file exactly as it is unless you pick something else.
+  const mechanicOptions = (decision.mechanic && !MECHANIC_OPTIONS.some(o => o.value === decision.mechanic))
+    ? [...MECHANIC_OPTIONS, { value: decision.mechanic, label: decision.mechanic + ' (built by Champ \u2014 kept exactly as it is)' }]
+    : MECHANIC_OPTIONS;
+  activeLeft.appendChild(selectField('Mechanic', decision.mechanic || 'none', mechanicOptions, v => { decision.mechanic = v; renderForm(); }));
   activeLeft.appendChild(renderMechanicFields(decision));
 
   activeLeft.appendChild(selectField('Motion', decision.motion, MOTION_OPTIONS, v => { decision.motion = v; }));
@@ -882,9 +910,9 @@ function renderOptions(decision) {
   label.textContent = 'Answer choices (legacy, optional — only needed for branching/scored scenes)';
   wrap.appendChild(label);
 
-  if (!decision.options) decision.options = [];
+  const optionList = decision.options || [];
 
-  decision.options.forEach((option, index) => {
+  optionList.forEach((option, index) => {
     const row = document.createElement('div');
     row.className = 'admin-item-row';
 
@@ -919,7 +947,7 @@ function renderOptions(decision) {
   addOptBtn.style.marginTop = '6px';
   addOptBtn.textContent = 'Add choice';
   addOptBtn.addEventListener('click', () => {
-    decision.options.push({ text: '', scoreDelta: 1 });
+    (decision.options = decision.options || []).push({ text: '', scoreDelta: 1 });
     renderForm();
   });
   wrap.appendChild(addOptBtn);
@@ -933,9 +961,9 @@ function renderResults() {
   section.className = 'admin-section';
   section.appendChild(sectionTitle('Results (optional — leave empty for non-scored games)'));
 
-  if (!state.results) state.results = [];
+  const resultList = state.results || [];
 
-  state.results.forEach((result, index) => {
+  resultList.forEach((result, index) => {
     const card = document.createElement('div');
     card.className = 'admin-item-card';
 
@@ -966,7 +994,7 @@ function renderResults() {
   addBtn.className = 'admin-btn';
   addBtn.textContent = 'Add result band';
   addBtn.addEventListener('click', () => {
-    state.results.push({ minScore: 0, maxScore: 0, title: '', message: '' });
+    (state.results = state.results || []).push({ minScore: 0, maxScore: 0, title: '', message: '' });
     renderForm();
   });
   section.appendChild(addBtn);
@@ -1047,13 +1075,24 @@ newThemeBtn.addEventListener('click', () => {
     saveStatus.textContent = 'That name did not produce a usable file name, try again.';
     return;
   }
+  // A new game keeps the series' fixed pages (landing page, consent page,
+  // Send-off, final page) and starts with none of the numbered scenes: the new
+  // scenes are added between consent page and Send-off, so Send-off and the
+  // final page always move to the end of the run.
+  const startedFrom = currentTheme;
+  const fixedPages = (state.decisions || []).filter(isFixedPage);
+  if (!fixedPages.length) {
+    saveStatus.textContent = `"${startedFrom}" has no landing page / consent page / Send-off / final page to start from. Open a series theme that has them (for example core-05), then use New theme.`;
+    return;
+  }
   state = JSON.parse(JSON.stringify(state));
+  state.decisions = state.decisions.filter(isFixedPage);
   state.credits = DEFAULT_CREDITS;
   currentSha = null;
   currentTheme = slug;
   activeSceneIndex = 0;
   themeSelect.value = '';
-  editorStatus.textContent = `New theme "${slug}" (not saved yet)`;
+  editorStatus.textContent = `New theme "${slug}" (not saved yet) \u2014 started from the fixed pages of "${startedFrom}": ${fixedPages.map(d => d.adminLabel).join(', ')}`;
   renderForm();
   saveStatus.textContent = 'This is a new theme. Use "Save as new theme" to write it to the repo.';
 });
@@ -1127,7 +1166,9 @@ saveAsBtn.addEventListener('click', async () => {
 });
 
 exportBtn.addEventListener('click', () => {
-  const baseName = state.fileName ? slugify(state.fileName) : (state.title ? slugify(state.title) : (currentTheme || 'theme'));
+  // The downloaded file always carries the name of the theme being edited, so it
+  // can be dropped straight into the config folder over the file it came from.
+  const baseName = currentTheme || (state.title ? slugify(state.title) : 'theme');
   const filename = `${baseName}.json`;
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);

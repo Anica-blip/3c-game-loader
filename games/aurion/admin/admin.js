@@ -1080,13 +1080,21 @@ newThemeBtn.addEventListener('click', () => {
   // scenes are added between consent page and Send-off, so Send-off and the
   // final page always move to the end of the run.
   const startedFrom = currentTheme;
-  const fixedPages = (state.decisions || []).filter(isFixedPage);
-  if (!fixedPages.length) {
-    saveStatus.textContent = `"${startedFrom}" has no landing page / consent page / Send-off / final page to start from. Open a series theme that has them (for example core-05), then use New theme.`;
+  // goals.01 calls its "We're Done Here" page "send-off page"; every other
+  // series calls it exactly "Send-off". Both are the same fixed page.
+  const SEND_OFF_NAMES = ['Send-off', 'send-off page'];
+  const pickFixed = label => (state.decisions || []).find(d =>
+    label === 'Send-off' ? SEND_OFF_NAMES.includes(d.adminLabel) : d.adminLabel === label);
+  const FOUR = ['landing page', 'consent page', 'Send-off', 'final page'];
+  const missing = FOUR.filter(label => !pickFixed(label));
+  if (missing.length) {
+    saveStatus.textContent = `"${startedFrom}" has no ${missing.join(' / ')} to start from. A new theme needs all four fixed pages (landing page, consent page, Send-off, final page). Open a series theme that has them (for example core-05), then use New theme.`;
     return;
   }
+  const fixedPages = FOUR.map(label => JSON.parse(JSON.stringify(pickFixed(label))));
+  fixedPages.forEach((d, i) => { d.adminLabel = FOUR[i]; });
   state = JSON.parse(JSON.stringify(state));
-  state.decisions = state.decisions.filter(isFixedPage);
+  state.decisions = fixedPages;
   state.credits = DEFAULT_CREDITS;
   currentSha = null;
   currentTheme = slug;
